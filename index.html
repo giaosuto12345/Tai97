@@ -77,12 +77,12 @@
       text-transform: uppercase;
     }
 
-    /* ====== STYLE TAB THỜI TIẾT ====== */
+    /* ====== TAB THỜI TIẾT ====== */
     .weather-frame {
       width: 100%;
-      height: 70vh;
+      height: 480px;
       border-radius: 12px;
-      border: 1px solid #ddd;
+      border: none;
     }
     .weather-note {
       font-size: 13px;
@@ -187,13 +187,19 @@
 
     <div id="tab-thoi-tiet" class="tab-content">
       <div class="weather-note">
-        <strong>📍 Vân Nham:</strong> Kéo thanh trượt <strong>dưới cùng</strong> để chọn ngày/giờ. Bấm <strong>Nhiệt độ/Độ ẩm</strong> ở góc phải bản đồ để đổi thông số.
+        📍 <strong>Dữ liệu Vân Nham:</strong> Bảng dưới đây hiện thông số nhiệt độ/độ ẩm thực tế theo từng giờ.
       </div>
       <div class="card" style="padding:0; overflow:hidden;">
-        <iframe class="weather-frame" src="https://www.windy.com/21.520/106.310?temp,21.450,106.310,12,m:eNmairQ" frameborder="0"></iframe>
+        <iframe 
+          class="weather-frame" 
+          src="https://www.meteoblue.com/vi/th%E1%BB%9Di-ti%E1%BA%BFt/widget/three/v%C3%A2n-nham_vi%E1%BB%87t-nam_1905545?geoloc=fixed&nocurrent=0&noforecast=0&days=4&tempunit=CELSIUS&windunit=KILOMETER_PER_HOUR&layout=bright" 
+          frameborder="0" scrolling="NO" allowtransparency="true">
+        </iframe>
       </div>
       <div style="text-align:center; padding:10px;">
-        <a href="https://www.meteoblue.com/vi/th%E1%BB%9Di-ti%E1%BA%BFt/d%E1%BB%B1-b%E1%BA%A3o/14-days/v%C3%A2n-nham_vi%E1%BB%87t-nam_1905545" target="_blank" style="color:#1976d2; font-weight:bold; text-decoration:none;">📊 Xem chi tiết độ ẩm 14 ngày Vân Nham</a>
+        <a href="https://www.meteoblue.com/vi/th%E1%BB%9Di-ti%E1%BA%BFt/d%E1%BB%B1-b%E1%BA%A3o/14-days/v%C3%A2n-nham_vi%E1%BB%87t-nam_1905545" target="_blank" style="color:#1976d2; font-weight:bold; text-decoration:none; font-size:14px;">
+          📊 Bấm để xem biểu đồ Độ ẩm chi tiết (14 ngày)
+        </a>
       </div>
     </div>
 
@@ -208,7 +214,7 @@
     event.currentTarget.classList.add('active');
   }
 
-  // --- GIỮ NGUYÊN LOGIC THÔNG GIÓ ---
+  // LOGIC THÔNG GIÓ (Bảng tra 34x40)
   const BANG_DO_AM = [
     [3.11,3.17,3.22,3.27,3.32,3.37,3.43,3.48,3.53,3.58,3.63,3.68,3.74,3.79,3.84,3.94,4,4,4.05,4.1,4.15,4.2,4.25,4.31,4.36,4.41,4.46,4.52,4.57,4.62,4.67,4.72,4.77,4.83,4.88,4.93,4.65,5.04,5.09,5.14],
     [3.33,3.39,3.45,3.5,3.56,3.61,3.67,3.72,3.78,3.83,3.89,3.94,4,4.06,4.11,4.22,4.28,4.28,4.33,4.39,4.45,4.5,4.56,4.61,4.67,4.72,4.78,4.83,4.89,4.95,5,5.06,5.11,5.17,5.22,5.28,4.98,5.39,5.45,5.5],
@@ -284,7 +290,7 @@
     document.getElementById('ketqua').style.display = 'block';
   }
 
-  // --- GIỮ NGUYÊN LOGIC CHIA GIỜ ---
+  // --- LOGIC CHIA GIỜ ---
   function formatTime(mins) { let h = Math.floor(mins / 60); let m = mins % 60; return (h<10?'0'+h:h) + ':' + (m<10?'0'+m:m); }
   function parseTime(t) { let p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); }
   function shuffle(a) { for (let i = a.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
@@ -319,12 +325,20 @@
     document.getElementById('ket-qua-chia-gio').style.display = 'block';
     localStorage.setItem('ngayTaoLich', new Date().toLocaleDateString('vi-VN'));
     localStorage.setItem('data1', b1.innerHTML); localStorage.setItem('data2', b2.innerHTML);
+    localStorage.setItem('sumSang', document.getElementById('sum-sang').innerText);
+    localStorage.setItem('sumChieu', document.getElementById('sum-chieu').innerText);
+    localStorage.setItem('sumNha', document.getElementById('sum-nha').innerText);
   }
 
   window.onload = function() {
     if (localStorage.getItem('ngayTaoLich') === new Date().toLocaleDateString('vi-VN')) {
       document.querySelector('#bang-ra-vao tbody').innerHTML = localStorage.getItem('data1');
       document.querySelector('#bang-thong-gio tbody').innerHTML = localStorage.getItem('data2');
+      if(localStorage.getItem('sumSang')) {
+          document.getElementById('sum-sang').innerText = localStorage.getItem('sumSang');
+          document.getElementById('sum-chieu').innerText = localStorage.getItem('sumChieu');
+          document.getElementById('sum-nha').innerText = localStorage.getItem('sumNha');
+      }
       document.getElementById('ket-qua-chia-gio').style.display = 'block';
     }
   }
