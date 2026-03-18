@@ -163,15 +163,22 @@
         <div class="set-row">
           <span>Cỡ chữ hiển thị:</span>
           <select id="set-fontsize" style="width: 100px; padding: 5px; font-size: 14px;">
-            <option value="12">Nhỏ (12)</option>
-            <option value="14" selected>Vừa (14)</option>
-            <option value="16">Lớn (16)</option>
-            <option value="18">Rất lớn (18)</option>
+            <option value="10">10 px</option>
+            <option value="11">11 px</option>
+            <option value="12">12 px</option>
+            <option value="13">13 px</option>
+            <option value="14" selected>14 px</option>
+            <option value="15">15 px</option>
+            <option value="16">16 px</option>
+            <option value="17">17 px</option>
+            <option value="18">18 px</option>
+            <option value="19">19 px</option>
+            <option value="20">20 px</option>
           </select>
         </div>
 
         <div style="border-top: 1px dashed #ccc; margin: 10px 0;"></div>
-        <div style="font-size: 12px; color: #666; margin-bottom: 10px;">* Chọn cột muốn hiển thị và nhập độ rộng (%):</div>
+        <div style="font-size: 12px; color: #666; margin-bottom: 10px;">* Nếu bỏ tích, % của cột ẩn sẽ tự nhảy sang cột kế tiếp:</div>
         
         <div id="danh-sach-cot-cai-dat"></div>
 
@@ -208,10 +215,10 @@
   // ==========================================
   // LOGIC TAB 4: DANH MỤC (TÙY CHỈNH BẢNG)
   // ==========================================
-  let duLieuDanhMuc = []; // Dữ liệu gốc từ Excel
+  let duLieuDanhMuc = []; 
   let cauHinhBang = {
     fontSize: 14,
-    cot: {} // Ví dụ: { "Tên": { show: true, width: 50 }, "KLR": { show: true, width: 25 } }
+    cot: {} 
   };
 
   // 1. Nạp file Excel
@@ -250,7 +257,6 @@
       cauHinhBang.cot[c] = { show: true, width: defaultWidth };
     });
     
-    // Nếu có cột đặc biệt cần rộng hơn (Ví dụ: TÊN ĐẠN DƯỢC)
     if(cacCot[0]) cauHinhBang.cot[cacCot[0]].width = 50; 
     
     localStorage.setItem('cauHinhBangExcel', JSON.stringify(cauHinhBang));
@@ -290,15 +296,38 @@
     panel.style.display = 'block';
   }
 
-  // 4. Lưu cài đặt
+  // 4. Lưu cài đặt (CÓ THUẬT TOÁN DỒN %)
   function luuCaiDatDanhMuc() {
     cauHinhBang.fontSize = document.getElementById('set-fontsize').value;
     
-    Object.keys(cauHinhBang.cot).forEach(tenCot => {
-      cauHinhBang.cot[tenCot].show = document.getElementById(`chk-${tenCot}`).checked;
-      let width = parseInt(document.getElementById(`width-${tenCot}`).value);
-      cauHinhBang.cot[tenCot].width = isNaN(width) ? 20 : width;
+    let carry = 0; // Biến tích lũy % của các cột bị ẩn
+    let lastCheckedCol = null; // Ghi nhớ cột hiển thị cuối cùng
+
+    let columns = Object.keys(cauHinhBang.cot);
+    
+    columns.forEach(tenCot => {
+      let isChecked = document.getElementById(`chk-${tenCot}`).checked;
+      let widthInput = parseInt(document.getElementById(`width-${tenCot}`).value);
+      if (isNaN(widthInput)) widthInput = 20;
+
+      if (!isChecked) {
+        // Nếu cột bị ẩn -> Dồn % của nó vào biến carry
+        cauHinhBang.cot[tenCot].show = false;
+        cauHinhBang.cot[tenCot].width = widthInput; // Vẫn lưu số gốc để hiện trong ô input
+        carry += widthInput; 
+      } else {
+        // Nếu cột được tích hiển thị -> Nhận toàn bộ % dồn từ các cột ẩn trước đó
+        cauHinhBang.cot[tenCot].show = true;
+        cauHinhBang.cot[tenCot].width = widthInput + carry; 
+        carry = 0; // Đã xả dồn thì reset về 0
+        lastCheckedCol = tenCot;
+      }
     });
+
+    // Xử lý ngoại lệ: Nếu các cột cuối cùng bị ẩn thì dồn % ngược lại cho cột hiển thị cuối cùng
+    if (carry > 0 && lastCheckedCol) {
+      cauHinhBang.cot[lastCheckedCol].width += carry;
+    }
     
     localStorage.setItem('cauHinhBangExcel', JSON.stringify(cauHinhBang));
     document.getElementById('panel-cai-dat').style.display = 'none';
@@ -318,7 +347,6 @@
       return;
     }
 
-    // Lấy các cột được phép "show"
     let cotHienThi = Object.keys(cauHinhBang.cot).filter(c => cauHinhBang.cot[c].show);
     
     // Vẽ tiêu đề có gắn width
@@ -346,7 +374,6 @@
       hienThiBangDanhMuc(duLieuDanhMuc);
       return;
     }
-    // Lọc data
     let ketQua = duLieuDanhMuc.filter(hang => {
       return Object.values(hang).some(giaTri => 
         String(giaTri).toLowerCase().includes(tuKhoa)
