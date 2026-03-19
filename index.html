@@ -13,12 +13,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
-    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box;}
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
     body { 
       margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-      background: #eaf6ff; 
-      padding-bottom: 110px; 
-      overflow-x: hidden;
+      background: #eaf6ff; padding-bottom: 110px; overflow-x: hidden;
     }
 
     /* ====== MÀN HÌNH KHÓA ====== */
@@ -39,11 +37,12 @@
     }
     .pin-input:focus { outline: none; border-color: #1976d2; }
     .btn-unlock { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: #1976d2; border: none; border-radius: 12px; cursor: pointer; }
-    .btn-unlock:active { transform: scale(0.98); }
+    .btn-faceid { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: #4caf50; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 15px 0; box-shadow: 0 4px 10px rgba(76,175,80,0.4); }
+    .btn-faceid:active, .btn-unlock:active { transform: scale(0.98); }
 
     #app-content { display: none; }
 
-    /* ====== FONT SCALE NGUYÊN BẢN ====== */
+    /* ====== FONT SCALE NGUYÊN BẢN CỦA BẠN ====== */
     :root {
       --fs-header: clamp(22px, 6vw, 32px);
       --fs-card-title: clamp(15px, 4vw, 20px);
@@ -59,7 +58,7 @@
     .bottom-nav-container {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: #fff; display: flex; align-items: center;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
       padding-bottom: calc(env(safe-area-inset-bottom) + 15px);
       padding-top: 10px; z-index: 1000;
     }
@@ -81,7 +80,7 @@
     .nav-btn.active { color: #1976d2; }
     .nav-icon { font-size: 28px; margin-bottom: 5px; }
 
-    /* ====== GIAO DIỆN TRANG CHỦ LƯỚI 3 CỘT ====== */
+    /* ====== GIAO DIỆN TRANG CHỦ LƯỚI ====== */
     .dash-header { padding: 30px 15px 10px 15px; text-align: center; }
     .dash-header h2 { color: #1976d2; margin: 0; font-size: var(--fs-header); font-weight: 800; letter-spacing: 1px; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; max-width: 600px; margin: 0 auto; }
@@ -103,7 +102,7 @@
     .card { background: #fff; border-radius: 18px; padding: 14px; box-shadow: 0 6px 16px rgba(0,0,0,0.08); margin-bottom: 15px; position: relative; }
     .card-title { text-align: center; font-weight: 800; font-size: var(--fs-card-title); color: #1976d2; margin-bottom: 10px; text-transform: uppercase; }
 
-    /* STYLE NHẬP LIỆU GỐC */
+    /* ====== STYLE NHẬP LIỆU GỐC ====== */
     label { display: block; font-size: var(--fs-label); color: #555; margin-top: 8px; margin-bottom: 4px; font-weight: bold; text-align: left; }
     
     input:not([type="checkbox"]):not([type="file"]), select {
@@ -167,6 +166,13 @@
 
     .sort-btn { background: #eaf6ff; color: #1976d2; border: 1px solid #1976d2; border-radius: 6px; padding: 4px 10px; font-size: 16px; cursor: pointer; margin-left: 5px; font-weight: bold;}
     .sort-btn:active { background: #1976d2; color: #fff; }
+    
+    /* Giao diện tìm kiếm địa điểm */
+    .loc-suggestions {
+        position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
+        border: 1px solid #1976d2; border-radius: 8px; max-height: 200px;
+        overflow-y: auto; z-index: 20; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
   </style>
 </head>
 <body>
@@ -196,23 +202,8 @@
         <div class="dash-header">
           <h2>QUẢN LÝ NHÀ</h2>
         </div>
-        <div class="grid-3">
-          <div class="dash-card" onclick="switchTab('tab-thong-gio')">
-            <div class="dash-card-icon">💨</div><div class="dash-card-title">Thông gió</div>
-          </div>
-          <div class="dash-card" onclick="switchTab('tab-chia-gio')">
-            <div class="dash-card-icon">⏰</div><div class="dash-card-title">Chia giờ</div>
-          </div>
-          <div class="dash-card" onclick="switchTab('tab-thoi-tiet')">
-            <div class="dash-card-icon">🌤️</div><div class="dash-card-title">Thời tiết</div>
-          </div>
-          <div class="dash-card" onclick="switchTab('tab-danh-muc')">
-            <div class="dash-card-icon">📋</div><div class="dash-card-title">Danh mục</div>
-          </div>
-          <div class="dash-card" onclick="switchTab('tab-cai-dat')">
-            <div class="dash-card-icon">⚙️</div><div class="dash-card-title">Cài đặt</div>
-          </div>
-        </div>
+        <div class="grid-3" id="dashboard-grid">
+           </div>
       </div>
 
       <div id="tab-thong-gio" class="tab-content">
@@ -257,17 +248,12 @@
       </div>
 
       <div id="tab-chia-gio" class="tab-content">
-
         <div class="card">
-          <div onclick="toggleLichSu()" style="position: absolute; top: 10px; left: 12px; font-size: 11px; font-weight: 800; color: #1976d2; background: #eaf6ff; padding: 4px 8px; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            🕒 LỊCH SỬ
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <button onclick="toggleLichSu()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">🕒 LỊCH SỬ</button>
+            <div class="card-title" style="margin: 0; flex: 1; text-align: center;">THỜI GIAN LÀM VIỆC</div>
+            <button onclick="toggleMoTa()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">ℹ️ MÔ TẢ</button>
           </div>
-          
-          <div onclick="toggleMoTa()" style="position: absolute; top: 10px; right: 12px; font-size: 11px; font-weight: 800; color: #1976d2; background: #eaf6ff; padding: 4px 8px; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            ℹ️ MÔ TẢ
-          </div>
-
-          <div class="card-title">THỜI GIAN LÀM VIỆC</div>
           
           <div id="view-lich-su" class="mo-ta-box" style="display: none; background: #eef7ff; border-left: 4px solid #1976d2;">
             <div style="font-weight: 800; color: #1976d2; margin-bottom: 10px; text-align: center; font-size: 15px;">🕒 LỊCH SỬ 30 NGÀY</div>
@@ -284,47 +270,27 @@
           <div id="view-edit" style="display: none; padding-top: 5px;">
             <label>Ca Sáng (Vào - Ra)</label>
             <div class="time-flex" style="margin-bottom: 10px;">
-              <input type="time" id="sang-vao" value="06:45"> 
-              <span>-</span>
-              <input type="time" id="sang-ra" value="11:15">
+              <input type="time" id="sang-vao" value="06:45"> <span>-</span> <input type="time" id="sang-ra" value="11:15">
             </div>
-
             <label>Ca Chiều (Vào - Ra)</label>
             <div class="time-flex" style="margin-bottom: 10px;">
-              <input type="time" id="chieu-vao" value="13:15"> 
-              <span>-</span>
-              <input type="time" id="chieu-ra" value="16:45">
+              <input type="time" id="chieu-vao" value="13:15"> <span>-</span> <input type="time" id="chieu-ra" value="16:45">
             </div>
-
             <label>Số lượng nhà</label>
             <select id="so-nha">
-              <option value="1">1 Nhà</option>
-              <option value="2">2 Nhà</option>
-              <option value="3" selected>3 Nhà</option>
-              <option value="4">4 Nhà</option>
-              <option value="5">5 Nhà</option>
-              <option value="6">6 Nhà</option>
+              <option value="1">1 Nhà</option><option value="2">2 Nhà</option><option value="3" selected>3 Nhà</option>
+              <option value="4">4 Nhà</option><option value="5">5 Nhà</option><option value="6">6 Nhà</option>
             </select>
-            
             <button onclick="luuKhungSua()" class="btn" style="margin-top: 15px; margin-bottom: 0; background-color: #ff9800; font-size: 16px; padding: 12px;">XONG</button>
           </div>
 
           <div id="mo-ta-content" class="mo-ta-box" style="display: none;">
             <strong>1. Các thông tin cần chọn:</strong>
-            <ul>
-              <li>Nhập giờ làm việc và Chọn số lượng nhà.</li>
-            </ul>
+            <ul><li>Nhập giờ làm việc và Chọn số lượng nhà.</li></ul>
             <strong style="display:inline-block; margin-top: 8px;">2. Ứng dụng tự động chia:</strong>
-            <ul>
-              <li><strong>Lịch đi:</strong> Nhà 1 luôn mở đầu tiên, N2, N3... tiếp theo. Giãn cách ngẫu nhiên 5-10 phút.</li>
-              <li><strong>Mốc 1:</strong> Cùng lúc với giờ "Vào".</li>
-              <li><strong>Mốc 2:</strong> Cách Mốc 1 ít nhất 1 tiếng (60 phút).</li>
-            </ul>
+            <ul><li><strong>Lịch đi:</strong> Nhà 1 luôn mở đầu tiên, N2, N3... tiếp theo. Giãn cách ngẫu nhiên 5-10 phút.</li><li><strong>Mốc 1:</strong> Cùng lúc với giờ "Vào".</li><li><strong>Mốc 2:</strong> Cách Mốc 1 ít nhất 60 phút.</li></ul>
             <strong style="display:inline-block; margin-top: 8px;">3. Tự động thông minh:</strong>
-            <ul>
-              <li>Mỗi ngày tự tạo lịch 1 lần và lưu vào <b>Lịch sử</b>.</li>
-              <li>Để chia lại lịch mới cho hôm nay, hãy <strong>bấm nhanh 3 lần</strong> vào nút CHIA LỊCH.</li>
-            </ul>
+            <ul><li>Mỗi ngày ứng dụng tự tạo lịch một lần và lưu <b>Lịch sử 30 ngày</b>.</li><li>Để chia lại lịch mới cho hôm nay, hãy <strong>bấm nhanh 3 lần</strong> vào nút xanh.</li></ul>
           </div>
         </div>
 
@@ -333,19 +299,16 @@
         <div id="ket-qua-chia-gio" style="display:none">
           <div class="card">
             <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <div id="title-ra-vao" class="result-title" style="color: #1976d2; margin: 0;">1. LỊCH RA VÀO</div>
+              <div id="title-ra-vao" class="result-title" style="color: #1976d2; margin:0; font-size:18px;">1. LỊCH RA VÀO</div>
               <button onclick="moCaiDatCoDinh()" style="background:#eaf6ff; color:#1976d2; border:1px solid #1976d2; border-radius:6px; padding:4px 8px; font-size:12px; font-weight:bold; cursor:pointer;">⚙️ CỐ ĐỊNH</button>
             </div>
 
             <div id="panel-co-dinh" class="setting-panel" style="display: none; border-color: #1976d2; background: #f0f7ff; margin-bottom: 10px;">
               <div style="text-align: center; color: #1976d2; font-weight: 800; margin-bottom: 15px; font-size: 15px;">CỐ ĐỊNH LỊCH RA VÀO</div>
-              
               <label style="display:flex; align-items:center; font-size:14px; cursor:pointer; color:#333; margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px;">
                 <input type="checkbox" id="chk-co-dinh" style="transform:scale(1.3); margin-right:10px; width:auto;" onchange="toggleFormCoDinh()"> Bật cố định lịch
               </label>
-              
               <div id="form-co-dinh-list" style="display:none; max-height:40vh; overflow-y:auto; padding-right:5px;"></div>
-              
               <button onclick="luuCaiDatCoDinh()" class="btn" style="background:#1976d2; padding:10px; margin-bottom:0; font-size: 14px; margin-top:10px;">LƯU LỊCH CỐ ĐỊNH</button>
             </div>
 
@@ -361,7 +324,7 @@
           </div>
 
           <div class="card">
-            <div id="title-thong-gio" class="result-title" style="color: #1976d2; margin: 0;">2. LỊCH THÔNG GIÓ</div>
+            <div id="title-thong-gio" class="result-title" style="color: #1976d2; margin:0; font-size:18px;">2. LỊCH THÔNG GIÓ</div>
             <div class="table-container">
               <table id="bang-thong-gio">
                 <thead>
@@ -377,17 +340,18 @@
 
       <div id="tab-thoi-tiet" class="tab-content">
         <div class="card">
-          <div class="card-title">TRA CỨU THỜI TIẾT VÂN NHAM</div>
+          <div class="card-title">TRA CỨU THỜI TIẾT</div>
           
-          <label>Chọn vị trí:</label>
-          <select id="weather-location" onchange="handleLocationChange()">
-            <option value="21.52,106.31" selected>Vân Nham</option>
-            <option value="current">📍 Vị trí hiện tại của tôi</option>
-            <option value="21.0285,105.8542">Hà Nội</option>
-            <option value="10.8231,106.6297">TP. Hồ Chí Minh</option>
-            <option value="16.0471,108.2062">Đà Nẵng</option>
-          </select>
-          <div id="location-status" style="font-size: 12px; color: #1976d2; text-align: center; margin-top: 5px; font-weight: bold;"></div>
+          <label>Vị trí đo thời tiết:</label>
+          <div style="position: relative;">
+            <input type="text" id="weather-location-search" placeholder="Nhập tên Xã, Tỉnh... (VD: Vân Nham)" autocomplete="off" oninput="debounceSearchLocation(this.value)">
+            <div id="location-suggestions" class="loc-suggestions" style="display:none;"></div>
+          </div>
+          
+          <div style="display:flex; justify-content:space-between; margin-top:10px;">
+            <button onclick="getCurrentLocation()" style="background:none; border:none; color:#1976d2; font-weight:bold; font-size:13px; padding:0; cursor:pointer;">📍 Dùng vị trí hiện tại</button>
+            <div id="location-status" style="font-size: 12px; color: #4caf50; font-weight: bold;">Mặc định: Vân Nham</div>
+          </div>
 
           <label style="margin-top: 15px;">Chọn ngày (Hôm nay & 10 ngày trước):</label>
           <select id="weather-date"></select>
@@ -397,16 +361,12 @@
 
           <button onclick="fetchWeather()" class="btn" style="background:#1976d2; margin-top:15px;">LẤY DỮ LIỆU NGAY</button>
 
-          <div id="weather-loading" class="loading-text">
-            Đang kết nối hệ thống vệ tinh...
-          </div>
+          <div id="weather-loading" class="loading-text">Đang kết nối hệ thống vệ tinh...</div>
 
           <div id="weather-result" class="weather-res-box">
-            <div class="w-label">NHIỆT ĐỘ</div>
-            <div id="res-temp" class="w-val">--°C</div>
+            <div class="w-label">NHIỆT ĐỘ</div><div id="res-temp" class="w-val">--°C</div>
             <div style="height:15px;"></div>
-            <div class="w-label">ĐỘ ẨM</div>
-            <div id="res-hum" class="w-val">--%</div>
+            <div class="w-label">ĐỘ ẨM</div><div id="res-hum" class="w-val">--%</div>
           </div>
         </div>
       </div>
@@ -421,7 +381,6 @@
 
         <div id="panel-cai-dat-danh-muc" class="setting-panel">
           <div style="text-align: center; color: #ff9800; font-weight: 800; margin-bottom: 10px; font-size: 16px;">CÀI ĐẶT BẢNG</div>
-          
           <div class="set-row">
             <span>Cỡ chữ hiển thị:</span>
             <select id="set-fontsize" style="width: 100px !important; padding: 5px !important; font-size: 16px !important; border-radius:6px; background:#fff; border: 1px solid #ccc;">
@@ -433,14 +392,9 @@
               <option value="20">20 px</option>
             </select>
           </div>
-
           <div style="border-top: 1px dashed #ccc; margin: 15px 0 10px 0;"></div>
-          <div style="font-size: 13px; color: #1976d2; font-weight: bold; margin-bottom: 10px;">
-            * Nếu bỏ tích, % của cột bị ẩn sẽ TỰ ĐỘNG NHẢY sang cột kế tiếp:
-          </div>
-          
+          <div style="font-size: 13px; color: #1976d2; font-weight: bold; margin-bottom: 10px;">* Nếu bỏ tích, % của cột bị ẩn sẽ tự nhảy sang cột kế tiếp:</div>
           <div id="danh-sach-cot-cai-dat"></div>
-
           <button onclick="luuCaiDatDanhMuc()" class="btn" style="background:#ff9800; padding:12px; margin-bottom:0; margin-top:10px; font-size: 16px;">LƯU VÀ ÁP DỤNG</button>
         </div>
 
@@ -466,9 +420,13 @@
             </label>
           </div>
 
-          <div style="font-size: 15px; color: #333; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">Sắp xếp thứ tự các Menu Tab:</div>
-          <div id="sort-tab-list" style="margin-bottom: 20px;">
-             </div>
+          <div class="set-row" style="border-bottom: 1px solid #eee; padding-bottom: 15px;">
+            <span style="font-size:15px; font-weight:bold; color:#333;">Đổi Mật khẩu:</span>
+            <input type="text" id="set-app-password" style="width: 120px !important; padding: 8px !important; font-size: 18px !important; text-align: center !important; border-radius: 8px !important; border: 1px solid #1976d2 !important;" maxlength="8" inputmode="numeric">
+          </div>
+
+          <div style="font-size: 15px; color: #333; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">Sắp xếp Menu Tab:</div>
+          <div id="sort-tab-list" style="margin-bottom: 20px;"></div>
 
           <button onclick="luuCaiDatApp()" class="btn" style="background:#1976d2; padding:12px; font-size: 16px; margin-bottom: 10px;">LƯU CÀI ĐẶT</button>
         </div>
@@ -477,12 +435,13 @@
           <div class="card-title" style="color:#ff9800;">DỌN DẸP DỮ LIỆU</div>
           <button onclick="xoaLichSuChiaGio()" class="btn" style="background:#f44336; padding:12px; font-size: 15px; margin-bottom: 10px;">XÓA LỊCH SỬ CHIA GIỜ</button>
           <button onclick="xoaDuLieuExcel()" class="btn" style="background:#f44336; padding:12px; font-size: 15px; margin-bottom: 0;">XÓA DANH MỤC EXCEL</button>
-          <p style="font-size: 12px; color: #888; text-align: center; margin-top: 10px;">Chỉ xóa dữ liệu bạn chọn, không ảnh hưởng chức năng khác.</p>
         </div>
       </div>
 
     </div>
-  </div> <div class="bottom-nav-container">
+  </div> 
+
+  <div class="bottom-nav-container">
     <button class="home-btn-fixed nav-btn active" id="nav-tab-home" onclick="switchTab('tab-home')">
       <span class="nav-icon">🏠</span>Home
     </button>
@@ -507,11 +466,10 @@
 
 <script>
   // ==========================================
-  // HỆ THỐNG MẬT KHẨU "18121997" VÀ FACE ID
+  // HỆ THỐNG MẬT KHẨU TÙY CHỈNH & FACE ID
   // ==========================================
-  const MAT_KHAU_APP = "18121997"; 
-
-  function isAppLocked() { return localStorage.getItem('isAppLocked') !== 'false'; }
+  function getAppPassword() { return localStorage.getItem('appPin') || "18121997"; }
+  function isAppLocked() { return localStorage.getItem('isAppLocked') !== 'false'; } 
 
   async function khoiDongKhoa() {
     loadTabOrder(); 
@@ -563,7 +521,7 @@
 
   async function checkMatKhau() {
     const input = document.getElementById('pin-input').value;
-    if (input === MAT_KHAU_APP) {
+    if (input === getAppPassword()) {
       let daDangKy = localStorage.getItem('faceID_Registered');
       if (!daDangKy && window.PublicKeyCredential) {
         let hoi = confirm("Bạn có muốn bật xác thực bằng Vân tay / Face ID cho các lần mở ứng dụng sau không?");
@@ -618,7 +576,6 @@
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     
     document.getElementById(tabId).classList.add('active');
-    
     let btn = document.getElementById('nav-' + tabId);
     if(btn) btn.classList.add('active');
     else document.getElementById('nav-tab-home').classList.add('active');
@@ -634,30 +591,17 @@
     window.scrollTo(0,0);
   }
 
-  // XỬ LÝ VUỐT MÀN HÌNH
-  let touchstartX = 0; let touchendX = 0;
-  const appContainer = document.getElementById('app-content');
-  appContainer.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
-  appContainer.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; handleSwipe(); }, {passive: true});
+  // ==========================================
+  // LOGIC SẮP XẾP MENU TAB CÀI ĐẶT VÀ TRANG CHỦ
+  // ==========================================
+  const dashData = {
+    'tab-thong-gio': { icon: '💨', title: 'Thông gió' },
+    'tab-chia-gio': { icon: '⏰', title: 'Chia giờ' },
+    'tab-thoi-tiet': { icon: '🌤️', title: 'Thời tiết' },
+    'tab-danh-muc': { icon: '📋', title: 'Danh mục' },
+    'tab-cai-dat': { icon: '⚙️', title: 'Cài đặt' }
+  };
 
-  function handleSwipe() {
-    let swipeDist = touchendX - touchstartX;
-    if (Math.abs(swipeDist) > 70) { 
-      let activeTab = document.querySelector('.tab-content.active').id;
-      if (activeTab === 'tab-home') return; 
-
-      let order = getTabOrderArray();
-      let currentIndex = order.indexOf(activeTab);
-      
-      if (swipeDist < 0 && currentIndex < order.length - 1) { 
-          switchTab(order[currentIndex + 1]); 
-      } else if (swipeDist > 0 && currentIndex > 0) { 
-          switchTab(order[currentIndex - 1]); 
-      }
-    }
-  }
-
-  // LOGIC SẮP XẾP MENU TAB CÀI ĐẶT
   function getTabOrderArray() {
     let saved = localStorage.getItem('tabOrder');
     if (saved) return JSON.parse(saved);
@@ -667,22 +611,33 @@
   function loadTabOrder() {
     let order = getTabOrderArray();
     let container = document.getElementById('scrollable-tab-container');
+    
+    // Đồng bộ Grid Home
+    let gridHtml = '';
     order.forEach((id) => {
         let btn = document.getElementById('nav-' + id);
         if(btn) container.appendChild(btn); 
+        
+        gridHtml += `
+          <div class="dash-card" onclick="switchTab('${id}')">
+            <div class="dash-card-icon">${dashData[id].icon}</div>
+            <div class="dash-card-title">${dashData[id].title}</div>
+          </div>`;
     });
+    document.getElementById('dashboard-grid').innerHTML = gridHtml;
   }
 
   function renderCaiDatMenu() {
     document.getElementById('chk-app-lock').checked = isAppLocked();
-    const tabNames = { 'tab-thong-gio': 'THÔNG GIÓ', 'tab-chia-gio': 'CHIA GIỜ', 'tab-thoi-tiet': 'THỜI TIẾT', 'tab-danh-muc': 'DANH MỤC' };
+    document.getElementById('set-app-password').value = getAppPassword();
+
     let order = getTabOrderArray();
     let html = '';
     order.forEach((id) => {
       if(id === 'tab-cai-dat') return; 
       html += `
         <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 15px; border-radius:8px; border:1px solid #eee; margin-bottom:5px;">
-            <span style="font-weight:bold; color:#1976d2;">${tabNames[id]}</span>
+            <span style="font-weight:bold; color:#1976d2; font-size:15px;">${dashData[id].title}</span>
             <div><button class="sort-btn" onclick="moveTabUp('${id}')">▲</button><button class="sort-btn" onclick="moveTabDown('${id}')">▼</button></div>
         </div>`;
     });
@@ -702,6 +657,8 @@
   function luuCaiDatApp() {
     let isLocked = document.getElementById('chk-app-lock').checked;
     localStorage.setItem('isAppLocked', isLocked);
+    let pass = document.getElementById('set-app-password').value;
+    if(pass && pass.length >= 4) { localStorage.setItem('appPin', pass); }
     alert("Lưu Cài đặt Hệ thống thành công!");
   }
 
@@ -712,6 +669,27 @@
   function xoaDuLieuExcel() {
     if(confirm("Bạn có muốn xóa dữ liệu Excel đã tải lên không?")) { localStorage.removeItem('duLieuExcelOffline'); localStorage.removeItem('cauHinhBangExcel'); alert("Đã xóa dữ liệu Danh mục!"); location.reload();}
   }
+
+  // XỬ LÝ VUỐT MÀN HÌNH CHUYỂN TAB
+  let touchstartX = 0; let touchendX = 0;
+  const appContainer = document.getElementById('app-content');
+  appContainer.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
+  appContainer.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; handleSwipe(); }, {passive: true});
+
+  function handleSwipe() {
+    let swipeDist = touchendX - touchstartX;
+    if (Math.abs(swipeDist) > 70) { 
+      let activeTab = document.querySelector('.tab-content.active').id;
+      if (activeTab === 'tab-home') return; 
+
+      let order = getTabOrderArray();
+      let currentIndex = order.indexOf(activeTab);
+      
+      if (swipeDist < 0 && currentIndex < order.length - 1) { switchTab(order[currentIndex + 1]); } 
+      else if (swipeDist > 0 && currentIndex > 0) { switchTab(order[currentIndex - 1]); }
+    }
+  }
+
 
   // ==========================================
   // CÁC HÀM GIAO DIỆN CON TỪ APP GỐC
@@ -887,10 +865,11 @@
   }
 
   // ==========================================
-  // LOGIC TAB 3: THỜI TIẾT OPEN-METEO (LẤY VỊ TRÍ HIỆN TẠI)
+  // LOGIC TAB 3: THỜI TIẾT OPEN-METEO (TÌM VỊ TRÍ)
   // ==========================================
   let weatherLat = 21.52;
   let weatherLon = 106.31;
+  let searchTimeout;
 
   function initWeatherOptions() {
     const dSel=document.getElementById('weather-date'); const hSel=document.getElementById('weather-hour'); const today=new Date();
@@ -898,34 +877,53 @@
     for(let h=0;h<24;h++){ let hDisp=(h<10?'0'+h:h)+':00'; hSel.innerHTML+=`<option value="${h}" ${h===14?'selected':''}>${hDisp}</option>`; }
   }
 
-  function handleLocationChange() {
-    const loc = document.getElementById('weather-location').value;
-    const statusDiv = document.getElementById('location-status');
-    if (loc === 'current') {
-      statusDiv.innerText = "Đang lấy tọa độ vệ tinh...";
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            weatherLat = position.coords.latitude;
-            weatherLon = position.coords.longitude;
-            statusDiv.innerText = `Đã định vị: ${weatherLat.toFixed(2)}, ${weatherLon.toFixed(2)}`;
-          },
-          (error) => {
-            alert("Không thể lấy vị trí. Vui lòng bật định vị trên điện thoại.");
-            document.getElementById('weather-location').value = "21.52,106.31"; 
-            weatherLat = 21.52; weatherLon = 106.31;
-            statusDiv.innerText = "";
+  function debounceSearchLocation(query) {
+    clearTimeout(searchTimeout);
+    let sugg = document.getElementById('location-suggestions');
+    if(query.length < 2) { sugg.style.display = 'none'; return; }
+    
+    sugg.innerHTML = '<div style="padding:10px; color:#888; text-align:center; font-size:13px;">Đang tìm kiếm...</div>';
+    sugg.style.display = 'block';
+
+    searchTimeout = setTimeout(() => {
+      fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=vn&format=json&limit=5`)
+      .then(res => res.json())
+      .then(data => {
+          sugg.innerHTML = '';
+          if(data && data.length > 0) {
+              data.forEach(item => {
+                  let name = item.display_name;
+                  sugg.innerHTML += `<div style="padding:12px 10px; border-bottom:1px solid #eee; cursor:pointer; font-size:13px; color:#333; line-height:1.4;" onclick="selectLocation(${item.lat}, ${item.lon}, '${name.replace(/'/g, "\\'")}')">${name}</div>`;
+              });
+          } else {
+              sugg.innerHTML = '<div style="padding:10px; color:#f44336; text-align:center; font-size:13px;">Không tìm thấy. Hãy thử nhập: Tên Xã, Tỉnh...</div>';
           }
-        );
-      } else {
-        alert("Trình duyệt không hỗ trợ định vị.");
-        document.getElementById('weather-location').value = "21.52,106.31";
-      }
-    } else {
-      let parts = loc.split(',');
-      weatherLat = parseFloat(parts[0]);
-      weatherLon = parseFloat(parts[1]);
-      statusDiv.innerText = "";
+      }).catch(() => { sugg.innerHTML = '<div style="padding:10px; color:#f44336; text-align:center; font-size:13px;">Lỗi mạng</div>'; });
+    }, 800);
+  }
+
+  function selectLocation(lat, lon, name) {
+    weatherLat = lat; weatherLon = lon;
+    document.getElementById('weather-location-search').value = name;
+    document.getElementById('location-suggestions').style.display = 'none';
+    const statusDiv = document.getElementById('location-status');
+    statusDiv.innerText = `Đang chọn: ${name}`;
+    statusDiv.style.color = '#1976d2';
+  }
+
+  function getCurrentLocation() {
+    const statusDiv = document.getElementById('location-status');
+    statusDiv.innerText = "Đang định vị vệ tinh..."; statusDiv.style.color = '#ff9800';
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          weatherLat = position.coords.latitude; weatherLon = position.coords.longitude;
+          statusDiv.innerText = `📍 Tọa độ GPS: ${weatherLat.toFixed(2)}, ${weatherLon.toFixed(2)}`;
+          statusDiv.style.color = '#4caf50';
+          document.getElementById('weather-location-search').value = "Vị trí hiện tại của bạn";
+        },
+        (error) => { alert("Vui lòng bật Định vị (GPS) trên điện thoại."); statusDiv.innerText = "Chưa có GPS"; statusDiv.style.color = '#f44336'; }
+      );
     }
   }
 
@@ -940,8 +938,14 @@
     } catch(e) { alert("Lỗi mạng!"); load.style.display='none'; }
   }
 
+  // Hide suggestions when clicking outside
+  document.addEventListener('click', function(event) {
+    var sugg = document.getElementById('location-suggestions');
+    if (sugg && event.target.id !== 'weather-location-search') { sugg.style.display = 'none'; }
+  });
+
   // ==========================================
-  // LOGIC TAB 4: DANH MỤC EXCEL (LỌC RÁC __EMPTY)
+  // LOGIC TAB 4: DANH MỤC EXCEL
   // ==========================================
   let duLieuDanhMuc = []; 
   let cauHinhBang = { fontSize: 14, cot: {} };
@@ -1054,7 +1058,7 @@
   }
 
   // ==========================================
-  // KHỞI CHẠY TẤT CẢ DỮ LIỆU SAU KHI ĐÃ MỞ KHÓA
+  // KHỞI CHẠY TẤT CẢ DỮ LIỆU SAU KHI MỞ KHÓA
   // ==========================================
   function khoiChayTatCaDuLieuGoc() {
     initWeatherOptions();
@@ -1109,7 +1113,6 @@
   // KHỞI ĐỘNG
   window.addEventListener('DOMContentLoaded', () => {
     khoiDongKhoa();
-    loadTabOrder();
   });
 </script>
 
