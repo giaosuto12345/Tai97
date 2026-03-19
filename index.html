@@ -8,15 +8,33 @@
   <meta name="apple-mobile-web-app-title" content="Quản Lý Nhà" />
   <meta name="mobile-web-app-capable" content="yes" />
 
-  <title>Tài</title>
+  <title>Quản lý Nhà - Vân Nham</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
     * { -webkit-tap-highlight-color: transparent; }
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #eaf6ff; }
 
-    /* ====== MÀN HÌNH KHÓA BẢO MẬT ====== */
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #eaf6ff;
+    }
+
+    /* ====== FONT SCALE ====== */
+    :root {
+      --fs-card-title: clamp(15px, 4vw, 20px);
+      --fs-label: clamp(12px, 3.2vw, 14px);
+      --fs-input: clamp(18px, 5vw, 22px);
+      --fs-button: clamp(18px, 5vw, 22px);
+      --fs-result-title: clamp(18px, 5vw, 22px);
+      --fs-value: clamp(20px, 6vw, 28px);
+      --fs-final: clamp(20px, 4vw, 18px);
+    }
+
+    /* ========================================== */
+    /* ====== MÀN HÌNH KHÓA BẢO MẬT ======= */
+    /* ========================================== */
     #lock-screen {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(135deg, #1976d2, #4caf50);
@@ -28,13 +46,11 @@
       text-align: center; width: 85%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); color: #333;
     }
     .lock-icon { font-size: 50px; margin-bottom: 5px; color: #1976d2; }
-    
     .pin-input {
       width: 100%; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 5px;
       border: 2px solid #ddd; border-radius: 12px; margin-bottom: 15px; background: #f9f9f9;
     }
     .pin-input:focus { outline: none; border-color: #1976d2; }
-    
     .btn-unlock {
       width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white;
       background: #1976d2; border: none; border-radius: 12px; cursor: pointer;
@@ -46,35 +62,56 @@
       box-shadow: 0 4px 10px rgba(76,175,80,0.4);
     }
     .btn-faceid:active, .btn-unlock:active { transform: scale(0.98); }
-    #app-content { display: none; }
 
-    /* ====== FONT SCALE ====== */
-    :root {
-      --fs-header: clamp(22px, 6vw, 32px);
-      --fs-card-title: clamp(15px, 4vw, 20px);
-      --fs-label: clamp(12px, 3.2vw, 14px);
-      --fs-input: clamp(18px, 5vw, 22px);
-      --fs-button: clamp(18px, 5vw, 22px);
-      --fs-result-title: clamp(18px, 5vw, 22px);
-      --fs-value: clamp(20px, 6vw, 28px);
-      --fs-final: clamp(20px, 4vw, 18px);
+    /* ========================================== */
+    /* ====== GIAO DIỆN TRANG CHỦ MỚI (LƯỚI) ==== */
+    /* ========================================== */
+    #app-content { display: none; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    #dashboard-view { flex: 1; overflow-y: auto; padding-bottom: 30px; }
+    #tool-view { flex: 1; overflow-y: auto; display: none; background: #eaf6ff; }
+    
+    .dash-header { padding: 30px 15px 10px 15px; text-align: center; }
+    .dash-header h2 { color: #1976d2; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: 1px; }
+    .dash-header p { color: #666; font-size: 14px; margin-top: 5px; }
+
+    .grid-dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; max-width: 600px; margin: 0 auto; }
+    .dash-card {
+      background: #fff; border-radius: 20px; padding: 25px 10px; text-align: center;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08); cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      border: 2px solid transparent; transition: all 0.2s;
     }
+    .dash-card:active { transform: scale(0.95); border-color: #1976d2; background: #f0f7ff; }
+    .dash-icon { font-size: 45px; margin-bottom: 12px; }
+    .dash-title { font-size: 15px; font-weight: 800; color: #1976d2; text-transform: uppercase; }
 
-    /* ====== TAB NAVIGATION ====== */
-    .tabs { display: flex; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-    .tab-btn { flex: 1; padding: 15px 1px; text-align: center; font-size: clamp(13px, 3.8vw, 16px); font-weight: 800; color: #888; background: none; border: none; border-bottom: 4px solid transparent; cursor: pointer; white-space: nowrap; text-transform: uppercase;}
-    .tab-btn.active { color: #1976d2; border-bottom: 4px solid #1976d2; }
+    /* ====== THANH TIÊU ĐỀ KHI VÀO CHỨC NĂNG ====== */
+    .top-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #1976d2; color: #fff; padding: 15px 10px; position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .btn-back {
+      background: none; border: none; color: #fff; font-size: 15px; font-weight: bold;
+      cursor: pointer; display: flex; align-items: center; width: 90px; text-align: left; padding: 0;
+    }
+    .btn-back:active { opacity: 0.7; }
+    .nav-title { flex: 1; text-align: center; font-size: 16px; font-weight: 800; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .nav-spacer { width: 90px; } /* Để cân bằng nút back bên trái */
+
+    /* Các nội dung bên trong Tool giữ nguyên form */
     .tab-content { display: none; padding: 15px 10px; }
     .tab-content.active { display: block; }
+    .container { max-width: 900px; margin: 0 auto; padding-bottom: 30px; }
 
-    .container { max-width: 900px; margin: 0 auto; }
+    /* ====== STYLE CHUNG CỦA BẠN (GIỮ NGUYÊN) ====== */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .card { background: #fff; border-radius: 18px; padding: 14px; box-shadow: 0 6px 16px rgba(0,0,0,0.08); margin-bottom: 15px; position: relative; }
     .card-title { text-align: center; font-weight: 800; font-size: var(--fs-card-title); color: #1976d2; margin-bottom: 10px; text-transform: uppercase; }
     label { display: block; font-size: var(--fs-label); color: #555; margin-top: 8px; margin-bottom: 4px; font-weight: bold; }
 
     input:not([type="checkbox"]):not([type="file"]), select {
-      width: 100%; padding: 12px; font-size: var(--fs-input); text-align: center; border-radius: 12px; border: 1px solid #ddd; background: #fdfdfd; box-sizing: border-box; appearance: none; -webkit-appearance: none; color: #333;
+      width: 100%; padding: 12px; font-size: var(--fs-input); text-align: center; border-radius: 12px; border: 1px solid #ddd; background: #fdfdfd; appearance: none; -webkit-appearance: none; color: #333;
     }
     input:focus, select:focus { outline: none; border: 2px solid #ff9800; }
 
@@ -112,7 +149,6 @@
     .ok { background: #e0f7e9; color: #1b5e20; }
     .no { background: #fff3e0; color: #bf360c; }
 
-    /* ====== THỜI TIẾT & DANH MỤC ====== */
     .weather-res-box { background: #f0f7ff; border-radius: 15px; padding: 20px; text-align: center; margin-top: 15px; border: 2px solid #1976d2; display: none; }
     .w-val { font-size: 32px; font-weight: 800; color: #ff9800; margin: 5px 0; }
     .w-label { font-size: 14px; color: #555; font-weight: bold; }
@@ -149,248 +185,246 @@
       <div id="fallback-login" style="display: none; width: 100%; margin-top: 15px;">
         <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Nhập mật khẩu để truy cập</p>
         <input type="password" id="pin-input" class="pin-input" placeholder="••••••••" maxlength="8" inputmode="numeric" />
-        <button onclick="checkMatKhau()" class="btn-unlock">MỞ KHÓA</button>
+        <button onclick="checkMatKhau()" class="btn-unlock">XÁC NHẬN MẬT KHẨU</button>
       </div>
     </div>
   </div>
 
   <div id="app-content">
 
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('tab-thong-gio')">THÔNG GIÓ</button>
-      <button class="tab-btn" onclick="switchTab('tab-chia-gio')">CHIA GIỜ</button>
-      <button class="tab-btn" onclick="switchTab('tab-thoi-tiet')">THỜI TIẾT</button>
-      <button class="tab-btn" onclick="switchTab('tab-danh-muc')">DANH MỤC</button>
+    <div id="dashboard-view" style="display: block;">
+      <div class="dash-header">
+        <h2>QUẢN LÝ NHÀ</h2>
+        <p>Hệ thống hỗ trợ công việc nội bộ</p>
+      </div>
+      <div class="grid-dashboard">
+        <div class="dash-card" onclick="moChucNang('tab-thong-gio', 'Thông Gió')">
+          <div class="dash-icon">💨</div>
+          <div class="dash-title">Thông gió</div>
+        </div>
+        <div class="dash-card" onclick="moChucNang('tab-chia-gio', 'Chia Giờ Lịch Trình')">
+          <div class="dash-icon">⏰</div>
+          <div class="dash-title">Chia giờ</div>
+        </div>
+        <div class="dash-card" onclick="moChucNang('tab-thoi-tiet', 'Dữ Liệu Thời Tiết')">
+          <div class="dash-icon">🌤️</div>
+          <div class="dash-title">Thời tiết</div>
+        </div>
+        <div class="dash-card" onclick="moChucNang('tab-danh-muc', 'Tra Cứu Danh Mục')">
+          <div class="dash-icon">📋</div>
+          <div class="dash-title">Danh mục</div>
+        </div>
+      </div>
     </div>
 
-    <div class="container">
+    <div id="tool-view">
+      <div class="top-nav">
+        <button class="btn-back" onclick="veTrangChu()">❮ Trang chủ</button>
+        <div class="nav-title" id="tool-title">TÊN CHỨC NĂNG</div>
+        <div class="nav-spacer"></div> </div>
 
-      <div id="tab-thong-gio" class="tab-content active">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-title">TRONG NHÀ</div>
-            <label>Nhiệt độ (°C)</label>
-            <input id="nt" type="text" inputmode="decimal" value="22" />
-            <label>Độ ẩm (%)</label>
-            <input id="dt" type="text" inputmode="decimal" value="73" />
+      <div class="container">
+
+        <div id="tab-thong-gio" class="tab-content">
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-title">TRONG NHÀ</div>
+              <label>Nhiệt độ (°C)</label>
+              <input id="nt" type="text" inputmode="decimal" value="22" />
+              <label>Độ ẩm (%)</label>
+              <input id="dt" type="text" inputmode="decimal" value="73" />
+            </div>
+            <div class="card">
+              <div class="card-title">NGOÀI NHÀ</div>
+              <label>Nhiệt độ (°C)</label>
+              <input id="nn" type="text" inputmode="decimal" value="28" />
+              <label>Độ ẩm (%)</label>
+              <input id="dn" type="text" inputmode="decimal" value="75" />
+            </div>
           </div>
 
-          <div class="card">
-            <div class="card-title">NGOÀI NHÀ</div>
-            <label>Nhiệt độ (°C)</label>
-            <input id="nn" type="text" inputmode="decimal" value="28" />
-            <label>Độ ẩm (%)</label>
-            <input id="dn" type="text" inputmode="decimal" value="75" />
+          <button id="btnTinh" class="btn">TÍNH TOÁN</button>
+
+          <div id="ketqua" class="card" style="display:none">
+            <div class="result-title" style="text-align: center;">KẾT QUẢ</div>
+            <div class="result-grid">
+              <div class="result-box">
+                <p>Độ ẩm tuyệt đối</p>
+                <div id="daTrong" class="value">--</div>
+                <p>Nhiệt độ điểm sương</p>
+                <div id="ndTrong" class="value">--</div>
+              </div>
+              <div class="result-box">
+                <p>Độ ẩm tuyệt đối</p>
+                <div id="daNgoai" class="value">--</div>
+                <p>Nhiệt độ điểm sương</p>
+                <div id="ndNgoai" class="value">--</div>
+              </div>
+            </div>
+            <div id="final" class="final"></div>
           </div>
         </div>
 
-        <button id="btnTinh" class="btn">TÍNH TOÁN</button>
-
-        <div id="ketqua" class="card" style="display:none">
-          <div class="result-title" style="text-align: center;">KẾT QUẢ</div>
-          <div class="result-grid">
-            <div class="result-box">
-              <p>Độ ẩm tuyệt đối</p>
-              <div id="daTrong" class="value">--</div>
-              <p>Nhiệt độ điểm sương</p>
-              <div id="ndTrong" class="value">--</div>
+        <div id="tab-chia-gio" class="tab-content">
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <button onclick="toggleLichSu()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">🕒 LỊCH SỬ</button>
+              <div class="card-title" style="margin: 0; flex: 1; text-align: center;">THỜI GIAN LÀM VIỆC</div>
+              <button onclick="toggleMoTa()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">ℹ️ MÔ TẢ</button>
             </div>
-            <div class="result-box">
-              <p>Độ ẩm tuyệt đối</p>
-              <div id="daNgoai" class="value">--</div>
-              <p>Nhiệt độ điểm sương</p>
-              <div id="ndNgoai" class="value">--</div>
-            </div>
-          </div>
-          <div id="final" class="final"></div>
-        </div>
-      </div>
-
-      <div id="tab-chia-gio" class="tab-content">
-
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <button onclick="toggleLichSu()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">🕒 LỊCH SỬ</button>
-            <div class="card-title" style="margin: 0; flex: 1; text-align: center;">THỜI GIAN LÀM VIỆC</div>
-            <button onclick="toggleMoTa()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">ℹ️ MÔ TẢ</button>
-          </div>
-          
-          <div id="view-lich-su" class="mo-ta-box" style="display: none; background: #eef7ff; border-left: 4px solid #1976d2;">
-            <div style="font-weight: 800; color: #1976d2; margin-bottom: 10px; text-align: center; font-size: 15px;">🕒 LỊCH SỬ 30 NGÀY</div>
-            <div id="danh-sach-lich-su" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto;"></div>
-          </div>
-
-          <div id="view-summary" class="summary-box" onclick="moKhungSua()">
-            <div style="position: absolute; right: 12px; top: 12px; color: #1976d2; font-weight: bold; font-size: 13px; background: #e9f5ff; padding: 4px 8px; border-radius: 6px;">✏️ SỬA</div>
-            <div class="summary-line"><strong>Sáng:</strong> <span id="sum-sang" class="sum-val">06:45 - 11:15</span></div>
-            <div class="summary-line"><strong>Chiều:</strong> <span id="sum-chieu" class="sum-val">13:15 - 16:45</span></div>
-            <div class="summary-line" style="margin-bottom: 0;"><strong>Số nhà:</strong> <span id="sum-nha" class="sum-val">3 Nhà</span></div>
-          </div>
-
-          <div id="view-edit" style="display: none; padding-top: 5px;">
-            <label>Ca Sáng (Vào - Ra)</label>
-            <div class="time-flex" style="margin-bottom: 10px;">
-              <input type="time" id="sang-vao" value="06:45"> 
-              <span>-</span>
-              <input type="time" id="sang-ra" value="11:15">
-            </div>
-
-            <label>Ca Chiều (Vào - Ra)</label>
-            <div class="time-flex" style="margin-bottom: 10px;">
-              <input type="time" id="chieu-vao" value="13:15"> 
-              <span>-</span>
-              <input type="time" id="chieu-ra" value="16:45">
-            </div>
-
-            <label>Số lượng nhà</label>
-            <select id="so-nha">
-              <option value="1">1 Nhà</option>
-              <option value="2">2 Nhà</option>
-              <option value="3" selected>3 Nhà</option>
-              <option value="4">4 Nhà</option>
-              <option value="5">5 Nhà</option>
-              <option value="6">6 Nhà</option>
-            </select>
             
-            <button onclick="luuKhungSua()" class="btn" style="margin-top: 15px; margin-bottom: 0; background-color: #ff9800; font-size: 16px; padding: 12px;">XONG</button>
+            <div id="view-lich-su" class="mo-ta-box" style="display: none; background: #eef7ff; border-left: 4px solid #1976d2;">
+              <div style="font-weight: 800; color: #1976d2; margin-bottom: 10px; text-align: center; font-size: 15px;">🕒 LỊCH SỬ 30 NGÀY</div>
+              <div id="danh-sach-lich-su" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto;"></div>
+            </div>
+
+            <div id="view-summary" class="summary-box" onclick="moKhungSua()">
+              <div style="position: absolute; right: 12px; top: 12px; color: #1976d2; font-weight: bold; font-size: 13px; background: #e9f5ff; padding: 4px 8px; border-radius: 6px;">✏️ SỬA</div>
+              <div class="summary-line"><strong>Sáng:</strong> <span id="sum-sang" class="sum-val">06:45 - 11:15</span></div>
+              <div class="summary-line"><strong>Chiều:</strong> <span id="sum-chieu" class="sum-val">13:15 - 16:45</span></div>
+              <div class="summary-line" style="margin-bottom: 0;"><strong>Số nhà:</strong> <span id="sum-nha" class="sum-val">3 Nhà</span></div>
+            </div>
+
+            <div id="view-edit" style="display: none; padding-top: 5px;">
+              <label>Ca Sáng (Vào - Ra)</label>
+              <div class="time-flex" style="margin-bottom: 10px;">
+                <input type="time" id="sang-vao" value="06:45"> <span>-</span> <input type="time" id="sang-ra" value="11:15">
+              </div>
+              <label>Ca Chiều (Vào - Ra)</label>
+              <div class="time-flex" style="margin-bottom: 10px;">
+                <input type="time" id="chieu-vao" value="13:15"> <span>-</span> <input type="time" id="chieu-ra" value="16:45">
+              </div>
+              <label>Số lượng nhà</label>
+              <select id="so-nha">
+                <option value="1">1 Nhà</option><option value="2">2 Nhà</option><option value="3" selected>3 Nhà</option>
+                <option value="4">4 Nhà</option><option value="5">5 Nhà</option><option value="6">6 Nhà</option>
+              </select>
+              <button onclick="luuKhungSua()" class="btn" style="margin-top: 15px; margin-bottom: 0; background-color: #ff9800; font-size: 16px; padding: 12px;">XONG</button>
+            </div>
+
+            <div id="mo-ta-content" class="mo-ta-box" style="display: none;">
+              <strong>1. Các thông tin cần chọn:</strong>
+              <ul><li>Nhập giờ làm việc và Chọn số lượng nhà.</li></ul>
+              <strong style="display:inline-block; margin-top: 8px;">2. Ứng dụng tự động chia:</strong>
+              <ul><li><strong>Lịch đi:</strong> N1 luôn mở đầu tiên, N2, N3... tiếp theo. Giãn cách ngẫu nhiên 5-10 phút.</li><li><strong>Mốc 1:</strong> Cùng lúc với giờ "Vào".</li><li><strong>Mốc 2:</strong> Cách Mốc 1 ít nhất 60 phút.</li></ul>
+              <strong style="display:inline-block; margin-top: 8px;">3. Tự động thông minh:</strong>
+              <ul><li>Mỗi ngày ứng dụng tự tạo lịch một lần và lưu <b>Lịch sử 30 ngày</b>.</li><li>Để chia lại lịch mới cho hôm nay, hãy <strong>bấm nhanh 3 lần</strong> vào nút xanh.</li></ul>
+            </div>
           </div>
 
-          <div id="mo-ta-content" class="mo-ta-box" style="display: none;">
-            <strong>1. Các thông tin cần chọn:</strong>
-            <ul>
-              <li>Nhập giờ làm việc (Sáng và Chiều).</li>
-              <li>Chọn số lượng nhà (1 đến 6).</li>
-            </ul>
-            <strong style="display:inline-block; margin-top: 8px;">2. Ứng dụng tự động chia:</strong>
-            <ul>
-              <li><strong>Lịch đi:</strong> Nhà 1 luôn đi trước, N2, N3... tiếp theo. Giãn cách ngẫu nhiên 5-10 phút.</li>
-              <li><strong>Mốc 1:</strong> Thông gió cùng lúc với giờ "Vào".</li>
-              <li><strong>Mốc 2:</strong> Cách Mốc 1 ít nhất 1 tiếng (60 phút).</li>
-            </ul>
-            <strong style="display:inline-block; margin-top: 8px;">3. Tự động thông minh:</strong>
-            <ul>
-              <li>Mỗi ngày tự tạo lịch 1 lần và lưu vào <b>Lịch sử</b>.</li>
-              <li>Để chia lại lịch mới cho hôm nay, hãy <strong>bấm nhanh 3 lần</strong> vào nút CHIA LỊCH.</li>
-            </ul>
+          <button onclick="xuLyNhanChiaLich()" class="btn">CHIA LỊCH TỰ ĐỘNG</button>
+
+          <div id="ket-qua-chia-gio" style="display:none">
+            <div class="card">
+              <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div id="title-ra-vao" class="result-title" style="color: #1976d2;">1. LỊCH RA VÀO</div>
+                <button onclick="moCaiDatCoDinh()" style="background:#eaf6ff; color:#1976d2; border:1px solid #1976d2; border-radius:6px; padding:4px 8px; font-size:12px; font-weight:bold; cursor:pointer;">⚙️ CỐ ĐỊNH</button>
+              </div>
+
+              <div id="panel-co-dinh" class="setting-panel" style="display: none; border-color: #1976d2; background: #f0f7ff; margin-bottom: 10px;">
+                <div style="text-align: center; color: #1976d2; font-weight: 800; margin-bottom: 15px; font-size: 15px;">CỐ ĐỊNH LỊCH RA VÀO</div>
+                <label style="display:flex; align-items:center; font-size:14px; cursor:pointer; color:#333; margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px;">
+                  <input type="checkbox" id="chk-co-dinh" style="transform:scale(1.3); margin-right:10px; width:auto;" onchange="toggleFormCoDinh()"> Bật cố định lịch
+                </label>
+                <div id="form-co-dinh-list" style="display:none; max-height:40vh; overflow-y:auto; padding-right:5px;"></div>
+                <button onclick="luuCaiDatCoDinh()" class="btn" style="background:#1976d2; padding:10px; margin-bottom:0; font-size: 14px; margin-top:10px;">LƯU LỊCH CỐ ĐỊNH</button>
+              </div>
+
+              <div id="wrap-bang-ra-vao" class="table-container">
+                <table id="bang-ra-vao">
+                  <thead>
+                    <tr><th rowspan="2">Nhà</th><th colspan="2" class="th-group">Sáng</th><th colspan="2" class="th-group">Chiều</th></tr>
+                    <tr><th>Vào</th><th>Ra</th><th>Vào</th><th>Ra</th></tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div id="title-thong-gio" class="result-title" style="color: #1976d2;">2. LỊCH THÔNG GIÓ</div>
+              <div class="table-container">
+                <table id="bang-thong-gio">
+                  <thead>
+                    <tr><th rowspan="2">Nhà</th><th colspan="2" class="th-group">Sáng</th><th colspan="2" class="th-group">Chiều</th></tr>
+                    <tr><th>Mốc 1</th><th>Mốc 2</th><th>Mốc 1</th><th>Mốc 2</th></tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
 
-        <button onclick="xuLyNhanChiaLich()" class="btn">CHIA LỊCH TỰ ĐỘNG</button>
-
-        <div id="ket-qua-chia-gio" style="display:none">
-          
+        <div id="tab-thoi-tiet" class="tab-content">
           <div class="card">
-            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <div id="title-ra-vao" class="result-title" style="color: #1976d2;">1. LỊCH RA VÀO</div>
-              <button onclick="moCaiDatCoDinh()" style="background:#eaf6ff; color:#1976d2; border:1px solid #1976d2; border-radius:6px; padding:4px 8px; font-size:12px; font-weight:bold; cursor:pointer;">⚙️ CỐ ĐỊNH</button>
+            <div class="card-title">TRA CỨU THỜI TIẾT VÂN NHAM</div>
+            <label>Chọn ngày (Hôm nay & 10 ngày trước):</label><select id="weather-date"></select>
+            <label>Chọn giờ (00:00 - 23:00):</label><select id="weather-hour"></select>
+            <button onclick="fetchWeather()" class="btn" style="background:#1976d2; margin-top:15px;">LẤY DỮ LIỆU NGAY</button>
+            <div id="weather-loading" class="loading-text">Đang kết nối hệ thống vệ tinh...</div>
+            <div id="weather-result" class="weather-res-box">
+              <div class="w-label">NHIỆT ĐỘ</div><div id="res-temp" class="w-val">--°C</div>
+              <div style="height:15px;"></div>
+              <div class="w-label">ĐỘ ẨM</div><div id="res-hum" class="w-val">--%</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-danh-muc" class="tab-content">
+          <div class="search-bar-container">
+            <input type="text" id="search-danh-muc" class="search-input" placeholder="Tìm kiếm đạn dược..." onkeyup="timKiemDanhMuc()">
+            <button class="action-btn btn-setting" onclick="toggleCaiDatDanhMuc()">⚙️</button>
+            <button class="action-btn btn-upload" onclick="document.getElementById('excel-upload').click()">+</button>
+            <input type="file" id="excel-upload" style="display:none;" accept=".xlsx, .xls, .csv" onchange="xuLyFileExcel(event)">
+          </div>
+
+          <div id="panel-cai-dat" class="setting-panel">
+            <div style="text-align: center; color: #ff9800; font-weight: 800; margin-bottom: 10px; font-size: 16px;">CÀI ĐẶT BẢNG</div>
+            
+            <div class="set-row">
+              <span>Cỡ chữ hiển thị:</span>
+              <select id="set-fontsize" style="width: 100px !important; padding: 5px !important; font-size: 16px !important; border-radius:6px; background:#fff; border: 1px solid #ccc;">
+                <option value="5">5 px</option><option value="6">6 px</option><option value="7">7 px</option>
+                <option value="8">8 px</option><option value="9">9 px</option><option value="10">10 px</option>
+                <option value="11">11 px</option><option value="12">12 px</option><option value="13">13 px</option>
+                <option value="14" selected>14 px</option><option value="15">15 px</option><option value="16">16 px</option>
+                <option value="17">17 px</option><option value="18">18 px</option><option value="19">19 px</option>
+                <option value="20">20 px</option>
+              </select>
             </div>
 
-            <div id="panel-co-dinh" class="setting-panel" style="display: none; border-color: #1976d2; background: #f0f7ff; margin-bottom: 10px;">
-              <div style="text-align: center; color: #1976d2; font-weight: 800; margin-bottom: 15px; font-size: 15px;">CỐ ĐỊNH LỊCH RA VÀO</div>
-              
-              <label style="display:flex; align-items:center; font-size:14px; cursor:pointer; color:#333; margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px;">
-                <input type="checkbox" id="chk-co-dinh" style="transform:scale(1.3); margin-right:10px; width:auto;" onchange="toggleFormCoDinh()"> Bật cố định lịch
-              </label>
-              
-              <div id="form-co-dinh-list" style="display:none; max-height:40vh; overflow-y:auto; padding-right:5px;"></div>
-              
-              <button onclick="luuCaiDatCoDinh()" class="btn" style="background:#1976d2; padding:10px; margin-bottom:0; font-size: 14px; margin-top:10px;">LƯU LỊCH CỐ ĐỊNH</button>
+            <div style="border-top: 1px dashed #ccc; margin: 15px 0 10px 0;"></div>
+            <div style="font-size: 13px; color: #1976d2; font-weight: bold; margin-bottom: 10px;">
+              * Nếu bỏ tích, % của cột bị ẩn sẽ TỰ ĐỘNG NHẢY sang cột kế tiếp:
             </div>
+            
+            <div id="danh-sach-cot-cai-dat"></div>
 
-            <div id="wrap-bang-ra-vao" class="table-container">
-              <table id="bang-ra-vao">
-                <thead>
-                  <tr><th rowspan="2">Nhà</th><th colspan="2" class="th-group">Sáng</th><th colspan="2" class="th-group">Chiều</th></tr>
-                  <tr><th>Vào</th><th>Ra</th><th>Vào</th><th>Ra</th></tr>
-                </thead>
-                <tbody></tbody>
+            <button onclick="luuCaiDatDanhMuc()" class="btn" style="background:#ff9800; padding:12px; margin-bottom:0; margin-top:10px; font-size: 16px;">LƯU VÀ ÁP DỤNG</button>
+          </div>
+
+          <div class="card" style="padding: 0; overflow: hidden; border-radius: 12px;">
+            <div class="table-container" style="max-height: 65vh; overflow-y: auto;">
+              <table id="bang-danh-muc">
+                <thead><tr id="dm-header"><th>DỮ LIỆU DANH MỤC</th></tr></thead>
+                <tbody id="dm-body">
+                  <tr><td style="color:#999; padding: 30px; text-align: center;">Chưa có dữ liệu.<br><br>Bấm nút <b>+</b> màu xanh để tải file Excel.</td></tr>
+                </tbody>
               </table>
             </div>
           </div>
-
-          <div class="card">
-            <div id="title-thong-gio" class="result-title" style="color: #1976d2;">2. LỊCH THÔNG GIÓ</div>
-            <div class="table-container">
-              <table id="bang-thong-gio">
-                <thead>
-                  <tr><th rowspan="2">Nhà</th><th colspan="2" class="th-group">Sáng</th><th colspan="2" class="th-group">Chiều</th></tr>
-                  <tr><th>Mốc 1</th><th>Mốc 2</th><th>Mốc 1</th><th>Mốc 2</th></tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
         </div>
+
       </div>
-
-      <div id="tab-thoi-tiet" class="tab-content">
-        <div class="card">
-          <div class="card-title">TRA CỨU THỜI TIẾT VÂN NHAM</div>
-          <label>Chọn ngày (Hôm nay & 10 ngày trước):</label><select id="weather-date"></select>
-          <label>Chọn giờ (00:00 - 23:00):</label><select id="weather-hour"></select>
-          <button onclick="fetchWeather()" class="btn" style="background:#1976d2; margin-top:15px;">LẤY DỮ LIỆU NGAY</button>
-          <div id="weather-loading" class="loading-text">Đang kết nối hệ thống vệ tinh...</div>
-          <div id="weather-result" class="weather-res-box">
-            <div class="w-label">NHIỆT ĐỘ</div><div id="res-temp" class="w-val">--°C</div>
-            <div style="height:15px;"></div>
-            <div class="w-label">ĐỘ ẨM</div><div id="res-hum" class="w-val">--%</div>
-          </div>
-        </div>
-      </div>
-
-      <div id="tab-danh-muc" class="tab-content">
-        <div class="search-bar-container">
-          <input type="text" id="search-danh-muc" class="search-input" placeholder="Tìm kiếm đạn dược..." onkeyup="timKiemDanhMuc()">
-          <button class="action-btn btn-setting" onclick="toggleCaiDatDanhMuc()">⚙️</button>
-          <button class="action-btn btn-upload" onclick="document.getElementById('excel-upload').click()">+</button>
-          <input type="file" id="excel-upload" style="display:none;" accept=".xlsx, .xls, .csv" onchange="xuLyFileExcel(event)">
-        </div>
-
-        <div id="panel-cai-dat" class="setting-panel">
-          <div style="text-align: center; color: #ff9800; font-weight: 800; margin-bottom: 10px; font-size: 16px;">CÀI ĐẶT BẢNG</div>
-          
-          <div class="set-row">
-            <span>Cỡ chữ hiển thị:</span>
-            <select id="set-fontsize" style="width: 100px !important; padding: 5px !important; font-size: 16px !important; border-radius:6px; background:#fff; border: 1px solid #ccc;">
-              <option value="5">5 px</option><option value="6">6 px</option><option value="7">7 px</option>
-              <option value="8">8 px</option><option value="9">9 px</option><option value="10">10 px</option>
-              <option value="11">11 px</option><option value="12">12 px</option><option value="13">13 px</option>
-              <option value="14" selected>14 px</option><option value="15">15 px</option><option value="16">16 px</option>
-              <option value="17">17 px</option><option value="18">18 px</option><option value="19">19 px</option>
-              <option value="20">20 px</option>
-            </select>
-          </div>
-
-          <div style="border-top: 1px dashed #ccc; margin: 15px 0 10px 0;"></div>
-          <div style="font-size: 13px; color: #1976d2; font-weight: bold; margin-bottom: 10px;">
-            * Nếu bỏ tích, % của cột bị ẩn sẽ TỰ ĐỘNG NHẢY sang cột kế tiếp:
-          </div>
-          
-          <div id="danh-sach-cot-cai-dat"></div>
-
-          <button onclick="luuCaiDatDanhMuc()" class="btn" style="background:#ff9800; padding:12px; margin-bottom:0; margin-top:10px; font-size: 16px;">LƯU VÀ ÁP DỤNG</button>
-        </div>
-
-        <div class="card" style="padding: 0; overflow: hidden; border-radius: 12px;">
-          <div class="table-container" style="max-height: 65vh; overflow-y: auto;">
-            <table id="bang-danh-muc">
-              <thead><tr id="dm-header"><th>DỮ LIỆU DANH MỤC</th></tr></thead>
-              <tbody id="dm-body">
-                <tr><td style="color:#999; padding: 30px; text-align: center;">Chưa có dữ liệu.<br><br>Bấm nút <b>+</b> màu xanh để tải file Excel.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div> <script>
   // ==========================================
-  // HỆ THỐNG KHÓA CỨNG: MẬT KHẨU "18121997" VÀ FACE ID
+  // HỆ THỐNG MẬT KHẨU "18121997" VÀ FACE ID
   // ==========================================
   const MAT_KHAU_APP = "18121997"; 
 
-  async function khoiDongKhoa() {
+  function khoiDongKhoa() {
     if (sessionStorage.getItem('appUnlocked') === 'true') {
       moKhoaThanhCong();
       return;
@@ -398,28 +432,15 @@
 
     let daDangKyFaceID = localStorage.getItem('faceID_Registered');
     if (window.PublicKeyCredential && daDangKyFaceID === 'true') {
-      try {
-        const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge);
-        const assertion = await navigator.credentials.get({
-          publicKey: { challenge: challenge, userVerification: "required", timeout: 60000 }
-        });
-        if (assertion) { moKhoaThanhCong(); return; }
-      } catch (err) {
-        hienThiNhapPin(true);
-      }
-    } else {
-      hienThiNhapPin(false);
-    }
-  }
-
-  function hienThiNhapPin(coHienNutFaceID) {
-    document.getElementById('lock-spinner').innerText = "🔒";
-    document.getElementById('lock-spinner').style.animation = "none";
-    document.getElementById('lock-title').innerText = "VUI LÒNG MỞ KHÓA";
-    
-    document.getElementById('fallback-login').style.display = 'block';
-    if (coHienNutFaceID) {
+      // Đã đăng ký -> Hiện nút quét mặt
       document.getElementById('btn-faceid-trigger').style.display = 'flex';
+      document.getElementById('fallback-login').style.display = 'none';
+      
+      // Cố gắng kích hoạt FaceID lập tức (Dù Safari có thể chặn nếu thiếu tương tác người dùng)
+      quetFaceIDThoCong();
+    } else {
+      // Chưa đăng ký hoặc không hỗ trợ -> Chỉ hiện khung điền pass
+      document.getElementById('fallback-login').style.display = 'block';
     }
   }
 
@@ -431,7 +452,8 @@
       });
       if (assertion) { moKhoaThanhCong(); }
     } catch (err) {
-      alert("Xác thực Face ID / Vân tay không thành công.");
+      // Nếu thất bại hoặc bị hủy thì nhả ra khung Passcode
+      document.getElementById('fallback-login').style.display = 'block';
     }
   }
 
@@ -472,10 +494,12 @@
     document.getElementById('lock-screen').style.opacity = '0';
     setTimeout(() => {
       document.getElementById('lock-screen').style.display = 'none';
-      document.getElementById('app-content').style.display = 'block';
+      document.getElementById('app-content').style.display = 'flex';
+      // Hiện mặc định là giao diện lưới Dashboard
+      document.getElementById('dashboard-view').style.display = 'block';
+      document.getElementById('tool-view').style.display = 'none';
     }, 300);
     sessionStorage.setItem('appUnlocked', 'true');
-    
     if(!window.daKhoiTaoDuLieu) {
       khoiChayTatCaDuLieuGoc(); 
       window.daKhoiTaoDuLieu = true;
@@ -483,15 +507,24 @@
   }
 
   // ==========================================
-  // XỬ LÝ CHUYỂN TAB VÀ UI CHUNG
+  // XỬ LÝ CHUYỂN TAB VÀ ĐIỀU HƯỚNG GIAO DIỆN LƯỚI
   // ==========================================
-  function switchTab(tabId) {
+  
+  function moChucNang(tabId, title) {
+    document.getElementById('dashboard-view').style.display = 'none';
+    document.getElementById('tool-view').style.display = 'block';
+    document.getElementById('tool-title').innerText = title;
+    
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
-    event.currentTarget.classList.add('active');
   }
 
+  function veTrangChu() {
+    document.getElementById('tool-view').style.display = 'none';
+    document.getElementById('dashboard-view').style.display = 'block';
+  }
+
+  // CÁC HÀM GIAO DIỆN CON
   function toggleMoTa() {
     const box = document.getElementById('mo-ta-content');
     document.getElementById('view-lich-su').style.display = 'none';
@@ -503,7 +536,6 @@
     document.getElementById('mo-ta-content').style.display = 'none';
     document.getElementById('view-edit').style.display = 'none';
     document.getElementById('view-summary').style.display = 'block';
-    
     if (box.style.display === 'none') {
         renderDanhSachLichSu();
         box.style.display = 'block';
@@ -629,7 +661,7 @@
   });
 
   // ==========================================
-  // LOGIC TAB 2: CHIA GIỜ TĂNG DẦN & CỐ ĐỊNH LỊCH MỚI
+  // LOGIC TAB 2: CHIA GIỜ TỰ ĐỘNG + LỊCH SỬ + CỐ ĐỊNH (GIỮ NGUYÊN BẢN GỐC)
   // ==========================================
   function addMinutes(timeStr, mins) {
     if(!timeStr) return "00:00";
@@ -835,7 +867,7 @@
   }
 
   // ==========================================
-  // LOGIC TAB 4: DANH MỤC EXCEL LỌC RÁC __EMPTY
+  // LOGIC TAB 4: DANH MỤC EXCEL LỌC RÁC __EMPTY (GIỮ NGUYÊN)
   // ==========================================
   let duLieuDanhMuc = []; 
   let cauHinhBang = { fontSize: 14, cot: {} };
@@ -854,7 +886,8 @@
           return newRow;
       });
 
-      duLieuDanhMuc = cleanedJson; localStorage.setItem('duLieuExcelOffline', JSON.stringify(duLieuDanhMuc));
+      duLieuDanhMuc = cleanedJson; 
+      localStorage.setItem('duLieuExcelOffline', JSON.stringify(duLieuDanhMuc));
       taoCauHinhMacDinh(); hienThiBangDanhMuc(duLieuDanhMuc);
       alert("Tải dữ liệu thành công! Bấm ⚙️ để căn chỉnh bảng.");
     };
@@ -903,6 +936,7 @@
   function chuyenPhanTramTuDong(cotNay) {
     let chk = document.getElementById('chk-' + cotNay); let inp = document.getElementById('width-' + cotNay);
     let soPhanTramHienTai = parseInt(inp.value) || 0;
+    
     let tatCaCacCot = Object.keys(cauHinhBang.cot).filter(c => !c.startsWith('__EMPTY')); 
     let viTriHienTai = tatCaCacCot.indexOf(cotNay);
 
@@ -974,7 +1008,7 @@
   }
 
   // ==========================================
-  // KHỞI CHẠY TẤT CẢ DỮ LIỆU SAU KHI ĐÃ MỞ KHÓA
+  // KHỞI CHẠY TẤT CẢ DỮ LIỆU GỐC (GIỮ NGUYÊN)
   // ==========================================
   function khoiChayTatCaDuLieuGoc() {
     initWeatherOptions();
