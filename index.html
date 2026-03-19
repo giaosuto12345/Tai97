@@ -14,7 +14,12 @@
 
   <style>
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box;}
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #eaf6ff; padding-bottom: 80px; /* Chừa khoảng trống cho thanh Menu đáy */ }
+    body { 
+      margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      background: #eaf6ff; 
+      padding-bottom: 110px; /* Chừa chỗ cho thanh menu bự dưới đáy */
+      overflow-x: hidden;
+    }
 
     /* ====== MÀN HÌNH KHÓA ====== */
     #lock-screen {
@@ -28,19 +33,17 @@
       text-align: center; width: 85%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); color: #333;
     }
     .lock-icon { font-size: 50px; margin-bottom: 5px; color: #1976d2; }
-    
     .pin-input {
       width: 100%; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 5px;
       border: 2px solid #ddd; border-radius: 12px; margin-bottom: 15px; background: #f9f9f9;
     }
     .pin-input:focus { outline: none; border-color: #1976d2; }
     .btn-unlock { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: #1976d2; border: none; border-radius: 12px; cursor: pointer; }
-    .btn-faceid { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: #4caf50; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 15px 0; box-shadow: 0 4px 10px rgba(76,175,80,0.4); }
-    .btn-faceid:active, .btn-unlock:active { transform: scale(0.98); }
+    .btn-unlock:active { transform: scale(0.98); }
 
     #app-content { display: none; }
 
-    /* ====== FONT SCALE NGUYÊN BẢN CỦA USER ====== */
+    /* ====== FONT SCALE NGUYÊN BẢN CỦA BẠN ====== */
     :root {
       --fs-header: clamp(22px, 6vw, 32px);
       --fs-card-title: clamp(15px, 4vw, 20px);
@@ -52,27 +55,38 @@
       --fs-final: clamp(20px, 4vw, 18px);
     }
 
-    /* ====== THANH ĐIỀU HƯỚNG DƯỚI ĐÁY (BOTTOM TAB BAR) ====== */
-    .bottom-nav {
+    /* ====== THANH ĐIỀU HƯỚNG DƯỚI ĐÁY CAO CẤP ====== */
+    .bottom-nav-container {
       position: fixed; bottom: 0; left: 0; right: 0;
-      background: #fff; display: flex; justify-content: space-around;
+      background: #fff; display: flex; align-items: center;
       box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
-      padding-bottom: env(safe-area-inset-bottom); z-index: 1000;
+      /* Nâng thanh menu lên, tránh vạch vuốt iPhone */
+      padding-bottom: calc(env(safe-area-inset-bottom) + 15px);
+      padding-top: 10px; z-index: 1000;
     }
+    .home-btn-fixed {
+      padding: 5px 15px; border-right: 1px solid #eee; display: flex; flex-direction: column; 
+      align-items: center; justify-content: center; background: none; border-top: none; 
+      border-bottom: none; border-left: none; min-width: 80px;
+    }
+    .scrollable-tabs {
+      display: flex; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; 
+      flex: 1; scroll-behavior: smooth;
+    }
+    .scrollable-tabs::-webkit-scrollbar { display: none; }
     .nav-btn {
-      flex: 1; padding: 10px 2px; text-align: center; border: none; background: none;
-      font-size: 12px; font-weight: 800; color: #888; cursor: pointer;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      flex: 0 0 auto; min-width: 85px; padding: 5px 5px; text-align: center; border: none; background: none;
+      font-size: 13px; font-weight: 800; color: #888; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s;
     }
     .nav-btn.active { color: #1976d2; }
-    .nav-icon { font-size: 22px; margin-bottom: 4px; }
+    /* Biểu tượng phóng to tránh bấm nhầm */
+    .nav-icon { font-size: 28px; margin-bottom: 5px; }
 
     /* ====== GIAO DIỆN TRANG CHỦ LƯỚI 3 CỘT ====== */
     .dash-header { padding: 30px 15px 10px 15px; text-align: center; }
     .dash-header h2 { color: #1976d2; margin: 0; font-size: var(--fs-header); font-weight: 800; letter-spacing: 1px; }
-    .grid-3 {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; max-width: 600px; margin: 0 auto;
-    }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; max-width: 600px; margin: 0 auto; }
     .dash-card {
       background: #fff; border-radius: 16px; padding: 20px 5px; text-align: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: pointer; transition: 0.2s;
@@ -84,28 +98,18 @@
     /* ====== CÁC TAB NỘI DUNG ====== */
     .tab-content { display: none; padding: 15px 10px; }
     .tab-content.active { display: block; animation: fadeIn 0.2s; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     .container { max-width: 900px; margin: 0 auto; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .card { background: #fff; border-radius: 18px; padding: 14px; box-shadow: 0 6px 16px rgba(0,0,0,0.08); margin-bottom: 15px; position: relative; }
     .card-title { text-align: center; font-weight: 800; font-size: var(--fs-card-title); color: #1976d2; margin-bottom: 10px; text-transform: uppercase; }
 
-    /* HTML GỐC: Khôi phục 100% CSS của thẻ input, select, nhãn */
-    label { display: block; font-size: var(--fs-label); color: #555; margin-top: 8px; margin-bottom: 4px; font-weight: bold; }
+    /* ====== STYLE NHẬP LIỆU GỐC CỦA BẠN ====== */
+    label { display: block; font-size: var(--fs-label); color: #555; margin-top: 8px; margin-bottom: 4px; font-weight: bold; text-align: left; }
     
     input:not([type="checkbox"]):not([type="file"]), select {
-      width: 100%;
-      padding: 12px;
-      font-size: var(--fs-input);
-      text-align: center;
-      border-radius: 12px;
-      border: 1px solid #ddd;
-      background: #fdfdfd;
-      box-sizing: border-box;
-      appearance: none;
-      -webkit-appearance: none;
-      color: #333;
+      width: 100%; padding: 12px; font-size: var(--fs-input); text-align: center; border-radius: 12px; border: 1px solid #ddd; background: #fdfdfd; box-sizing: border-box; appearance: none; -webkit-appearance: none; color: #333;
     }
     input:focus, select:focus { outline: none; border: 2px solid #ff9800; }
 
@@ -151,17 +155,18 @@
 
     .search-bar-container { display: flex; gap: 8px; margin-bottom: 10px; }
     .search-input { flex: 1; padding: 12px 15px !important; font-size: 16px !important; border-radius: 12px !important; border: 1px solid #ddd !important; background: #fdfdfd !important; text-align: left !important; }
-    .search-input:focus { outline: none; border: 2px solid #1976d2 !important; }
     .action-btn { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: white; border-radius: 50%; font-size: 22px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     
     .setting-panel { background: #fff9e6; border: 2px solid #ff9800; border-radius: 12px; padding: 15px; margin-bottom: 15px; display: none; }
     .set-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 14px; font-weight: bold; color: #333; }
     .set-row input[type="number"] { width: 60px !important; padding: 8px 5px !important; font-size: 16px !important; text-align: center !important; border-radius: 6px !important; border: 1px solid #ccc !important; background: #fff !important; }
     .set-row input[type="checkbox"] { transform: scale(1.5); margin-right: 15px; width: auto !important; }
-
+    
     #bang-danh-muc { table-layout: fixed; }
     #bang-danh-muc th { background: #5c6bc0; color: #fff; position: sticky; top: 0; z-index: 10; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;}
     #bang-danh-muc td { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
+
+    .sort-btn { background: #eaf6ff; color: #1976d2; border: 1px solid #1976d2; border-radius: 4px; padding: 2px 8px; font-size: 18px; cursor: pointer; margin-left: 5px;}
   </style>
 </head>
 <body>
@@ -169,12 +174,8 @@
   <div id="lock-screen">
     <div class="lock-box">
       <div id="lock-spinner" class="lock-icon">🔒</div>
-      <h2 id="lock-title" style="margin: 0 0 5px 0; color:#1976d2;">ỨNG DỤNG ĐÃ KHÓA</h2>
+      <h2 id="lock-title" style="margin: 0 0 5px 0; color:#1976d2;">ĐANG XÁC THỰC...</h2>
       
-      <button id="btn-faceid-trigger" onclick="quetFaceIDThoCong()" class="btn-faceid" style="display:none;">
-        <span style="font-size:24px;">👤</span> MỞ KHÓA BẰNG FACE ID
-      </button>
-
       <div id="fallback-login" style="display: none; width: 100%; margin-top: 15px;">
         <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Nhập mật khẩu để truy cập</p>
         <input type="password" id="pin-input" class="pin-input" placeholder="••••••••" maxlength="8" inputmode="numeric" />
@@ -253,14 +254,11 @@
 
       <div id="tab-chia-gio" class="tab-content">
         <div class="card">
-          <div onclick="toggleLichSu()" style="position: absolute; top: 10px; left: 12px; font-size: 11px; font-weight: 800; color: #1976d2; background: #eaf6ff; padding: 4px 8px; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            🕒 LỊCH SỬ
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <button onclick="toggleLichSu()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">🕒 LỊCH SỬ</button>
+            <div class="card-title" style="margin: 0; flex: 1; text-align: center;">THỜI GIAN LÀM VIỆC</div>
+            <button onclick="toggleMoTa()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">ℹ️ MÔ TẢ</button>
           </div>
-          <div onclick="toggleMoTa()" style="position: absolute; top: 10px; right: 12px; font-size: 11px; font-weight: 800; color: #1976d2; background: #eaf6ff; padding: 4px 8px; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-            ℹ️ MÔ TẢ
-          </div>
-
-          <div class="card-title">THỜI GIAN LÀM VIỆC</div>
           
           <div id="view-lich-su" class="mo-ta-box" style="display: none; background: #eef7ff; border-left: 4px solid #1976d2;">
             <div style="font-weight: 800; color: #1976d2; margin-bottom: 10px; text-align: center; font-size: 15px;">🕒 LỊCH SỬ 30 NGÀY</div>
@@ -369,7 +367,7 @@
         </div>
 
         <div id="panel-cai-dat-danh-muc" class="setting-panel">
-          <div style="text-align: center; color: #ff9800; font-weight: 800; margin-bottom: 10px; font-size: 16px;">TÙY CHỈNH BẢNG</div>
+          <div style="text-align: center; color: #ff9800; font-weight: 800; margin-bottom: 10px; font-size: 16px;">CÀI ĐẶT BẢNG</div>
           
           <div class="set-row">
             <span>Cỡ chữ hiển thị:</span>
@@ -385,7 +383,7 @@
 
           <div style="border-top: 1px dashed #ccc; margin: 15px 0 10px 0;"></div>
           <div style="font-size: 13px; color: #1976d2; font-weight: bold; margin-bottom: 10px;">
-            * Nếu bỏ tích, % của cột bị ẩn sẽ tự nhảy sang cột kế tiếp:
+            * Nếu bỏ tích, % của cột bị ẩn sẽ TỰ ĐỘNG NHẢY sang cột kế tiếp:
           </div>
           <div id="danh-sach-cot-cai-dat"></div>
           <button onclick="luuCaiDatDanhMuc()" class="btn" style="background:#ff9800; padding:12px; margin-bottom:0; margin-top:10px; font-size: 16px;">LƯU VÀ ÁP DỤNG</button>
@@ -407,35 +405,42 @@
         <div class="card">
           <div class="card-title">CÀI ĐẶT HỆ THỐNG</div>
           
-          <div style="font-size: 14px; color: #333; line-height: 1.6; margin-top: 15px;">
-            Hệ thống đang khóa bằng mật khẩu mặc định: <b style="color:#1976d2; font-size: 18px;">18121997</b><br>
-            Bạn có thể đăng nhập bằng Face ID / Vân tay nếu máy có hỗ trợ.
+          <div class="set-row" style="margin-top: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+            <label style="margin:0; font-size:15px; color:#333; display:flex; align-items:center;">
+              <input type="checkbox" id="chk-app-lock" style="transform:scale(1.5); margin-right:15px; width:auto;"> Mở Khóa Ứng Dụng Bằng Mật khẩu / Face ID
+            </label>
           </div>
-          
-          <div style="border-top: 1px dashed #ccc; margin: 20px 0;"></div>
-          
-          <button onclick="xoaTrangDuLieu()" class="btn" style="background:#f44336; padding:12px; font-size: 16px; margin-bottom: 0;">XÓA TOÀN BỘ DỮ LIỆU</button>
-          <div style="text-align: center; font-size: 11px; color: #999; margin-top: 8px;">(Xóa sạch Lịch sử, Danh mục Excel, Cài đặt bảng về trạng thái ban đầu)</div>
+
+          <div style="font-size: 15px; color: #333; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">Sắp xếp thứ tự các Menu Tab:</div>
+          <div id="sort-tab-list" style="margin-bottom: 20px;">
+             </div>
+
+          <button onclick="luuCaiDatApp()" class="btn" style="background:#1976d2; padding:12px; font-size: 16px; margin-bottom: 0;">LƯU CÀI ĐẶT</button>
         </div>
       </div>
 
     </div>
-  </div> <div class="bottom-nav">
-    <button class="nav-btn active" id="nav-tab-home" onclick="switchTab('tab-home')">
+  </div> <div class="bottom-nav-container">
+    <button class="home-btn-fixed nav-btn active" id="nav-tab-home" onclick="switchTab('tab-home')">
       <span class="nav-icon">🏠</span>Home
     </button>
-    <button class="nav-btn" id="nav-tab-thong-gio" onclick="switchTab('tab-thong-gio')">
-      <span class="nav-icon">💨</span>T.Gió
-    </button>
-    <button class="nav-btn" id="nav-tab-chia-gio" onclick="switchTab('tab-chia-gio')">
-      <span class="nav-icon">⏰</span>C.Giờ
-    </button>
-    <button class="nav-btn" id="nav-tab-thoi-tiet" onclick="switchTab('tab-thoi-tiet')">
-      <span class="nav-icon">🌤️</span>T.Tiết
-    </button>
-    <button class="nav-btn" id="nav-tab-danh-muc" onclick="switchTab('tab-danh-muc')">
-      <span class="nav-icon">📋</span>D.Mục
-    </button>
+    <div class="scrollable-tabs" id="scrollable-tab-container">
+      <button class="nav-btn" id="nav-tab-thong-gio" onclick="switchTab('tab-thong-gio')">
+        <span class="nav-icon">💨</span>T.Gió
+      </button>
+      <button class="nav-btn" id="nav-tab-chia-gio" onclick="switchTab('tab-chia-gio')">
+        <span class="nav-icon">⏰</span>C.Giờ
+      </button>
+      <button class="nav-btn" id="nav-tab-thoi-tiet" onclick="switchTab('tab-thoi-tiet')">
+        <span class="nav-icon">🌤️</span>T.Tiết
+      </button>
+      <button class="nav-btn" id="nav-tab-danh-muc" onclick="switchTab('tab-danh-muc')">
+        <span class="nav-icon">📋</span>D.Mục
+      </button>
+      <button class="nav-btn" id="nav-tab-cai-dat" onclick="switchTab('tab-cai-dat')">
+        <span class="nav-icon">⚙️</span>C.Đặt
+      </button>
+    </div>
   </div>
 
 <script>
@@ -443,9 +448,12 @@
   // HỆ THỐNG MẬT KHẨU "18121997" VÀ FACE ID
   // ==========================================
   const MAT_KHAU_APP = "18121997"; 
+  function isAppLocked() { return localStorage.getItem('isAppLocked') !== 'false'; }
 
   async function khoiDongKhoa() {
-    if (sessionStorage.getItem('appUnlocked') === 'true') {
+    loadTabOrder(); // Load thứ tự tab
+
+    if (!isAppLocked() || sessionStorage.getItem('appUnlocked') === 'true') {
       moKhoaThanhCong();
       return;
     }
@@ -453,40 +461,28 @@
     let daDangKyFaceID = localStorage.getItem('faceID_Registered');
     if (window.PublicKeyCredential && daDangKyFaceID === 'true') {
       try {
+        // Cố gắng tự gọi Face ID
+        document.getElementById('lock-screen').style.display = 'flex';
         const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge);
         const assertion = await navigator.credentials.get({
           publicKey: { challenge: challenge, userVerification: "required", timeout: 60000 }
         });
         if (assertion) { moKhoaThanhCong(); return; }
       } catch (err) {
-        hienThiNhapPin(true);
+        hienThiNhapPin(); // Thất bại thì hiện mã PIN
       }
     } else {
-      hienThiNhapPin(false);
+      // Lần đầu vào app -> Hiện luôn mã PIN
+      document.getElementById('lock-screen').style.display = 'flex';
+      hienThiNhapPin();
     }
   }
 
-  function hienThiNhapPin(coHienNutFaceID) {
+  function hienThiNhapPin() {
     document.getElementById('lock-spinner').innerText = "🔒";
     document.getElementById('lock-spinner').style.animation = "none";
     document.getElementById('lock-title').innerText = "VUI LÒNG MỞ KHÓA";
-    
     document.getElementById('fallback-login').style.display = 'block';
-    if (coHienNutFaceID) {
-      document.getElementById('btn-faceid-trigger').style.display = 'flex';
-    }
-  }
-
-  async function quetFaceIDThoCong() {
-    try {
-      const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge);
-      const assertion = await navigator.credentials.get({
-        publicKey: { challenge: challenge, userVerification: "required", timeout: 60000 }
-      });
-      if (assertion) { moKhoaThanhCong(); }
-    } catch (err) {
-      alert("Xác thực Face ID / Vân tay không thành công.");
-    }
   }
 
   async function checkMatKhau() {
@@ -539,6 +535,7 @@
   // ==========================================
   // ĐIỀU HƯỚNG BOTTOM TAB BAR VÀ LƯỚI HOME
   // ==========================================
+  let currentTabId = 'tab-home';
   function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -547,64 +544,88 @@
     
     let btn = document.getElementById('nav-' + tabId);
     if(btn) btn.classList.add('active');
-    else document.getElementById('nav-tab-home').classList.add('active');
     
+    currentTabId = tabId;
+
+    // Tự động cuộn menu ngang nếu tab bị khuất
+    if(tabId !== 'tab-home' && btn) {
+        let tabBar = document.getElementById('scrollable-tab-container');
+        tabBar.scrollTo({ left: btn.offsetLeft - (tabBar.offsetWidth/2) + (btn.offsetWidth/2), behavior: 'smooth' });
+    }
     window.scrollTo(0,0);
   }
 
   // ==========================================
-  // CÁC HÀM UI CON
+  // TÙY CHỈNH CÀI ĐẶT APP (TAB 5)
   // ==========================================
-  function toggleMoTa() {
-    const box = document.getElementById('mo-ta-content');
-    document.getElementById('view-lich-su').style.display = 'none';
-    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+  const defaultTabOrder = ['tab-thong-gio', 'tab-chia-gio', 'tab-thoi-tiet', 'tab-danh-muc', 'tab-cai-dat'];
+  const tabNames = {
+    'tab-thong-gio': 'THÔNG GIÓ', 'tab-chia-gio': 'CHIA GIỜ', 
+    'tab-thoi-tiet': 'THỜI TIẾT', 'tab-danh-muc': 'DANH MỤC', 'tab-cai-dat': 'CÀI ĐẶT'
+  };
+
+  function getTabOrderArray() {
+    let saved = localStorage.getItem('tabOrder');
+    if (saved) return JSON.parse(saved);
+    return defaultTabOrder;
   }
 
-  function toggleLichSu() {
-    const box = document.getElementById('view-lich-su');
-    document.getElementById('mo-ta-content').style.display = 'none';
-    document.getElementById('view-edit').style.display = 'none';
-    document.getElementById('view-summary').style.display = 'block';
-    if (box.style.display === 'none') { renderDanhSachLichSu(); box.style.display = 'block'; } else { box.style.display = 'none'; }
+  function loadTabOrder() {
+    let order = getTabOrderArray();
+    let container = document.getElementById('scrollable-tab-container');
+    order.forEach((id) => {
+        let btn = document.getElementById('nav-' + id);
+        if(btn) container.appendChild(btn); 
+    });
   }
 
-  function moKhungSua() {
-    document.getElementById('view-summary').style.display = 'none';
-    document.getElementById('view-edit').style.display = 'block';
-    document.getElementById('mo-ta-content').style.display = 'none';
-    document.getElementById('view-lich-su').style.display = 'none';
-  }
-
-  function luuKhungSua() {
-    const sv = document.getElementById('sang-vao').value; const sr = document.getElementById('sang-ra').value;
-    const cv = document.getElementById('chieu-vao').value; const cr = document.getElementById('chieu-ra').value;
-    const n = document.getElementById('so-nha').value;
-
-    document.getElementById('sum-sang').innerText = sv + ' - ' + sr;
-    document.getElementById('sum-chieu').innerText = cv + ' - ' + cr;
-    document.getElementById('sum-nha').innerText = n + ' Nhà';
-
-    document.getElementById('view-summary').style.display = 'block';
-    document.getElementById('view-edit').style.display = 'none';
+  function renderCaiDatMenu() {
+    document.getElementById('chk-app-lock').checked = isAppLocked();
     
-    let fixedConfig = JSON.parse(localStorage.getItem('fixedSchedule') || '{"isFixed": false, "data": []}');
-    if(fixedConfig.isFixed && fixedConfig.data.length !== parseInt(n)) {
-      fixedConfig.isFixed = false;
-      localStorage.setItem('fixedSchedule', JSON.stringify(fixedConfig));
+    let order = getTabOrderArray();
+    let html = '';
+    order.forEach((id, index) => {
+      if(id === 'tab-cai-dat') return; 
+      html += `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 15px; border-radius:8px; border:1px solid #eee; margin-bottom:5px;">
+            <span style="font-weight:bold; color:#1976d2;">${tabNames[id]}</span>
+            <div>
+              <button class="sort-btn" onclick="moveTabUp('${id}')">▲</button>
+              <button class="sort-btn" onclick="moveTabDown('${id}')">▼</button>
+            </div>
+        </div>
+      `;
+    });
+    document.getElementById('sort-tab-list').innerHTML = html;
+  }
+
+  function moveTabUp(id) {
+    let arr = getTabOrderArray(); let idx = arr.indexOf(id);
+    if(idx > 0) {
+      let temp = arr[idx]; arr[idx] = arr[idx-1]; arr[idx-1] = temp;
+      localStorage.setItem('tabOrder', JSON.stringify(arr));
+      renderCaiDatMenu(); loadTabOrder();
     }
   }
 
-  function xoaTrangDuLieu() {
-    if(confirm("BẠN CÓ CHẮC CHẮN MUỐN XÓA TẤT CẢ DỮ LIỆU?\nBao gồm: Lịch sử, Danh mục Excel, Cài đặt bảng.")) {
-      localStorage.clear();
-      alert("Đã xóa sạch dữ liệu. Ứng dụng sẽ tải lại.");
-      window.location.reload();
+  function moveTabDown(id) {
+    let arr = getTabOrderArray(); let idx = arr.indexOf(id);
+    if(idx < arr.length - 2) { 
+      let temp = arr[idx]; arr[idx] = arr[idx+1]; arr[idx+1] = temp;
+      localStorage.setItem('tabOrder', JSON.stringify(arr));
+      renderCaiDatMenu(); loadTabOrder();
     }
   }
+
+  function luuCaiDatApp() {
+    let isLocked = document.getElementById('chk-app-lock').checked;
+    localStorage.setItem('isAppLocked', isLocked);
+    alert("Lưu Cài đặt Hệ thống thành công!");
+  }
+
 
   // ==========================================
-  // LOGIC TAB 1: THÔNG GIÓ (GIỮ NGUYÊN BẢN GỐC TỪ USER)
+  // LOGIC TAB 1: THÔNG GIÓ (NGUYÊN GỐC TỪ ẢNH BẠN)
   // ==========================================
   const BANG_DO_AM = [
     [3.11,3.17,3.22,3.27,3.32,3.37,3.43,3.48,3.53,3.58,3.63,3.68,3.74,3.79,3.84,3.94,4,4,4.05,4.1,4.15,4.2,4.25,4.31,4.36,4.41,4.46,4.52,4.57,4.62,4.67,4.72,4.77,4.83,4.88,4.93,4.65,5.04,5.09,5.14],
@@ -643,60 +664,22 @@
     [22.55,22.92,23.3,23.68,24.05,24.43,24.81,25.18,25.56,25.93,26.31,26.68,27.06,27.43,27.81,28.16,28.56,28.94,29.31,29.69,30.07,30.44,30.85,31.19,31.57,31.94,32.32,32.76,33.07,33.45,33.82,34.2,34.57,34.65,35.33,35.7,36.08,36.45,36.83,37.21]
   ];
 
-  function layDoAmTuyetDoi(nhietDo, doAm) {
-    let idx_nhietDo = Math.round(nhietDo) - 1; let idx_doAm = Math.round(doAm) - 60;
-    if (idx_nhietDo < 0) idx_nhietDo = 0; if (idx_nhietDo >= 34) idx_nhietDo = 33;
-    if (idx_doAm < 0) idx_doAm = 0; if (idx_doAm >= 40) idx_doAm = 39;
-    return BANG_DO_AM[idx_nhietDo][idx_doAm];
-  }
-
-  function tinhNhietDoDiemSuong(doAmTuyetDoi) {
-    const bangDoAm = [5.18,5.55,5.94,6.33,6.8,7.27,7.74,8.28,8.82,9.41,10.01,10.66,11.45,12.11,12.83,13.64,14.49,15.4,16.32,17.31,18.33,19.43,20.57,21.75,23.02,24.35,25.76,27.2,28.78,30.37];
-    let b8 = 0; for (let i = 0; i < bangDoAm.length; i++) { if (doAmTuyetDoi >= bangDoAm[i]) b8 = i; else break; }
-    const b9 = bangDoAm[b8]; const b10 = (b8 + 1 < bangDoAm.length) ? bangDoAm[b8 + 1] : bangDoAm[b8];
-    const b11 = Math.abs(b9 - doAmTuyetDoi); const b7 = Math.min(Math.abs(doAmTuyetDoi - b9), Math.abs(doAmTuyetDoi - b10));
-    const b12 = (b11 === b7) ? b9 : b10; const b13 = (b11 === b7) ? (b8 + 1) : (b8 + 2);
-    return Math.round(doAmTuyetDoi * b13 / b12 * 10) / 10;
-  }
-
+  function layDoAmTuyetDoi(n, d) { let iN=Math.round(n)-1; let iD=Math.round(d)-60; if(iN<0)iN=0; if(iN>=34)iN=33; if(iD<0)iD=0; if(iD>=40)iD=39; return BANG_DO_AM[iN][iD]; }
+  function tinhDS(da) { const b=[5.18,5.55,5.94,6.33,6.8,7.27,7.74,8.28,8.82,9.41,10.01,10.66,11.45,12.11,12.83,13.64,14.49,15.4,16.32,17.31,18.33,19.43,20.57,21.75,23.02,24.35,25.76,27.2,28.78,30.37]; let b8=0; for(let i=0;i<b.length;i++){if(da>=b[i])b8=i;else break;} const b9=b[b8]; const b10=(b8+1<b.length)?b[b8+1]:b9; const b11=Math.abs(b9-da); const b7=Math.min(Math.abs(da-b9),Math.abs(da-b10)); const b12=(b11===b7)?b9:b10; const b13=(b11===b7)?(b8+1):(b8+2); return Math.round(da*b13/b12*10)/10; }
+  
   document.getElementById('btnTinh').addEventListener('click', function() {
-    const nt = parseFloat(document.getElementById('nt').value.replace(',', '.'));
-    const dt = parseFloat(document.getElementById('dt').value.replace(',', '.'));
-    const nn = parseFloat(document.getElementById('nn').value.replace(',', '.'));
-    const dn = parseFloat(document.getElementById('dn').value.replace(',', '.'));
-
-    if ([nt, dt, nn, dn].some(v => isNaN(v))) { alert('Vui lòng nhập đủ số hợp lệ'); return; }
-
-    const daTrong = layDoAmTuyetDoi(nt, dt); const daNgoai = layDoAmTuyetDoi(nn, dn);
-    const ndTrong = tinhNhietDoDiemSuong(daTrong); const ndNgoai = tinhNhietDoDiemSuong(daNgoai);
-
-    document.getElementById('daTrong').innerText = daTrong.toFixed(2);
-    document.getElementById('daNgoai').innerText = daNgoai.toFixed(2);
-    document.getElementById('ndTrong').innerText = ndTrong.toFixed(1);
-    document.getElementById('ndNgoai').innerText = ndNgoai.toFixed(1);
-
-    let ketQua = '';
-    if (nn > 32) ketQua = 'Không thông gió (Nhiệt độ ngoài > 32°C)';
-    else if (nn < 10) ketQua = 'Không thông gió (Nhiệt độ ngoài < 10°C)';
-    else if (daTrong <= daNgoai) ketQua = 'Không thông gió (Độ ẩm tuyệt đối trong nhà thấp hơn)';
-    else if (nn > nt && ndNgoai >= nt) ketQua = 'Không thông gió (Nhiệt độ điểm sương ngoài cao hơn nhiệt độ trong)';
-    else if (nn <= nt && ndTrong >= nn) ketQua = 'Không thông gió (Nhiệt độ điểm sương trong cao hơn nhiệt độ ngoài)';
-    else ketQua = 'Thông gió';
-
-    const final = document.getElementById('final');
-    final.innerText = ketQua;
-    final.className = 'final ' + (ketQua.includes('Không') ? 'no' : 'ok');
-    document.getElementById('ketqua').style.display = 'block';
+    const nt=parseFloat(document.getElementById('nt').value.replace(',','.')); const dt=parseFloat(document.getElementById('dt').value.replace(',','.')); const nn=parseFloat(document.getElementById('nn').value.replace(',','.')); const dn=parseFloat(document.getElementById('dn').value.replace(',','.'));
+    if([nt,dt,nn,dn].some(v=>isNaN(v))){alert('Vui lòng nhập đủ số hợp lệ');return;}
+    const daT=layDoAmTuyetDoi(nt,dt); const daN=layDoAmTuyetDoi(nn,dn); const ndT=tinhDS(daT); const ndN=tinhDS(daN);
+    document.getElementById('daTrong').innerText=daT.toFixed(2); document.getElementById('daNgoai').innerText=daN.toFixed(2); document.getElementById('ndTrong').innerText=ndT.toFixed(1); document.getElementById('ndNgoai').innerText=ndN.toFixed(1);
+    let kq='';
+    if(nn>32) kq='Không thông gió (Ngoài > 32°C)'; else if(nn<10) kq='Không thông gió (Ngoài < 10°C)'; else if(daT<=daN) kq='Không thông gió (Độ ẩm tuyệt đối ngoài cao hơn)'; else if(nn>nt && ndN>=nt) kq='Không thông gió (Điểm sương ngoài cao hơn nhiệt độ trong)'; else if(nn<=nt && ndT>=nn) kq='Không thông gió (Điểm sương trong cao hơn nhiệt độ ngoài)'; else kq='Thông gió';
+    const final=document.getElementById('final'); final.innerText=kq; final.className='final '+(kq.includes('Không')?'no':'ok'); document.getElementById('ketqua').style.display='block';
   });
-
-  ['nt','dt','nn','dn'].forEach(id => {
-    const el = document.getElementById(id);
-    el.addEventListener('focus', () => { setTimeout(() => el.select(), 0); });
-    el.addEventListener('click', () => { el.select(); });
-  });
+  ['nt','dt','nn','dn'].forEach(id => { const el=document.getElementById(id); el.addEventListener('focus', () => { setTimeout(()=>el.select(),0); }); el.addEventListener('click', () => { el.select(); }); });
 
   // ==========================================
-  // LOGIC TAB 2: CHIA GIỜ TỰ ĐỘNG THEO THỨ TỰ VÀ CỐ ĐỊNH LỊCH MỚI
+  // LOGIC TAB 2: CHIA GIỜ TĂNG DẦN & CỐ ĐỊNH LỊCH 
   // ==========================================
   function addMinutes(timeStr, mins) {
     if(!timeStr) return "00:00";
@@ -877,7 +860,6 @@
     document.getElementById('title-ra-vao').innerHTML = `1. LỊCH RA VÀO <span style="color:#888; font-size:14px;">${labelFixed}</span>`;
     document.getElementById('title-thong-gio').innerHTML = `2. LỊCH THÔNG GIÓ <span style="color:#888; font-size:14px;">(${label})</span>`;
     document.getElementById('wrap-bang-ra-vao').style.display = isFixed ? 'none' : 'block';
-    
     document.getElementById('ket-qua-chia-gio').style.display = 'block';
     toggleLichSu(); 
   }
@@ -902,7 +884,7 @@
   }
 
   // ==========================================
-  // LOGIC TAB 4: DANH MỤC EXCEL (LỌC __EMPTY DỌN RÁC)
+  // LOGIC TAB 4: DANH MỤC EXCEL (LỌC RÁC __EMPTY)
   // ==========================================
   let duLieuDanhMuc = []; 
   let cauHinhBang = { fontSize: 14, cot: {} };
@@ -939,7 +921,7 @@
   }
 
   function toggleCaiDatDanhMuc() {
-    let panel = document.getElementById('panel-cai-dat');
+    let panel = document.getElementById('panel-cai-dat-danh-muc');
     if(panel.style.display === 'block') { panel.style.display = 'none'; return; }
     if(duLieuDanhMuc.length === 0) { alert("Vui lòng tải file Excel lên trước!"); return; }
     
@@ -950,7 +932,6 @@
       if (tenCot.startsWith('__EMPTY')) return;
       let isChecked = cauHinhBang.cot[tenCot].show ? "checked" : "";
       let widthVal = cauHinhBang.cot[tenCot].width;
-      
       htmlCaiDatCot += `
         <div class="set-row">
           <label style="margin:0; display:flex; align-items:center; flex:1; font-size:13px; color:#333; cursor:pointer;">
@@ -971,7 +952,6 @@
   function chuyenPhanTramTuDong(cotNay) {
     let chk = document.getElementById('chk-' + cotNay); let inp = document.getElementById('width-' + cotNay);
     let soPhanTramHienTai = parseInt(inp.value) || 0;
-    
     let tatCaCacCot = Object.keys(cauHinhBang.cot).filter(c => !c.startsWith('__EMPTY')); 
     let viTriHienTai = tatCaCacCot.indexOf(cotNay);
 
@@ -1010,9 +990,8 @@
           cauHinhBang.cot[tenCot].width = isNaN(widthInput) ? 0 : widthInput;
       }
     });
-    
     localStorage.setItem('cauHinhBangExcel', JSON.stringify(cauHinhBang));
-    document.getElementById('panel-cai-dat').style.display = 'none';
+    document.getElementById('panel-cai-dat-danh-muc').style.display = 'none';
     timKiemDanhMuc(); 
   }
 
@@ -1044,7 +1023,7 @@
   }
 
   // ==========================================
-  // KHỞI CHẠY TẤT CẢ DỮ LIỆU GỐC SAU KHI ĐÃ MỞ KHÓA
+  // KHỞI CHẠY TẤT CẢ DỮ LIỆU SAU KHI MỞ KHÓA
   // ==========================================
   function khoiChayTatCaDuLieuGoc() {
     initWeatherOptions();
@@ -1054,8 +1033,7 @@
         document.getElementById('sum-sang').innerText = savedSang;
         let parts = savedSang.split(' - ');
         if(parts.length === 2) {
-            document.getElementById('sang-vao').value = parts[0];
-            document.getElementById('sang-ra').value = parts[1];
+            document.getElementById('sang-vao').value = parts[0]; document.getElementById('sang-ra').value = parts[1];
         }
     }
     let savedChieu = localStorage.getItem('sumChieu');
@@ -1063,15 +1041,13 @@
         document.getElementById('sum-chieu').innerText = savedChieu;
         let parts = savedChieu.split(' - ');
         if(parts.length === 2) {
-            document.getElementById('chieu-vao').value = parts[0];
-            document.getElementById('chieu-ra').value = parts[1];
+            document.getElementById('chieu-vao').value = parts[0]; document.getElementById('chieu-ra').value = parts[1];
         }
     }
     let savedNha = localStorage.getItem('sumNha');
     if (savedNha) {
         document.getElementById('sum-nha').innerText = savedNha;
-        let num = savedNha.replace(' Nhà', '');
-        document.getElementById('so-nha').value = num;
+        document.getElementById('so-nha').value = savedNha.replace(' Nhà', '');
     }
 
     let history = getHistoryLich();
@@ -1099,12 +1075,13 @@
     }
   }
 
-  // KHỞI ĐỘNG KHI TẢI TRANG
+  // KHỞI ĐỘNG
   window.addEventListener('DOMContentLoaded', () => {
     khoiDongKhoa();
+    loadTabOrder();
   });
-  
-  // TÍCH HỢP TÍNH NĂNG VUỐT TRÁI - PHẢI ĐỂ CHUYỂN TAB 
+
+  // TÍCH HỢP TÍNH NĂNG VUỐT (CHỈ ÁP DỤNG CÁC TAB KHÔNG PHẢI HOME)
   let touchstartX = 0; let touchendX = 0;
   const appContainer = document.getElementById('app-content');
   appContainer.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
@@ -1113,17 +1090,69 @@
   function handleSwipe() {
     let swipeDist = touchendX - touchstartX;
     if (Math.abs(swipeDist) > 70) { 
-      let tabs = ['tab-home', 'tab-thong-gio', 'tab-chia-gio', 'tab-thoi-tiet', 'tab-danh-muc'];
-      let currentActiveTab = document.querySelector('.tab-content.active').id;
-      let currentIndex = tabs.indexOf(currentActiveTab);
+      let activeTab = document.querySelector('.tab-content.active').id;
+      if (activeTab === 'tab-home') return; // Không vuốt ở trang chủ
+
+      let order = getTabOrderArray();
+      let currentIndex = order.indexOf(activeTab);
       
-      if (swipeDist < 0 && currentIndex < tabs.length - 1) { // Vuốt sang trái
-          switchTab(tabs[currentIndex + 1]); 
-      } else if (swipeDist > 0 && currentIndex > 0) { // Vuốt sang phải
-          switchTab(tabs[currentIndex - 1]); 
+      if (swipeDist < 0 && currentIndex < order.length - 1) { 
+          switchTab(order[currentIndex + 1]); 
+      } else if (swipeDist > 0 && currentIndex > 0) { 
+          switchTab(order[currentIndex - 1]); 
       }
     }
   }
+
+  // LOGIC SẮP XẾP MENU TAB CÀI ĐẶT
+  function getTabOrderArray() {
+    let saved = localStorage.getItem('tabOrder');
+    if (saved) return JSON.parse(saved);
+    return ['tab-thong-gio', 'tab-chia-gio', 'tab-thoi-tiet', 'tab-danh-muc', 'tab-cai-dat'];
+  }
+
+  function loadTabOrder() {
+    let order = getTabOrderArray();
+    let container = document.getElementById('scrollable-tab-container');
+    order.forEach((id) => {
+        let btn = document.getElementById('nav-' + id);
+        if(btn) container.appendChild(btn); 
+    });
+  }
+
+  function renderCaiDatMenu() {
+    document.getElementById('chk-app-lock').checked = isAppLocked();
+    const tabNames = { 'tab-thong-gio': 'THÔNG GIÓ', 'tab-chia-gio': 'CHIA GIỜ', 'tab-thoi-tiet': 'THỜI TIẾT', 'tab-danh-muc': 'DANH MỤC' };
+    let order = getTabOrderArray();
+    let html = '';
+    order.forEach((id) => {
+      if(id === 'tab-cai-dat') return; 
+      html += `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 15px; border-radius:8px; border:1px solid #eee; margin-bottom:5px;">
+            <span style="font-weight:bold; color:#1976d2;">${tabNames[id]}</span>
+            <div><button class="sort-btn" onclick="moveTabUp('${id}')">▲</button><button class="sort-btn" onclick="moveTabDown('${id}')">▼</button></div>
+        </div>`;
+    });
+    document.getElementById('sort-tab-list').innerHTML = html;
+  }
+
+  function moveTabUp(id) {
+    let arr = getTabOrderArray(); let idx = arr.indexOf(id);
+    if(idx > 0) { let temp = arr[idx]; arr[idx] = arr[idx-1]; arr[idx-1] = temp; localStorage.setItem('tabOrder', JSON.stringify(arr)); renderCaiDatMenu(); loadTabOrder(); }
+  }
+
+  function moveTabDown(id) {
+    let arr = getTabOrderArray(); let idx = arr.indexOf(id);
+    if(idx < arr.length - 2) { let temp = arr[idx]; arr[idx] = arr[idx+1]; arr[idx+1] = temp; localStorage.setItem('tabOrder', JSON.stringify(arr)); renderCaiDatMenu(); loadTabOrder(); }
+  }
+
+  function luuCaiDatApp() {
+    let isLocked = document.getElementById('chk-app-lock').checked;
+    localStorage.setItem('isAppLocked', isLocked);
+    alert("Lưu Cài đặt Hệ thống thành công!");
+  }
+
+  function isAppLocked() { return localStorage.getItem('isAppLocked') !== 'false'; }
 </script>
 
 </body>
