@@ -13,7 +13,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
-    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box;}
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
     body { 
       margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
       background: #eaf6ff; 
@@ -21,7 +21,7 @@
       overflow-x: hidden;
     }
 
-    /* ====== MÀN HÌNH KHÓA ====== */
+    /* ====== MÀN HÌNH KHÓA BẢO MẬT ====== */
     #lock-screen {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(135deg, #1976d2, #4caf50);
@@ -39,7 +39,8 @@
     }
     .pin-input:focus { outline: none; border-color: #1976d2; }
     .btn-unlock { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: #1976d2; border: none; border-radius: 12px; cursor: pointer; }
-    .btn-unlock:active { transform: scale(0.98); }
+    .btn-faceid { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: #4caf50; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 15px 0; box-shadow: 0 4px 10px rgba(76,175,80,0.4); }
+    .btn-faceid:active, .btn-unlock:active { transform: scale(0.98); }
 
     #app-content { display: none; }
 
@@ -55,11 +56,11 @@
       --fs-final: clamp(20px, 4vw, 18px);
     }
 
-    /* ====== THANH ĐIỀU HƯỚNG DƯỚI ĐÁY CAO CẤP ====== */
+    /* ====== THANH ĐIỀU HƯỚNG DƯỚI ĐÁY (NÂNG CAO HƠN) ====== */
     .bottom-nav-container {
       position: fixed; bottom: 0; left: 0; right: 0;
       background: #fff; display: flex; align-items: center;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
       /* Nâng thanh menu lên, tránh vạch vuốt iPhone */
       padding-bottom: calc(env(safe-area-inset-bottom) + 15px);
       padding-top: 10px; z-index: 1000;
@@ -80,7 +81,7 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s;
     }
     .nav-btn.active { color: #1976d2; }
-    /* Biểu tượng phóng to tránh bấm nhầm */
+    /* Biểu tượng to, dễ ấn */
     .nav-icon { font-size: 28px; margin-bottom: 5px; }
 
     /* ====== GIAO DIỆN TRANG CHỦ LƯỚI 3 CỘT ====== */
@@ -113,7 +114,7 @@
     }
     input:focus, select:focus { outline: none; border: 2px solid #ff9800; }
 
-    .time-flex { display: flex; align-items: center; gap: 10px; }
+    .time-flex { display: flex; align-items: center; gap: 10px; margin-bottom: 10px;}
     .time-flex span { font-weight: bold; color: #555; }
     .btn { margin: 5px 0 15px 0; width: 100%; padding: 14px; font-size: var(--fs-button); font-weight: bold; border: none; border-radius: 999px; background: #4caf50; color: #fff; cursor: pointer; box-shadow: 0 6px 14px rgba(76,175,80,0.4); touch-action: manipulation; }
     .btn:active { transform: scale(0.98); }
@@ -155,6 +156,7 @@
 
     .search-bar-container { display: flex; gap: 8px; margin-bottom: 10px; }
     .search-input { flex: 1; padding: 12px 15px !important; font-size: 16px !important; border-radius: 12px !important; border: 1px solid #ddd !important; background: #fdfdfd !important; text-align: left !important; }
+    .search-input:focus { outline: none; border: 2px solid #1976d2 !important; }
     .action-btn { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: white; border-radius: 50%; font-size: 22px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     
     .setting-panel { background: #fff9e6; border: 2px solid #ff9800; border-radius: 12px; padding: 15px; margin-bottom: 15px; display: none; }
@@ -166,7 +168,9 @@
     #bang-danh-muc th { background: #5c6bc0; color: #fff; position: sticky; top: 0; z-index: 10; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;}
     #bang-danh-muc td { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
 
-    .sort-btn { background: #eaf6ff; color: #1976d2; border: 1px solid #1976d2; border-radius: 4px; padding: 2px 8px; font-size: 18px; cursor: pointer; margin-left: 5px;}
+    /* Nút di chuyển tab trong cài đặt */
+    .sort-btn { background: #eaf6ff; color: #1976d2; border: 1px solid #1976d2; border-radius: 6px; padding: 4px 10px; font-size: 16px; cursor: pointer; margin-left: 5px; font-weight: bold;}
+    .sort-btn:active { background: #1976d2; color: #fff; }
   </style>
 </head>
 <body>
@@ -174,8 +178,12 @@
   <div id="lock-screen">
     <div class="lock-box">
       <div id="lock-spinner" class="lock-icon">🔒</div>
-      <h2 id="lock-title" style="margin: 0 0 5px 0; color:#1976d2;">ĐANG XÁC THỰC...</h2>
+      <h2 id="lock-title" style="margin: 0 0 5px 0; color:#1976d2;">ỨNG DỤNG ĐÃ KHÓA</h2>
       
+      <button id="btn-faceid-trigger" onclick="quetFaceIDThoCong()" class="btn-faceid" style="display:none;">
+        <span style="font-size:24px;">👤</span> MỞ KHÓA BẰNG FACE ID
+      </button>
+
       <div id="fallback-login" style="display: none; width: 100%; margin-top: 15px;">
         <p style="font-size: 13px; color: #666; margin-bottom: 10px;">Nhập mật khẩu để truy cập</p>
         <input type="password" id="pin-input" class="pin-input" placeholder="••••••••" maxlength="8" inputmode="numeric" />
@@ -286,7 +294,7 @@
               <option value="1">1 Nhà</option><option value="2">2 Nhà</option><option value="3" selected>3 Nhà</option>
               <option value="4">4 Nhà</option><option value="5">5 Nhà</option><option value="6">6 Nhà</option>
             </select>
-            <button onclick="luuKhungSua()" class="btn" style="margin-top: 15px; margin-bottom: 0; background-color: #ff9800; font-size: 16px; padding: 12px;">XONG</button>
+            <button onclick="luuKhungSua()" class="btn" style="margin-top: 15px; margin-bottom: 0; background-color: #ff9800;">XONG</button>
           </div>
 
           <div id="mo-ta-content" class="mo-ta-box" style="display: none;">
@@ -383,7 +391,7 @@
 
           <div style="border-top: 1px dashed #ccc; margin: 15px 0 10px 0;"></div>
           <div style="font-size: 13px; color: #1976d2; font-weight: bold; margin-bottom: 10px;">
-            * Nếu bỏ tích, % của cột bị ẩn sẽ TỰ ĐỘNG NHẢY sang cột kế tiếp:
+            * Nếu bỏ tích, % của cột bị ẩn sẽ tự nhảy sang cột kế tiếp:
           </div>
           <div id="danh-sach-cot-cai-dat"></div>
           <button onclick="luuCaiDatDanhMuc()" class="btn" style="background:#ff9800; padding:12px; margin-bottom:0; margin-top:10px; font-size: 16px;">LƯU VÀ ÁP DỤNG</button>
@@ -407,15 +415,26 @@
           
           <div class="set-row" style="margin-top: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
             <label style="margin:0; font-size:15px; color:#333; display:flex; align-items:center;">
-              <input type="checkbox" id="chk-app-lock" style="transform:scale(1.5); margin-right:15px; width:auto;"> Mở Khóa Ứng Dụng Bằng Mật khẩu / Face ID
+              <input type="checkbox" id="chk-app-lock" style="transform:scale(1.5); margin-right:15px; width:auto;"> Bật Khóa App (Mật khẩu / Face ID)
             </label>
           </div>
 
-          <div style="font-size: 15px; color: #333; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">Sắp xếp thứ tự các Menu Tab:</div>
-          <div id="sort-tab-list" style="margin-bottom: 20px;">
-             </div>
+          <div class="set-row" style="border-bottom: 1px solid #eee; padding-bottom: 15px;">
+            <span style="font-size:15px; font-weight:bold; color:#333;">Đổi Mật khẩu:</span>
+            <input type="text" id="set-app-password" style="width: 120px !important; padding: 8px !important; font-size: 18px !important; text-align: center !important; border-radius: 8px !important; border: 1px solid #1976d2 !important;" maxlength="8" inputmode="numeric">
+          </div>
 
-          <button onclick="luuCaiDatApp()" class="btn" style="background:#1976d2; padding:12px; font-size: 16px; margin-bottom: 0;">LƯU CÀI ĐẶT</button>
+          <div style="font-size: 15px; color: #333; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">Sắp xếp Menu Tab:</div>
+          <div id="sort-tab-list" style="margin-bottom: 20px;"></div>
+
+          <button onclick="luuCaiDatApp()" class="btn" style="background:#1976d2; padding:12px; font-size: 16px; margin-bottom: 10px;">LƯU CÀI ĐẶT</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="color:#ff9800;">DỌN DẸP DỮ LIỆU</div>
+          <button onclick="xoaLichSuChiaGio()" class="btn" style="background:#f44336; padding:12px; font-size: 15px; margin-bottom: 10px;">XÓA LỊCH SỬ CHIA GIỜ</button>
+          <button onclick="xoaDuLieuExcel()" class="btn" style="background:#f44336; padding:12px; font-size: 15px; margin-bottom: 0;">XÓA DANH MỤC EXCEL</button>
+          <p style="font-size: 12px; color: #888; text-align: center; margin-top: 10px;">Chỉ xóa dữ liệu bạn chọn, không ảnh hưởng chức năng khác.</p>
         </div>
       </div>
 
@@ -445,14 +464,16 @@
 
 <script>
   // ==========================================
-  // HỆ THỐNG MẬT KHẨU "18121997" VÀ FACE ID
+  // HỆ THỐNG MẬT KHẨU TÙY CHỈNH & FACE ID
   // ==========================================
-  const MAT_KHAU_APP = "18121997"; 
-  function isAppLocked() { return localStorage.getItem('isAppLocked') !== 'false'; }
+  
+  function getAppPassword() { return localStorage.getItem('appPin') || "18121997"; }
+  function isAppLocked() { return localStorage.getItem('isAppLocked') !== 'false'; } // Mặc định là Bật
 
   async function khoiDongKhoa() {
-    loadTabOrder(); // Load thứ tự tab
+    loadTabOrder(); 
 
+    // Nếu người dùng đã tắt khóa hoặc phiên này đã đăng nhập
     if (!isAppLocked() || sessionStorage.getItem('appUnlocked') === 'true') {
       moKhoaThanhCong();
       return;
@@ -461,7 +482,6 @@
     let daDangKyFaceID = localStorage.getItem('faceID_Registered');
     if (window.PublicKeyCredential && daDangKyFaceID === 'true') {
       try {
-        // Cố gắng tự gọi Face ID
         document.getElementById('lock-screen').style.display = 'flex';
         const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge);
         const assertion = await navigator.credentials.get({
@@ -469,25 +489,39 @@
         });
         if (assertion) { moKhoaThanhCong(); return; }
       } catch (err) {
-        hienThiNhapPin(); // Thất bại thì hiện mã PIN
+        hienThiNhapPin(true);
       }
     } else {
-      // Lần đầu vào app -> Hiện luôn mã PIN
       document.getElementById('lock-screen').style.display = 'flex';
-      hienThiNhapPin();
+      hienThiNhapPin(false);
     }
   }
 
-  function hienThiNhapPin() {
+  function hienThiNhapPin(coHienNutFaceID) {
     document.getElementById('lock-spinner').innerText = "🔒";
     document.getElementById('lock-spinner').style.animation = "none";
     document.getElementById('lock-title').innerText = "VUI LÒNG MỞ KHÓA";
     document.getElementById('fallback-login').style.display = 'block';
+    if (coHienNutFaceID) {
+      document.getElementById('btn-faceid-trigger').style.display = 'flex';
+    }
+  }
+
+  async function quetFaceIDThoCong() {
+    try {
+      const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge);
+      const assertion = await navigator.credentials.get({
+        publicKey: { challenge: challenge, userVerification: "required", timeout: 60000 }
+      });
+      if (assertion) { moKhoaThanhCong(); }
+    } catch (err) {
+      alert("Xác thực Face ID / Vân tay không thành công.");
+    }
   }
 
   async function checkMatKhau() {
     const input = document.getElementById('pin-input').value;
-    if (input === MAT_KHAU_APP) {
+    if (input === getAppPassword()) {
       let daDangKy = localStorage.getItem('faceID_Registered');
       if (!daDangKy && window.PublicKeyCredential) {
         let hoi = confirm("Bạn có muốn bật xác thực bằng Vân tay / Face ID cho các lần mở ứng dụng sau không?");
@@ -533,21 +567,23 @@
   }
 
   // ==========================================
-  // ĐIỀU HƯỚNG BOTTOM TAB BAR VÀ LƯỚI HOME
+  // ĐIỀU HƯỚNG BOTTOM TAB BAR, LƯỚI HOME VÀ CÀI ĐẶT
   // ==========================================
   let currentTabId = 'tab-home';
+  
   function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     
     document.getElementById(tabId).classList.add('active');
-    
     let btn = document.getElementById('nav-' + tabId);
     if(btn) btn.classList.add('active');
+    else document.getElementById('nav-tab-home').classList.add('active');
     
     currentTabId = tabId;
 
-    // Tự động cuộn menu ngang nếu tab bị khuất
+    if(tabId === 'tab-cai-dat') { renderCaiDatMenu(); }
+
     if(tabId !== 'tab-home' && btn) {
         let tabBar = document.getElementById('scrollable-tab-container');
         tabBar.scrollTo({ left: btn.offsetLeft - (tabBar.offsetWidth/2) + (btn.offsetWidth/2), behavior: 'smooth' });
@@ -555,19 +591,31 @@
     window.scrollTo(0,0);
   }
 
-  // ==========================================
-  // TÙY CHỈNH CÀI ĐẶT APP (TAB 5)
-  // ==========================================
-  const defaultTabOrder = ['tab-thong-gio', 'tab-chia-gio', 'tab-thoi-tiet', 'tab-danh-muc', 'tab-cai-dat'];
-  const tabNames = {
-    'tab-thong-gio': 'THÔNG GIÓ', 'tab-chia-gio': 'CHIA GIỜ', 
-    'tab-thoi-tiet': 'THỜI TIẾT', 'tab-danh-muc': 'DANH MỤC', 'tab-cai-dat': 'CÀI ĐẶT'
-  };
+  // XỬ LÝ VUỐT MÀN HÌNH
+  let touchstartX = 0; let touchendX = 0;
+  const appContainer = document.getElementById('app-content');
+  appContainer.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
+  appContainer.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; handleSwipe(); }, {passive: true});
 
+  function handleSwipe() {
+    let swipeDist = touchendX - touchstartX;
+    if (Math.abs(swipeDist) > 70) { 
+      let activeTab = document.querySelector('.tab-content.active').id;
+      if (activeTab === 'tab-home') return; 
+
+      let order = getTabOrderArray();
+      let currentIndex = order.indexOf(activeTab);
+      
+      if (swipeDist < 0 && currentIndex < order.length - 1) { switchTab(order[currentIndex + 1]); } 
+      else if (swipeDist > 0 && currentIndex > 0) { switchTab(order[currentIndex - 1]); }
+    }
+  }
+
+  // LOGIC SẮP XẾP MENU TAB CÀI ĐẶT
   function getTabOrderArray() {
     let saved = localStorage.getItem('tabOrder');
     if (saved) return JSON.parse(saved);
-    return defaultTabOrder;
+    return ['tab-thong-gio', 'tab-chia-gio', 'tab-thoi-tiet', 'tab-danh-muc', 'tab-cai-dat'];
   }
 
   function loadTabOrder() {
@@ -581,89 +629,67 @@
 
   function renderCaiDatMenu() {
     document.getElementById('chk-app-lock').checked = isAppLocked();
-    
+    document.getElementById('set-app-password').value = getAppPassword();
+
+    const tabNames = { 'tab-thong-gio': 'THÔNG GIÓ', 'tab-chia-gio': 'CHIA GIỜ', 'tab-thoi-tiet': 'THỜI TIẾT', 'tab-danh-muc': 'DANH MỤC' };
     let order = getTabOrderArray();
     let html = '';
-    order.forEach((id, index) => {
+    order.forEach((id) => {
       if(id === 'tab-cai-dat') return; 
       html += `
         <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 15px; border-radius:8px; border:1px solid #eee; margin-bottom:5px;">
             <span style="font-weight:bold; color:#1976d2;">${tabNames[id]}</span>
-            <div>
-              <button class="sort-btn" onclick="moveTabUp('${id}')">▲</button>
-              <button class="sort-btn" onclick="moveTabDown('${id}')">▼</button>
-            </div>
-        </div>
-      `;
+            <div><button class="sort-btn" onclick="moveTabUp('${id}')">▲</button><button class="sort-btn" onclick="moveTabDown('${id}')">▼</button></div>
+        </div>`;
     });
     document.getElementById('sort-tab-list').innerHTML = html;
   }
 
   function moveTabUp(id) {
     let arr = getTabOrderArray(); let idx = arr.indexOf(id);
-    if(idx > 0) {
-      let temp = arr[idx]; arr[idx] = arr[idx-1]; arr[idx-1] = temp;
-      localStorage.setItem('tabOrder', JSON.stringify(arr));
-      renderCaiDatMenu(); loadTabOrder();
-    }
+    if(idx > 0) { let temp = arr[idx]; arr[idx] = arr[idx-1]; arr[idx-1] = temp; localStorage.setItem('tabOrder', JSON.stringify(arr)); renderCaiDatMenu(); loadTabOrder(); }
   }
 
   function moveTabDown(id) {
     let arr = getTabOrderArray(); let idx = arr.indexOf(id);
-    if(idx < arr.length - 2) { 
-      let temp = arr[idx]; arr[idx] = arr[idx+1]; arr[idx+1] = temp;
-      localStorage.setItem('tabOrder', JSON.stringify(arr));
-      renderCaiDatMenu(); loadTabOrder();
-    }
+    if(idx < arr.length - 2) { let temp = arr[idx]; arr[idx] = arr[idx+1]; arr[idx+1] = temp; localStorage.setItem('tabOrder', JSON.stringify(arr)); renderCaiDatMenu(); loadTabOrder(); }
   }
 
   function luuCaiDatApp() {
-    let isLocked = document.getElementById('chk-app-lock').checked;
-    localStorage.setItem('isAppLocked', isLocked);
+    localStorage.setItem('isAppLocked', document.getElementById('chk-app-lock').checked);
+    let pass = document.getElementById('set-app-password').value;
+    if(pass && pass.length >= 4) { localStorage.setItem('appPin', pass); }
     alert("Lưu Cài đặt Hệ thống thành công!");
   }
 
+  function xoaLichSuChiaGio() {
+    if(confirm("Bạn có muốn xóa toàn bộ lịch sử Chia giờ không?")) { localStorage.removeItem('lichSuChiaGio'); alert("Đã xóa Lịch sử chia giờ!"); }
+  }
+
+  function xoaDuLieuExcel() {
+    if(confirm("Bạn có muốn xóa dữ liệu Excel đã tải lên không?")) { localStorage.removeItem('duLieuExcelOffline'); localStorage.removeItem('cauHinhBangExcel'); alert("Đã xóa dữ liệu Danh mục!"); location.reload();}
+  }
 
   // ==========================================
-  // LOGIC TAB 1: THÔNG GIÓ (NGUYÊN GỐC TỪ ẢNH BẠN)
+  // CÁC HÀM GIAO DIỆN CON TỪ APP GỐC
   // ==========================================
-  const BANG_DO_AM = [
-    [3.11,3.17,3.22,3.27,3.32,3.37,3.43,3.48,3.53,3.58,3.63,3.68,3.74,3.79,3.84,3.94,4,4,4.05,4.1,4.15,4.2,4.25,4.31,4.36,4.41,4.46,4.52,4.57,4.62,4.67,4.72,4.77,4.83,4.88,4.93,4.65,5.04,5.09,5.14],
-    [3.33,3.39,3.45,3.5,3.56,3.61,3.67,3.72,3.78,3.83,3.89,3.94,4,4.06,4.11,4.22,4.28,4.28,4.33,4.39,4.45,4.5,4.56,4.61,4.67,4.72,4.78,4.83,4.89,4.95,5,5.06,5.11,5.17,5.22,5.28,4.98,5.39,5.45,5.5],
-    [3.57,3.63,3.69,3.75,3.81,3.86,3.92,3.98,4.04,4.1,4.16,4.22,4.28,4.34,4.4,4.52,4.58,4.58,4.64,4.7,4.76,4.82,4.87,4.93,4.99,5.05,5.11,5.17,5.23,5.29,5.35,5.41,5.47,5.53,5.59,5.65,5.34,5.77,5.83,5.89],
-    [3.82,3.88,3.94,4.01,4.07,4.13,4.2,4.26,4.32,4.39,4.45,4.52,4.59,4.64,4.7,4.83,4.83,4.9,4.96,5.02,5.1,5.16,5.22,5.29,5.35,5.42,5.48,5.54,5.61,5.67,5.72,5.79,5.85,5.91,5.98,6.04,6.1,6.17,6.23,6.29],
-    [4.08,4.14,4.21,4.21,4.35,4.42,4.49,4.55,4.62,4.69,4.76,4.82,4.89,4.96,5.03,5.1,5.16,5.23,5.3,5.37,5.44,5.5,5.57,5.64,5.71,5.78,5.84,5.91,5.98,6.05,6.12,6.18,6.25,6.32,6.39,6.46,6.52,6.59,6.66,6.73],
-    [4.36,4.43,4.5,4.57,4.65,4.72,4.79,4.86,4.94,5.01,5.08,5.15,5.23,5.3,5.37,5.44,5.52,5.59,5.66,5.74,5.81,5.88,5.95,6.03,6.1,6.17,6.24,6.32,6.39,6.46,6.53,6.61,6.68,6.75,6.82,6.9,6.97,7.04,7.11,7.19],
-    [4.65,4.73,4.8,4.88,4.96,5.04,5.11,5.19,5.27,5.35,5.42,5.5,5.58,5.66,5.73,5.81,5.89,5.97,6.04,6.12,6.2,6.28,6.35,6.43,6.51,6.59,6.67,6.74,6.82,6.9,6.97,7.05,7.13,7.21,7.28,7.36,7.44,7.52,7.59,7.67],
-    [4.96,5.04,5.13,5.21,5.29,5.38,5.46,5.54,5.62,5.71,5.79,5.87,5.95,6.04,6.12,6.2,6.28,6.37,6.45,6.53,6.62,6.7,6.78,6.86,6.95,7.03,7.11,7.19,7.29,7.36,7.44,7.53,7.61,7.69,7.77,7.86,7.94,8.02,8.1,8.19],
-    [5.29,5.38,5.47,5.56,5.64,5.73,5.82,5.91,6,6.09,6.17,6.26,6.35,6.45,6.53,6.61,6.7,6.79,6.88,6.97,7.06,7.14,7.29,7.32,7.41,7.5,7.59,7.67,7.76,7.85,7.94,8.05,8.13,8.2,8.29,8.38,8.47,8.56,8.64,8.73],
-    [5.64,5.73,5.83,5.92,6.02,6.11,6.2,6.3,6.39,6.49,6.58,6.67,6.77,6.86,6.96,7.05,7.17,7.24,7.33,7.43,7.52,7.61,7.71,7.8,7.9,7.99,8.08,8.18,8.27,8.37,8.46,8.55,8.65,8.74,8.84,8.93,9.02,9.12,9.21,9.31],
-    [6.01,6.11,6.21,6.31,6.41,6.51,6.61,6.71,6.81,6.91,7.01,7.11,7.21,7.31,7.41,7.51,7.61,7.71,7.81,7.91,8.01,8.11,8.21,8.31,8.41,8.51,8.61,8.71,8.81,8.91,9.01,9.11,9.21,9.31,9.41,9.51,9.61,9.71,9.81,9.91],
-    [6.4,6.5,6.61,6.72,6.82,6.93,7.04,7.14,7.25,7.36,7.46,7.57,7.68,7.78,7.89,8,8.1,8.21,8.32,8.42,8.59,8.64,8.74,8.85,8.96,9.06,9.17,9.28,9.38,9.49,9.6,9.7,9.81,9.92,10.02,10.13,10.24,10.34,10.45,10.56],
-    [6.81,6.92,7.03,7.15,7.26,7.38,7.49,7.6,7.72,7.83,7.94,8.06,8.17,8.28,8.4,8.51,8.62,8.74,8.85,8.96,9.08,9.19,9.3,9.42,9.53,9.64,9.76,9.87,9.98,10.1,10.21,10.33,10.44,10.55,10.67,10.78,10.89,11.01,11.12,11.23],
-    [7.24,7.36,7.48,7.6,7.72,7.84,7.97,8.09,8.21,8.33,8.45,8.57,8.69,8.81,8.93,9.05,9.17,9.29,9.41,9.53,9.66,9.78,9.9,10.02,10.14,10.26,10.38,10.5,10.62,10.74,10.86,10.89,11.09,11.22,11.34,11.47,11.59,11.71,11.83,11.95],
-    [7.7,7.83,7.95,8.08,8.21,8.34,8.47,8.6,8.72,8.85,8.98,9.11,9.24,9.37,9.49,9.62,9.75,9.88,10.01,10.14,10.26,10.39,10.52,10.65,10.78,10.91,11.06,11.16,11.29,11.42,11.55,11.68,11.8,11.93,12.06,12.19,12.32,12.45,12.57,12.7],
-    [8.18,8.32,8.45,8.59,8.73,8.86,9,9.13,9.27,9.41,9.54,9.68,9.82,9.95,10.09,10.23,10.36,10.5,10.63,10.77,10.91,11.04,11.18,11.32,11.45,11.59,11.78,11.86,12,12.19,12.33,12.54,12.68,12.82,12.95,13.09,13.15,13.22,13.36,13.5],
-    [8.69,8.83,8.98,9.12,9.27,9.41,9.56,9.7,9.85,9.99,10.14,10.28,10.43,10.57,10.72,10.86,11.01,11.15,11.29,11.44,11.58,11.73,11.87,12.02,12.16,12.31,12.45,12.6,12.74,12.95,13.03,13.18,13.32,13.47,13.61,13.76,13.9,14.05,14.19,14.34],
-    [9.22,9.38,9.53,9.68,9.84,9.99,10.15,10.3,10.45,10.61,10.76,10.91,11.07,11.22,11.38,11.53,11.68,11.84,11.99,12.14,12.3,12.45,12.6,12.76,12.91,13.07,13.22,13.37,13.53,13.68,13.83,13.99,14.14,14.3,14.45,14.6,14.76,14.91,15.06,15.22],
-    [9.79,9.95,10.11,10.27,10.44,10.6,10.76,10.93,11.09,11.25,11.42,11.58,11.74,11.91,12.07,12.23,12.4,12.56,12.73,12.88,13.05,13.21,13.37,13.54,13.7,13.86,14.03,14.19,14.35,14.52,14.68,14.84,15.01,15.17,15.33,15.49,15.66,15.82,15.98,16.15],
-    [10.38,10.55,10.73,10.9,11.07,11.24,11.42,11.59,11.76,11.94,12.11,12.28,12.46,12.63,12.8,12.97,13.15,13.32,13.49,13.67,13.84,14.01,14.19,14.36,14.53,14.7,14.88,15.05,15.22,15.4,15.57,15.74,15.92,16.09,16.26,16.43,16.61,16.78,16.95,17.13],
-    [11,11.19,11.37,11.55,11.74,11.92,12.1,12.29,12.47,12.67,12.84,13.12,13.2,13.39,13.57,13.75,13.94,14.12,14.3,14.49,14.67,14.85,15.09,15.22,15.4,15.59,15.77,15.95,16.14,16.32,16.5,16.71,16.87,17.05,17.24,17.42,17.6,17.79,17.97,18.15],
-    [11.66,11.85,12.05,12.24,12.43,12.63,12.82,13.02,13.21,13.41,13.6,13.79,14.02,14.18,14.38,14.57,14.77,14.96,15.15,15.35,15.54,15.74,15.93,16.13,16.32,16.51,16.71,16.9,17.1,17.29,17.49,17.68,17.87,18.07,18.26,18.46,18.65,18.85,19.04,19.23],
-    [12.35,12.55,12.76,12.96,13.17,13.37,13.58,13.79,13.99,14.2,14.4,14.61,14.89,15.02,15.23,15.43,15.64,15.84,16.06,16.26,16.46,16.67,16.85,17.68,17.28,17.4,17.7,17.9,18.11,18.31,18.52,18.72,18.93,19.14,19.34,19.55,19.75,19.96,20.17,20.37],
-    [13.07,13.29,13.5,13.72,13.94,14.16,14.38,14.59,14.81,15.13,15.25,15.46,15.68,15.9,16.12,16.34,16.55,16.77,16.99,17.21,17.43,17.64,17.86,18.03,18.3,18.51,18.73,18.95,19.17,19.39,19.6,19.83,20.04,20.26,20.48,20.64,20.91,21.13,21.35,21.56],
-    [13.83,14.06,14.29,14.52,14.75,14.98,15.21,15.44,15.67,15.9,16.13,16.36,16.59,16.82,17.06,17.29,17.52,17.75,17.98,18.21,18.44,18.67,18.9,19.13,19.36,19.59,19.82,20.05,20.28,20.51,20.74,20.97,21.2,21.45,21.67,21.89,22.13,22.36,22.59,22.82],
-    [14.63,14.87,15.11,15.36,15.6,15.84,16.09,16.33,16.58,16.82,17.06,17.31,17.55,17.79,18.04,18.28,18.53,18.77,19.01,19.26,19.5,19.75,19.99,20.23,20.48,20.72,20.96,21.21,21.45,21.7,21.94,22.18,22.43,22.67,22.91,23.16,23.4,23.65,23.89,24.13],
-    [15.46,15.72,15.98,16.23,16.49,16.75,17.01,17.27,17.52,17.78,18.04,18.3,18.55,18.81,19.07,19.33,19.58,19.84,20.1,20.36,20.62,20.87,21.13,21.39,21.65,21.9,22.16,22.42,22.68,22.94,23.19,23.45,23.71,23.97,24.2,24.49,24.74,25,25.25,25.51],
-    [16.34,16.61,16.88,17.16,17.43,17.7,17.97,18.25,18.52,18.79,19.06,19.34,19.61,19.88,20.15,20.42,20.7,20.97,21.24,21.51,21.79,22.06,22.33,22.6,22.87,23.15,23.42,23.69,23.96,24.24,24.51,24.78,25.05,25.33,25.4,25.87,26.14,26.42,26.69,26.96],
-    [17.26,17.55,17.83,18.12,18.41,18.7,18.98,19.27,19.56,19.85,20.13,20.42,20.71,21,21.29,21.57,22.08,22.15,22.44,22.72,23.01,23.3,23.59,23.87,24.16,24.45,24.74,25.02,25.31,25.61,25.89,26.18,26.46,26.75,27.01,27.33,27.59,27.9,28.19,28.48],
-    [18.22,18.53,18.83,19.13,19.44,19.74,20.04,20.35,20.65,20.91,21.26,21.56,21.87,22.17,22.47,23.08,23.22,23.38,23.69,23.99,24.3,24.56,24.96,25.21,25.51,25.81,26.12,26.42,26.73,27.03,27.33,27.64,27.94,28.24,28.55,28.85,29.16,29.46,29.79,30.07],
-    [19.23,19.55,19.87,20.19,20.51,20.83,21.15,21.47,21.79,22.03,22.44,22.76,23.08,23.4,23.72,24.36,24.48,24.68,25.1,25.32,25.64,25.96,26.28,26.61,26.92,27.24,27.56,27.88,28.2,28.53,28.85,29.17,29.49,29.81,30.13,30.45,30.77,31.09,31.41,31.73],
-    [20.29,20.62,20.96,21.3,21.64,21.98,22.31,22.65,22.94,23.32,23.67,25.31,24.34,24.68,25.02,25.37,25.73,26.03,26.37,26.71,27.05,27.39,27.72,28.06,28.4,28.74,29.08,29.42,29.75,30.09,30.43,30.77,31.31,31.44,31.78,32.12,32.46,32.8,33.13,33.47],
-    [21.39,21.75,22.1,22.46,22.82,23.18,23.53,23.83,24.25,24.61,24.96,26.68,25.67,26.03,26.38,26.75,27.1,27.45,27.81,28.17,28.51,28.88,29.26,29.59,29.95,30.31,30.66,31.02,31.38,31.73,32.09,32.45,32.8,33.16,33.52,33.87,34.33,34.59,34.4,35.3],
-    [22.55,22.92,23.3,23.68,24.05,24.43,24.81,25.18,25.56,25.93,26.31,26.68,27.06,27.43,27.81,28.16,28.56,28.94,29.31,29.69,30.07,30.44,30.85,31.19,31.57,31.94,32.32,32.76,33.07,33.45,33.82,34.2,34.57,34.65,35.33,35.7,36.08,36.45,36.83,37.21]
-  ];
+  function toggleMoTa() { const box = document.getElementById('mo-ta-content'); document.getElementById('view-lich-su').style.display = 'none'; box.style.display = box.style.display === 'none' ? 'block' : 'none'; }
+  function toggleLichSu() { const box = document.getElementById('view-lich-su'); document.getElementById('mo-ta-content').style.display = 'none'; document.getElementById('view-edit').style.display = 'none'; document.getElementById('view-summary').style.display = 'block'; if (box.style.display === 'none') { renderDanhSachLichSu(); box.style.display = 'block'; } else { box.style.display = 'none'; } }
+  function moKhungSua() { document.getElementById('view-summary').style.display = 'none'; document.getElementById('view-edit').style.display = 'block'; document.getElementById('mo-ta-content').style.display = 'none'; document.getElementById('view-lich-su').style.display = 'none'; }
+  function luuKhungSua() {
+    const sv = document.getElementById('sang-vao').value; const sr = document.getElementById('sang-ra').value;
+    const cv = document.getElementById('chieu-vao').value; const cr = document.getElementById('chieu-ra').value;
+    const n = document.getElementById('so-nha').value;
+    document.getElementById('sum-sang').innerText = sv + ' - ' + sr; document.getElementById('sum-chieu').innerText = cv + ' - ' + cr; document.getElementById('sum-nha').innerText = n + ' Nhà';
+    document.getElementById('view-summary').style.display = 'block'; document.getElementById('view-edit').style.display = 'none';
+    let fixedConfig = JSON.parse(localStorage.getItem('fixedSchedule') || '{"isFixed": false, "data": []}');
+    if(fixedConfig.isFixed && fixedConfig.data.length !== parseInt(n)) { fixedConfig.isFixed = false; localStorage.setItem('fixedSchedule', JSON.stringify(fixedConfig)); }
+  }
 
+  // ==========================================
+  // LOGIC TAB 1: THÔNG GIÓ (NGUYÊN GỐC 100%)
+  // ==========================================
+  const BANG_DO_AM = [[3.11,3.17,3.22,3.27,3.32,3.37,3.43,3.48,3.53,3.58,3.63,3.68,3.74,3.79,3.84,3.94,4,4,4.05,4.1,4.15,4.2,4.25,4.31,4.36,4.41,4.46,4.52,4.57,4.62,4.67,4.72,4.77,4.83,4.88,4.93,4.65,5.04,5.09,5.14],[3.33,3.39,3.45,3.5,3.56,3.61,3.67,3.72,3.78,3.83,3.89,3.94,4,4.06,4.11,4.22,4.28,4.28,4.33,4.39,4.45,4.5,4.56,4.61,4.67,4.72,4.78,4.83,4.89,4.95,5,5.06,5.11,5.17,5.22,5.28,4.98,5.39,5.45,5.5],[3.57,3.63,3.69,3.75,3.81,3.86,3.92,3.98,4.04,4.1,4.16,4.22,4.28,4.34,4.4,4.52,4.58,4.58,4.64,4.7,4.76,4.82,4.87,4.93,4.99,5.05,5.11,5.17,5.23,5.29,5.35,5.41,5.47,5.53,5.59,5.65,5.34,5.77,5.83,5.89],[3.82,3.88,3.94,4.01,4.07,4.13,4.2,4.26,4.32,4.39,4.45,4.52,4.59,4.64,4.7,4.83,4.83,4.9,4.96,5.02,5.1,5.16,5.22,5.29,5.35,5.42,5.48,5.54,5.61,5.67,5.72,5.79,5.85,5.91,5.98,6.04,6.1,6.17,6.23,6.29],[4.08,4.14,4.21,4.21,4.35,4.42,4.49,4.55,4.62,4.69,4.76,4.82,4.89,4.96,5.03,5.1,5.16,5.23,5.3,5.37,5.44,5.5,5.57,5.64,5.71,5.78,5.84,5.91,5.98,6.05,6.12,6.18,6.25,6.32,6.39,6.46,6.52,6.59,6.66,6.73],[4.36,4.43,4.5,4.57,4.65,4.72,4.79,4.86,4.94,5.01,5.08,5.15,5.23,5.3,5.37,5.44,5.52,5.59,5.66,5.74,5.81,5.88,5.95,6.03,6.1,6.17,6.24,6.32,6.39,6.46,6.53,6.61,6.68,6.75,6.82,6.9,6.97,7.04,7.11,7.19],[4.65,4.73,4.8,4.88,4.96,5.04,5.11,5.19,5.27,5.35,5.42,5.5,5.58,5.66,5.73,5.81,5.89,5.97,6.04,6.12,6.2,6.28,6.35,6.43,6.51,6.59,6.67,6.74,6.82,6.9,6.97,7.05,7.13,7.21,7.28,7.36,7.44,7.52,7.59,7.67],[4.96,5.04,5.13,5.21,5.29,5.38,5.46,5.54,5.62,5.71,5.79,5.87,5.95,6.04,6.12,6.2,6.28,6.37,6.45,6.53,6.62,6.7,6.78,6.86,6.95,7.03,7.11,7.19,7.29,7.36,7.44,7.53,7.61,7.69,7.77,7.86,7.94,8.02,8.1,8.19],[5.29,5.38,5.47,5.56,5.64,5.73,5.82,5.91,6,6.09,6.17,6.26,6.35,6.45,6.53,6.61,6.7,6.79,6.88,6.97,7.06,7.14,7.29,7.32,7.41,7.5,7.59,7.67,7.76,7.85,7.94,8.05,8.13,8.2,8.29,8.38,8.47,8.56,8.64,8.73],[5.64,5.73,5.83,5.92,6.02,6.11,6.2,6.3,6.39,6.49,6.58,6.67,6.77,6.86,6.96,7.05,7.17,7.24,7.33,7.43,7.52,7.61,7.71,7.8,7.9,7.99,8.08,8.18,8.27,8.37,8.46,8.55,8.65,8.74,8.84,8.93,9.02,9.12,9.21,9.31],[6.01,6.11,6.21,6.31,6.41,6.51,6.61,6.71,6.81,6.91,7.01,7.11,7.21,7.31,7.41,7.51,7.61,7.71,7.81,7.91,8.01,8.11,8.21,8.31,8.41,8.51,8.61,8.71,8.81,8.91,9.01,9.11,9.21,9.31,9.41,9.51,9.61,9.71,9.81,9.91],[6.4,6.5,6.61,6.72,6.82,6.93,7.04,7.14,7.25,7.36,7.46,7.57,7.68,7.78,7.89,8,8.1,8.21,8.32,8.42,8.59,8.64,8.74,8.85,8.96,9.06,9.17,9.28,9.38,9.49,9.6,9.7,9.81,9.92,10.02,10.13,10.24,10.34,10.45,10.56],[6.81,6.92,7.03,7.15,7.26,7.38,7.49,7.6,7.72,7.83,7.94,8.06,8.17,8.28,8.4,8.51,8.62,8.74,8.85,8.96,9.08,9.19,9.3,9.42,9.53,9.64,9.76,9.87,9.98,10.1,10.21,10.33,10.44,10.55,10.67,10.78,10.89,11.01,11.12,11.23],[7.24,7.36,7.48,7.6,7.72,7.84,7.97,8.09,8.21,8.33,8.45,8.57,8.69,8.81,8.93,9.05,9.17,9.29,9.41,9.53,9.66,9.78,9.9,10.02,10.14,10.26,10.38,10.5,10.62,10.74,10.86,10.89,11.09,11.22,11.34,11.47,11.59,11.71,11.83,11.95],[7.7,7.83,7.95,8.08,8.21,8.34,8.47,8.6,8.72,8.85,8.98,9.11,9.24,9.37,9.49,9.62,9.75,9.88,10.01,10.14,10.26,10.39,10.52,10.65,10.78,10.91,11.06,11.16,11.29,11.42,11.55,11.68,11.8,11.93,12.06,12.19,12.32,12.45,12.57,12.7],[8.18,8.32,8.45,8.59,8.73,8.86,9,9.13,9.27,9.41,9.54,9.68,9.82,9.95,10.09,10.23,10.36,10.5,10.63,10.77,10.91,11.04,11.18,11.32,11.45,11.59,11.78,11.86,12,12.19,12.33,12.54,12.68,12.82,12.95,13.09,13.15,13.22,13.36,13.5],[8.69,8.83,8.98,9.12,9.27,9.41,9.56,9.7,9.85,9.99,10.14,10.28,10.43,10.57,10.72,10.86,11.01,11.15,11.29,11.44,11.58,11.73,11.87,12.02,12.16,12.31,12.45,12.6,12.74,12.95,13.03,13.18,13.32,13.47,13.61,13.76,13.9,14.05,14.19,14.34],[9.22,9.38,9.53,9.68,9.84,9.99,10.15,10.3,10.45,10.61,10.76,10.91,11.07,11.22,11.38,11.53,11.68,11.84,11.99,12.14,12.3,12.45,12.6,12.76,12.91,13.07,13.22,13.37,13.53,13.68,13.83,13.99,14.14,14.3,14.45,14.6,14.76,14.91,15.06,15.22],[9.79,9.95,10.11,10.27,10.44,10.6,10.76,10.93,11.09,11.25,11.42,11.58,11.74,11.91,12.07,12.23,12.4,12.56,12.73,12.88,13.05,13.21,13.37,13.54,13.7,13.86,14.03,14.19,14.35,14.52,14.68,14.84,15.01,15.17,15.33,15.49,15.66,15.82,15.98,16.15],[10.38,10.55,10.73,10.9,11.07,11.24,11.42,11.59,11.76,11.94,12.11,12.28,12.46,12.63,12.8,12.97,13.15,13.32,13.49,13.67,13.84,14.01,14.19,14.36,14.53,14.7,14.88,15.05,15.22,15.4,15.57,15.74,15.92,16.09,16.26,16.43,16.61,16.78,16.95,17.13],[11,11.19,11.37,11.55,11.74,11.92,12.1,12.29,12.47,12.67,12.84,13.12,13.2,13.39,13.57,13.75,13.94,14.12,14.3,14.49,14.67,14.85,15.09,15.22,15.4,15.59,15.77,15.95,16.14,16.32,16.5,16.71,16.87,17.05,17.24,17.42,17.6,17.79,17.97,18.15],[11.66,11.85,12.05,12.24,12.43,12.63,12.82,13.02,13.21,13.41,13.6,13.79,14.02,14.18,14.38,14.57,14.77,14.96,15.15,15.35,15.54,15.74,15.93,16.13,16.32,16.51,16.71,16.9,17.1,17.29,17.49,17.68,17.87,18.07,18.26,18.46,18.65,18.85,19.04,19.23],[12.35,12.55,12.76,12.96,13.17,13.37,13.58,13.79,13.99,14.2,14.4,14.61,14.89,15.02,15.23,15.43,15.64,15.84,16.06,16.26,16.46,16.67,16.85,17.68,17.28,17.4,17.7,17.9,18.11,18.31,18.52,18.72,18.93,19.14,19.34,19.55,19.75,19.96,20.17,20.37],[13.07,13.29,13.5,13.72,13.94,14.16,14.38,14.59,14.81,15.13,15.25,15.46,15.68,15.9,16.12,16.34,16.55,16.77,16.99,17.21,17.43,17.64,17.86,18.03,18.3,18.51,18.73,18.95,19.17,19.39,19.6,19.83,20.04,20.26,20.48,20.64,20.91,21.13,21.35,21.56],[13.83,14.06,14.29,14.52,14.75,14.98,15.21,15.44,15.67,15.9,16.13,16.36,16.59,16.82,17.06,17.29,17.52,17.75,17.98,18.21,18.44,18.67,18.9,19.13,19.36,19.59,19.82,20.05,20.28,20.51,20.74,20.97,21.2,21.45,21.67,21.89,22.13,22.36,22.59,22.82],[14.63,14.87,15.11,15.36,15.6,15.84,16.09,16.33,16.58,16.82,17.06,17.31,17.55,17.79,18.04,18.28,18.53,18.77,19.01,19.26,19.5,19.75,19.99,20.23,20.48,20.72,20.96,21.21,21.45,21.7,21.94,22.18,22.43,22.67,22.91,23.16,23.4,23.65,23.89,24.13],[15.46,15.72,15.98,16.23,16.49,16.75,17.01,17.27,17.52,17.78,18.04,18.3,18.55,18.81,19.07,19.33,19.58,19.84,20.1,20.36,20.62,20.87,21.13,21.39,21.65,21.9,22.16,22.42,22.68,22.94,23.19,23.45,23.71,23.97,24.2,24.49,24.74,25,25.25,25.51],[16.34,16.61,16.88,17.16,17.43,17.7,17.97,18.25,18.52,18.79,19.06,19.34,19.61,19.88,20.15,20.42,20.7,20.97,21.24,21.51,21.79,22.06,22.33,22.6,22.87,23.15,23.42,23.69,23.96,24.24,24.51,24.78,25.05,25.33,25.4,25.87,26.14,26.42,26.69,26.96],[17.26,17.55,17.83,18.12,18.41,18.7,18.98,19.27,19.56,19.85,20.13,20.42,20.71,21,21.29,21.57,22.08,22.15,22.44,22.72,23.01,23.3,23.59,23.87,24.16,24.45,24.74,25.02,25.31,25.61,25.89,26.18,26.46,26.75,27.01,27.33,27.59,27.9,28.19,28.48],[18.22,18.53,18.83,19.13,19.44,19.74,20.04,20.35,20.65,20.91,21.26,21.56,21.87,22.17,22.47,23.08,23.22,23.38,23.69,23.99,24.3,24.56,24.96,25.21,25.51,25.81,26.12,26.42,26.73,27.03,27.33,27.64,27.94,28.24,28.55,28.85,29.16,29.46,29.79,30.07],[19.23,19.55,19.87,20.19,20.51,20.83,21.15,21.47,21.79,22.03,22.44,22.76,23.08,23.4,23.72,24.36,24.48,24.68,25.1,25.32,25.64,25.96,26.28,26.61,26.92,27.24,27.56,27.88,28.2,28.53,28.85,29.17,29.49,29.81,30.13,30.45,30.77,31.09,31.41,31.73],[20.29,20.62,20.96,21.3,21.64,21.98,22.31,22.65,22.94,23.32,23.67,25.31,24.34,24.68,25.02,25.37,25.73,26.03,26.37,26.71,27.05,27.39,27.72,28.06,28.4,28.74,29.08,29.42,29.75,30.09,30.43,30.77,31.31,31.44,31.78,32.12,32.46,32.8,33.13,33.47],[21.39,21.75,22.1,22.46,22.82,23.18,23.53,23.83,24.25,24.61,24.96,26.68,25.67,26.03,26.38,26.75,27.1,27.45,27.81,28.17,28.51,28.88,29.26,29.59,29.95,30.31,30.66,31.02,31.38,31.73,32.09,32.45,32.8,33.16,33.52,33.87,34.33,34.59,34.4,35.3],[22.55,22.92,23.3,23.68,24.05,24.43,24.81,25.18,25.56,25.93,26.31,26.68,27.06,27.43,27.81,28.16,28.56,28.94,29.31,29.69,30.07,30.44,30.85,31.19,31.57,31.94,32.32,32.76,33.07,33.45,33.82,34.2,34.57,34.65,35.33,35.7,36.08,36.45,36.83,37.21]];
   function layDoAmTuyetDoi(n, d) { let iN=Math.round(n)-1; let iD=Math.round(d)-60; if(iN<0)iN=0; if(iN>=34)iN=33; if(iD<0)iD=0; if(iD>=40)iD=39; return BANG_DO_AM[iN][iD]; }
   function tinhDS(da) { const b=[5.18,5.55,5.94,6.33,6.8,7.27,7.74,8.28,8.82,9.41,10.01,10.66,11.45,12.11,12.83,13.64,14.49,15.4,16.32,17.31,18.33,19.43,20.57,21.75,23.02,24.35,25.76,27.2,28.78,30.37]; let b8=0; for(let i=0;i<b.length;i++){if(da>=b[i])b8=i;else break;} const b9=b[b8]; const b10=(b8+1<b.length)?b[b8+1]:b9; const b11=Math.abs(b9-da); const b7=Math.min(Math.abs(da-b9),Math.abs(da-b10)); const b12=(b11===b7)?b9:b10; const b13=(b11===b7)?(b8+1):(b8+2); return Math.round(da*b13/b12*10)/10; }
   
@@ -687,53 +713,35 @@
     m += mins; h += Math.floor(m / 60); m = m % 60;
     return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
   }
-
   function generateFixedData(num) {
-    let data = [];
-    let sv = "06:45", sr = "11:00", cv = "13:30", cr = "16:30";
+    let data = []; let sv = "06:45", sr = "11:00", cv = "13:30", cr = "16:30";
     for (let i=0; i<num; i++) {
       data.push({sv, sr, cv, cr});
-      let stepSV = (i%2 === 0) ? 7 : 8; let stepSR = (i%2 === 0) ? 8 : 7;
-      let stepCV = (i%2 === 0) ? 8 : 7; let stepCR = (i%2 === 0) ? 8 : 7;
-      sv = addMinutes(sv, stepSV); sr = addMinutes(sr, stepSR);
-      cv = addMinutes(cv, stepCV); cr = addMinutes(cr, stepCR);
+      let stepSV = (i%2 === 0) ? 7 : 8; let stepSR = (i%2 === 0) ? 8 : 7; let stepCV = (i%2 === 0) ? 8 : 7; let stepCR = (i%2 === 0) ? 8 : 7;
+      sv = addMinutes(sv, stepSV); sr = addMinutes(sr, stepSR); cv = addMinutes(cv, stepCV); cr = addMinutes(cr, stepCR);
     }
     return data;
   }
-
   function formatTime(mins) { let h=Math.floor(mins/60); let m=mins%60; return (h<10?'0'+h:h)+':'+(m<10?'0'+m:m); }
   function parseTime(t) { let p=t.split(':'); return parseInt(p[0])*60+parseInt(p[1]); }
   function getRandom(min, max) { return Math.floor(Math.random()*(max-min+1))+min; }
-  
   function taoDayThoiGianTheoThuTu(baseMin, isForward, numHouses) { 
-    let t=[]; let c=baseMin; 
-    for(let i=0; i<numHouses; i++) { t.push(c); let s=getRandom(5,10); c=isForward?c+s:c-s; } 
-    return t.sort((a,b)=>a-b); 
+    let t=[]; let c=baseMin; for(let i=0; i<numHouses; i++) { t.push(c); let s=getRandom(5,10); c=isForward?c+s:c-s; } return t.sort((a,b)=>a-b); 
   }
-
   function getHistoryLich() { let h=localStorage.getItem('lichSuChiaGio'); return h?JSON.parse(h):[]; }
   function saveHistoryLich(dateStr, raVao, thongGio, isFixed) {
     let h = getHistoryLich(); h = h.filter(item => item.date !== dateStr); 
     h.push({ date: dateStr, bangRaVao: raVao, bangThongGio: thongGio, isFixed: isFixed });
-    if(h.length > 30) h.shift(); 
-    localStorage.setItem('lichSuChiaGio', JSON.stringify(h));
+    if(h.length > 30) h.shift(); localStorage.setItem('lichSuChiaGio', JSON.stringify(h));
   }
-
   function moCaiDatCoDinh() {
     let n = parseInt(document.getElementById('so-nha').value);
-    let listDiv = document.getElementById('form-co-dinh-list');
-    listDiv.innerHTML = '';
-    
+    let listDiv = document.getElementById('form-co-dinh-list'); listDiv.innerHTML = '';
     let fixedConfig = JSON.parse(localStorage.getItem('fixedSchedule') || '{"isFixed": false, "data": []}');
-    if(fixedConfig.data.length !== n) {
-      fixedConfig.data = generateFixedData(n);
-    }
-    
+    if(fixedConfig.data.length !== n) { fixedConfig.data = generateFixedData(n); }
     document.getElementById('chk-co-dinh').checked = fixedConfig.isFixed;
-    
     for(let i=0; i<n; i++) {
-        let sv = fixedConfig.data[i].sv; let sr = fixedConfig.data[i].sr;
-        let cv = fixedConfig.data[i].cv; let cr = fixedConfig.data[i].cr;
+        let sv = fixedConfig.data[i].sv; let sr = fixedConfig.data[i].sr; let cv = fixedConfig.data[i].cv; let cr = fixedConfig.data[i].cr;
         listDiv.innerHTML += `
             <div style="background:#fff; padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #ddd;">
                 <div style="font-size:13px; font-weight:bold; color:#1976d2; margin-bottom:8px;">🏠 NHÀ ${i+1}</div>
@@ -749,56 +757,38 @@
                     <span style="font-weight:bold;">-</span>
                     <input type="time" id="fix-cr-${i}" value="${cr}" style="flex:1; margin:0 5px; border:1px solid #ccc; padding:6px; border-radius:6px;">
                 </div>
-            </div>
-        `;
+            </div>`;
     }
     toggleFormCoDinh();
-    let panel = document.getElementById('panel-co-dinh');
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    let panel = document.getElementById('panel-co-dinh'); panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
   }
-
   function toggleFormCoDinh() {
     let isChecked = document.getElementById('chk-co-dinh').checked;
     document.getElementById('form-co-dinh-list').style.display = isChecked ? 'block' : 'none';
   }
-
   function luuCaiDatCoDinh() {
-    let isFixed = document.getElementById('chk-co-dinh').checked;
-    let n = parseInt(document.getElementById('so-nha').value);
-    let data = [];
+    let isFixed = document.getElementById('chk-co-dinh').checked; let n = parseInt(document.getElementById('so-nha').value); let data = [];
     if(isFixed) {
         for(let i=0; i<n; i++) {
             data.push({
-                sv: document.getElementById(`fix-sv-${i}`).value,
-                sr: document.getElementById(`fix-sr-${i}`).value,
-                cv: document.getElementById(`fix-cv-${i}`).value,
-                cr: document.getElementById(`fix-cr-${i}`).value
+                sv: document.getElementById(`fix-sv-${i}`).value, sr: document.getElementById(`fix-sr-${i}`).value,
+                cv: document.getElementById(`fix-cv-${i}`).value, cr: document.getElementById(`fix-cr-${i}`).value
             });
         }
     }
     localStorage.setItem('fixedSchedule', JSON.stringify({ isFixed, data }));
-    document.getElementById('panel-co-dinh').style.display = 'none';
-    taoDuLieu(); 
+    document.getElementById('panel-co-dinh').style.display = 'none'; taoDuLieu(); 
   }
-
   let soLanBam=0; let thoiGianCho=null;
   function xuLyNhanChiaLich() {
-    soLanBam++;
-    if(soLanBam===1) thoiGianCho=setTimeout(()=>{soLanBam=0;},800);
+    soLanBam++; if(soLanBam===1) thoiGianCho=setTimeout(()=>{soLanBam=0;},800);
     if(soLanBam===3){ clearTimeout(thoiGianCho); soLanBam=0; if(confirm("Tạo lại Lịch chia cho ngày HÔM NAY?")) taoDuLieu(); }
   }
-
   function taoDuLieu() {
     let n=parseInt(document.getElementById('so-nha').value);
     let fixedConfig = JSON.parse(localStorage.getItem('fixedSchedule') || '{"isFixed": false, "data": []}');
-    
-    if(fixedConfig.isFixed && fixedConfig.data.length !== n) {
-        fixedConfig.isFixed = false;
-        localStorage.setItem('fixedSchedule', JSON.stringify(fixedConfig));
-    }
-
+    if(fixedConfig.isFixed && fixedConfig.data.length !== n) { fixedConfig.isFixed = false; localStorage.setItem('fixedSchedule', JSON.stringify(fixedConfig)); }
     let assignSV=[], assignSR=[], assignCV=[], assignCR=[];
-    
     if(fixedConfig.isFixed) {
         for(let i=0; i<n; i++) {
             assignSV.push(parseTime(fixedConfig.data[i].sv)); assignSR.push(parseTime(fixedConfig.data[i].sr));
@@ -810,7 +800,6 @@
         assignSV=taoDayThoiGianTheoThuTu(svB,true,n); assignSR=taoDayThoiGianTheoThuTu(srB,false,n);
         assignCV=taoDayThoiGianTheoThuTu(cvB,true,n); assignCR=taoDayThoiGianTheoThuTu(crB,false,n);
     }
-
     let mSV=Math.max(...assignSV); let mCV=Math.max(...assignCV);
     let sM2=Math.max(480+getRandom(0,15), mSV+60); let aM2=taoDayThoiGianTheoThuTu(sM2,true,n);
     let sM4=Math.max(840+getRandom(0,15), mCV+60); let aM4=taoDayThoiGianTheoThuTu(sM4,true,n);
@@ -821,28 +810,22 @@
       b1.innerHTML+=`<tr><td>N${i+1}</td><td class="td-highlight">${formatTime(assignSV[i])}</td><td>${formatTime(assignSR[i])}</td><td class="td-highlight">${formatTime(assignCV[i])}</td><td>${formatTime(assignCR[i])}</td></tr>`; 
       b2.innerHTML+=`<tr><td>N${i+1}</td><td class="td-highlight">${formatTime(assignSV[i])}</td><td>${formatTime(aM2[i])}</td><td class="td-highlight">${formatTime(assignCV[i])}</td><td>${formatTime(aM4[i])}</td></tr>`; 
     }
-    
     let ngayHienTai=new Date().toLocaleDateString('vi-VN');
     saveHistoryLich(ngayHienTai, b1.innerHTML, b2.innerHTML, fixedConfig.isFixed);
-
     document.getElementById('wrap-bang-ra-vao').style.display = fixedConfig.isFixed ? 'none' : 'block';
     let labelFixed = fixedConfig.isFixed ? '<span style="color:#888; font-size:14px;">(Đã cố định - Ẩn)</span>' : '<span style="color:#888; font-size:14px;">(Hôm nay)</span>';
-    
     document.getElementById('title-ra-vao').innerHTML = `1. LỊCH RA VÀO ${labelFixed}`;
     document.getElementById('title-thong-gio').innerHTML = `2. LỊCH THÔNG GIÓ <span style="color:#888; font-size:14px;">(Hôm nay)</span>`;
     document.getElementById('ket-qua-chia-gio').style.display='block'; 
-    
     localStorage.setItem('sumSang',document.getElementById('sum-sang').innerText); localStorage.setItem('sumChieu',document.getElementById('sum-chieu').innerText); localStorage.setItem('sumNha',document.getElementById('sum-nha').innerText);
   }
 
   function renderDanhSachLichSu() {
-    let history = getHistoryLich(); let container = document.getElementById('danh-sach-lich-su');
-    container.innerHTML = '';
+    let history = getHistoryLich(); let container = document.getElementById('danh-sach-lich-su'); container.innerHTML = '';
     if (history.length === 0) { container.innerHTML = '<div style="font-size: 13px; color: #888; text-align: center;">Chưa có dữ liệu lịch sử.</div>'; return; }
     let ngayHienTai = new Date().toLocaleDateString('vi-VN');
     history.slice().reverse().forEach(item => {
-      let isToday = (item.date === ngayHienTai);
-      let btn = document.createElement('button');
+      let isToday = (item.date === ngayHienTai); let btn = document.createElement('button');
       btn.innerHTML = isToday ? `Hôm nay (${item.date})` : item.date;
       btn.style.cssText = `padding: 10px; border: 1px solid ${isToday ? '#ff9800' : '#1976d2'}; border-radius: 8px; background: ${isToday ? '#fff9e6' : '#fff'}; color: ${isToday ? '#ff9800' : '#1976d2'}; font-weight: bold; cursor: pointer; text-align: left;`;
       btn.onclick = () => xemLichSuNgay(item.date, item.bangRaVao, item.bangThongGio, isToday, item.isFixed);
@@ -851,17 +834,12 @@
   }
 
   function xemLichSuNgay(dateStr, raVao, thongGio, isToday, isFixed) {
-    document.querySelector('#bang-ra-vao tbody').innerHTML = raVao;
-    document.querySelector('#bang-thong-gio tbody').innerHTML = thongGio;
-    
-    let label = isToday ? 'Hôm nay' : dateStr;
-    let labelFixed = isFixed ? `(${label} - Đã cố định)` : `(${label})`;
-
+    document.querySelector('#bang-ra-vao tbody').innerHTML = raVao; document.querySelector('#bang-thong-gio tbody').innerHTML = thongGio;
+    let label = isToday ? 'Hôm nay' : dateStr; let labelFixed = isFixed ? `(${label} - Đã cố định)` : `(${label})`;
     document.getElementById('title-ra-vao').innerHTML = `1. LỊCH RA VÀO <span style="color:#888; font-size:14px;">${labelFixed}</span>`;
     document.getElementById('title-thong-gio').innerHTML = `2. LỊCH THÔNG GIÓ <span style="color:#888; font-size:14px;">(${label})</span>`;
     document.getElementById('wrap-bang-ra-vao').style.display = isFixed ? 'none' : 'block';
-    document.getElementById('ket-qua-chia-gio').style.display = 'block';
-    toggleLichSu(); 
+    document.getElementById('ket-qua-chia-gio').style.display = 'block'; toggleLichSu(); 
   }
 
   // ==========================================
@@ -896,25 +874,16 @@
       let data = new Uint8Array(e.target.result); let workbook = XLSX.read(data, {type: 'array'});
       let json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {defval: ""});
       if(json.length === 0) { alert("File rỗng!"); return; }
-      
-      let cleanedJson = json.map(row => {
-          let newRow = {};
-          for (let key in row) { if (!key.startsWith('__EMPTY')) { newRow[key] = row[key]; } }
-          return newRow;
-      });
-
-      duLieuDanhMuc = cleanedJson; 
-      localStorage.setItem('duLieuExcelOffline', JSON.stringify(duLieuDanhMuc));
+      let cleanedJson = json.map(row => { let newRow = {}; for (let key in row) { if (!key.startsWith('__EMPTY')) { newRow[key] = row[key]; } } return newRow; });
+      duLieuDanhMuc = cleanedJson; localStorage.setItem('duLieuExcelOffline', JSON.stringify(duLieuDanhMuc));
       taoCauHinhMacDinh(); hienThiBangDanhMuc(duLieuDanhMuc);
       alert("Tải dữ liệu thành công! Bấm ⚙️ để căn chỉnh bảng.");
-    };
-    reader.readAsArrayBuffer(file);
+    }; reader.readAsArrayBuffer(file);
   }
 
   function taoCauHinhMacDinh() {
     let cacCot = Object.keys(duLieuDanhMuc[0]).filter(c => !c.startsWith('__EMPTY')); 
-    let defaultWidth = Math.floor(100 / cacCot.length);
-    cauHinhBang.cot = {};
+    let defaultWidth = Math.floor(100 / cacCot.length); cauHinhBang.cot = {};
     cacCot.forEach(c => { cauHinhBang.cot[c] = { show: true, width: defaultWidth }; });
     if(cacCot[0]) cauHinhBang.cot[cacCot[0]].width = 50; 
     localStorage.setItem('cauHinhBangExcel', JSON.stringify(cauHinhBang));
@@ -924,46 +893,35 @@
     let panel = document.getElementById('panel-cai-dat-danh-muc');
     if(panel.style.display === 'block') { panel.style.display = 'none'; return; }
     if(duLieuDanhMuc.length === 0) { alert("Vui lòng tải file Excel lên trước!"); return; }
-    
     document.getElementById('set-fontsize').value = cauHinhBang.fontSize;
-
     let htmlCaiDatCot = "";
     Object.keys(cauHinhBang.cot).forEach(tenCot => {
       if (tenCot.startsWith('__EMPTY')) return;
-      let isChecked = cauHinhBang.cot[tenCot].show ? "checked" : "";
-      let widthVal = cauHinhBang.cot[tenCot].width;
+      let isChecked = cauHinhBang.cot[tenCot].show ? "checked" : ""; let widthVal = cauHinhBang.cot[tenCot].width;
       htmlCaiDatCot += `
         <div class="set-row">
           <label style="margin:0; display:flex; align-items:center; flex:1; font-size:13px; color:#333; cursor:pointer;">
-            <input type="checkbox" id="chk-${tenCot}" onchange="chuyenPhanTramTuDong('${tenCot}')" ${isChecked}>
-            ${tenCot}
+            <input type="checkbox" id="chk-${tenCot}" onchange="chuyenPhanTramTuDong('${tenCot}')" ${isChecked}> ${tenCot}
           </label>
           <div style="display:flex; align-items:center;">
-            <input type="number" id="width-${tenCot}" value="${widthVal}" ${!cauHinhBang.cot[tenCot].show ? 'disabled style="background:#f0f0f0;"' : ''}> 
-            <span style="margin-left:5px; color:#666;">%</span>
+            <input type="number" id="width-${tenCot}" value="${widthVal}" ${!cauHinhBang.cot[tenCot].show ? 'disabled style="background:#f0f0f0;"' : ''}> <span style="margin-left:5px; color:#666;">%</span>
           </div>
-        </div>
-      `;
+        </div>`;
     });
-    document.getElementById('danh-sach-cot-cai-dat').innerHTML = htmlCaiDatCot;
-    panel.style.display = 'block';
+    document.getElementById('danh-sach-cot-cai-dat').innerHTML = htmlCaiDatCot; panel.style.display = 'block';
   }
 
   function chuyenPhanTramTuDong(cotNay) {
     let chk = document.getElementById('chk-' + cotNay); let inp = document.getElementById('width-' + cotNay);
     let soPhanTramHienTai = parseInt(inp.value) || 0;
-    let tatCaCacCot = Object.keys(cauHinhBang.cot).filter(c => !c.startsWith('__EMPTY')); 
-    let viTriHienTai = tatCaCacCot.indexOf(cotNay);
-
+    let tatCaCacCot = Object.keys(cauHinhBang.cot).filter(c => !c.startsWith('__EMPTY')); let viTriHienTai = tatCaCacCot.indexOf(cotNay);
     if (!chk.checked) {
-      inp.value = 0; inp.disabled = true; inp.style.background = "#f0f0f0";
-      let daTimThayCotNhan = false;
+      inp.value = 0; inp.disabled = true; inp.style.background = "#f0f0f0"; let daTimThayCotNhan = false;
       for (let i = viTriHienTai + 1; i < tatCaCacCot.length; i++) {
         let chkTiepTheo = document.getElementById('chk-' + tatCaCacCot[i]);
         if (chkTiepTheo && chkTiepTheo.checked) {
           let inpTiepTheo = document.getElementById('width-' + tatCaCacCot[i]);
-          inpTiepTheo.value = (parseInt(inpTiepTheo.value) || 0) + soPhanTramHienTai;
-          daTimThayCotNhan = true; break;
+          inpTiepTheo.value = (parseInt(inpTiepTheo.value) || 0) + soPhanTramHienTai; daTimThayCotNhan = true; break;
         }
       }
       if (!daTimThayCotNhan) {
@@ -971,8 +929,7 @@
           let chkPhiaTruoc = document.getElementById('chk-' + tatCaCacCot[i]);
           if (chkPhiaTruoc && chkPhiaTruoc.checked) {
             let inpPhiaTruoc = document.getElementById('width-' + tatCaCacCot[i]);
-            inpPhiaTruoc.value = (parseInt(inpPhiaTruoc.value) || 0) + soPhanTramHienTai;
-            break;
+            inpPhiaTruoc.value = (parseInt(inpPhiaTruoc.value) || 0) + soPhanTramHienTai; break;
           }
         }
       }
@@ -991,15 +948,12 @@
       }
     });
     localStorage.setItem('cauHinhBangExcel', JSON.stringify(cauHinhBang));
-    document.getElementById('panel-cai-dat-danh-muc').style.display = 'none';
-    timKiemDanhMuc(); 
+    document.getElementById('panel-cai-dat-danh-muc').style.display = 'none'; timKiemDanhMuc(); 
   }
 
   function hienThiBangDanhMuc(data) {
     let thead = document.getElementById('dm-header'); let tbody = document.getElementById('dm-body');
-    if (!data || data.length === 0) {
-      thead.innerHTML = "<th>DỮ LIỆU</th>"; tbody.innerHTML = "<tr><td style='color:#999; padding: 20px; text-align:center;'>Không tìm thấy kết quả.</td></tr>"; return;
-    }
+    if (!data || data.length === 0) { thead.innerHTML = "<th>DỮ LIỆU</th>"; tbody.innerHTML = "<tr><td style='color:#999; padding: 20px; text-align:center;'>Không tìm thấy kết quả.</td></tr>"; return; }
     let cotHienThi = Object.keys(cauHinhBang.cot).filter(c => cauHinhBang.cot[c].show && !c.startsWith('__EMPTY'));
     thead.innerHTML = cotHienThi.map(cot => `<th style="width: ${cauHinhBang.cot[cot].width}%;">${cot}</th>`).join('');
     let fontSize = cauHinhBang.fontSize + "px";
@@ -1016,17 +970,16 @@
   function timKiemDanhMuc() {
     let tuKhoa = document.getElementById('search-danh-muc').value.toLowerCase();
     if (!tuKhoa) { hienThiBangDanhMuc(duLieuDanhMuc); return; }
-    let ketQua = duLieuDanhMuc.filter(hang => {
-      return Object.values(hang).some(giaTri => String(giaTri).toLowerCase().includes(tuKhoa));
-    });
+    let ketQua = duLieuDanhMuc.filter(hang => { return Object.values(hang).some(giaTri => String(giaTri).toLowerCase().includes(tuKhoa)); });
     hienThiBangDanhMuc(ketQua);
   }
 
   // ==========================================
-  // KHỞI CHẠY TẤT CẢ DỮ LIỆU SAU KHI MỞ KHÓA
+  // KHỞI CHẠY TẤT CẢ DỮ LIỆU SAU KHI ĐÃ MỞ KHÓA
   // ==========================================
   function khoiChayTatCaDuLieuGoc() {
     initWeatherOptions();
+    renderCaiDatMenu();
     
     let savedSang = localStorage.getItem('sumSang');
     if (savedSang) {
@@ -1075,84 +1028,9 @@
     }
   }
 
-  // KHỞI ĐỘNG
   window.addEventListener('DOMContentLoaded', () => {
     khoiDongKhoa();
-    loadTabOrder();
   });
-
-  // TÍCH HỢP TÍNH NĂNG VUỐT (CHỈ ÁP DỤNG CÁC TAB KHÔNG PHẢI HOME)
-  let touchstartX = 0; let touchendX = 0;
-  const appContainer = document.getElementById('app-content');
-  appContainer.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
-  appContainer.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; handleSwipe(); }, {passive: true});
-
-  function handleSwipe() {
-    let swipeDist = touchendX - touchstartX;
-    if (Math.abs(swipeDist) > 70) { 
-      let activeTab = document.querySelector('.tab-content.active').id;
-      if (activeTab === 'tab-home') return; // Không vuốt ở trang chủ
-
-      let order = getTabOrderArray();
-      let currentIndex = order.indexOf(activeTab);
-      
-      if (swipeDist < 0 && currentIndex < order.length - 1) { 
-          switchTab(order[currentIndex + 1]); 
-      } else if (swipeDist > 0 && currentIndex > 0) { 
-          switchTab(order[currentIndex - 1]); 
-      }
-    }
-  }
-
-  // LOGIC SẮP XẾP MENU TAB CÀI ĐẶT
-  function getTabOrderArray() {
-    let saved = localStorage.getItem('tabOrder');
-    if (saved) return JSON.parse(saved);
-    return ['tab-thong-gio', 'tab-chia-gio', 'tab-thoi-tiet', 'tab-danh-muc', 'tab-cai-dat'];
-  }
-
-  function loadTabOrder() {
-    let order = getTabOrderArray();
-    let container = document.getElementById('scrollable-tab-container');
-    order.forEach((id) => {
-        let btn = document.getElementById('nav-' + id);
-        if(btn) container.appendChild(btn); 
-    });
-  }
-
-  function renderCaiDatMenu() {
-    document.getElementById('chk-app-lock').checked = isAppLocked();
-    const tabNames = { 'tab-thong-gio': 'THÔNG GIÓ', 'tab-chia-gio': 'CHIA GIỜ', 'tab-thoi-tiet': 'THỜI TIẾT', 'tab-danh-muc': 'DANH MỤC' };
-    let order = getTabOrderArray();
-    let html = '';
-    order.forEach((id) => {
-      if(id === 'tab-cai-dat') return; 
-      html += `
-        <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 15px; border-radius:8px; border:1px solid #eee; margin-bottom:5px;">
-            <span style="font-weight:bold; color:#1976d2;">${tabNames[id]}</span>
-            <div><button class="sort-btn" onclick="moveTabUp('${id}')">▲</button><button class="sort-btn" onclick="moveTabDown('${id}')">▼</button></div>
-        </div>`;
-    });
-    document.getElementById('sort-tab-list').innerHTML = html;
-  }
-
-  function moveTabUp(id) {
-    let arr = getTabOrderArray(); let idx = arr.indexOf(id);
-    if(idx > 0) { let temp = arr[idx]; arr[idx] = arr[idx-1]; arr[idx-1] = temp; localStorage.setItem('tabOrder', JSON.stringify(arr)); renderCaiDatMenu(); loadTabOrder(); }
-  }
-
-  function moveTabDown(id) {
-    let arr = getTabOrderArray(); let idx = arr.indexOf(id);
-    if(idx < arr.length - 2) { let temp = arr[idx]; arr[idx] = arr[idx+1]; arr[idx+1] = temp; localStorage.setItem('tabOrder', JSON.stringify(arr)); renderCaiDatMenu(); loadTabOrder(); }
-  }
-
-  function luuCaiDatApp() {
-    let isLocked = document.getElementById('chk-app-lock').checked;
-    localStorage.setItem('isAppLocked', isLocked);
-    alert("Lưu Cài đặt Hệ thống thành công!");
-  }
-
-  function isAppLocked() { return localStorage.getItem('isAppLocked') !== 'false'; }
 </script>
 
 </body>
