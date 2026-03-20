@@ -8,30 +8,41 @@
   <meta name="apple-mobile-web-app-title" content="Quản Lý Nhà" />
   <meta name="mobile-web-app-capable" content="yes" />
 
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-
   <title>Quản lý Nhà - Vân Nham</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #eaf6ff; padding-bottom: 110px; overflow-x: hidden; }
+    body { 
+      margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      background: #eaf6ff; padding-bottom: 110px; overflow-x: hidden;
+    }
 
     /* ====== MÀN HÌNH KHÓA ====== */
-    #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1976d2, #4caf50); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; color: white; transition: opacity 0.3s; }
-    .lock-box { background: rgba(255, 255, 255, 0.98); padding: 30px 20px; border-radius: 20px; text-align: center; width: 85%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); color: #333; }
+    #lock-screen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, #1976d2, #4caf50);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 99999; color: white; transition: opacity 0.3s;
+    }
+    .lock-box {
+      background: rgba(255, 255, 255, 0.98); padding: 30px 20px; border-radius: 20px;
+      text-align: center; width: 85%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); color: #333;
+    }
     .lock-icon { font-size: 50px; margin-bottom: 5px; color: #1976d2; }
-    .pin-input { width: 100%; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 5px; border: 2px solid #ddd; border-radius: 12px; margin-bottom: 15px; background: #f9f9f9; }
+    .pin-input {
+      width: 100%; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 5px;
+      border: 2px solid #ddd; border-radius: 12px; margin-bottom: 15px; background: #f9f9f9;
+    }
     .pin-input:focus { outline: none; border-color: #1976d2; }
     .btn-unlock { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: #1976d2; border: none; border-radius: 12px; cursor: pointer; }
     .btn-faceid { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: #4caf50; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 15px 0; box-shadow: 0 4px 10px rgba(76,175,80,0.4); }
     .btn-faceid:active, .btn-unlock:active { transform: scale(0.98); }
+
     #app-content { display: none; }
 
-    /* ====== FONT SCALE NGUYÊN BẢN ====== */
+    /* ====== FONT SCALE NGUYÊN BẢN CỦA BẠN ====== */
     :root {
       --fs-header: clamp(22px, 6vw, 32px);
       --fs-card-title: clamp(15px, 4vw, 20px);
@@ -42,15 +53,6 @@
       --fs-value: clamp(20px, 6vw, 28px);
       --fs-final: clamp(20px, 4vw, 18px);
     }
-
-    /* ====== TAB NAVIGATION ====== */
-    .tabs { display: flex; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; overflow-x: auto; white-space: nowrap; scrollbar-width: none; -ms-overflow-style: none; }
-    .tabs::-webkit-scrollbar { display: none; }
-    .tab-btn { flex: 1; padding: 15px 10px; text-align: center; font-size: clamp(12px, 3.5vw, 15px); font-weight: 800; color: #888; background: none; border: none; border-bottom: 4px solid transparent; cursor: pointer; white-space: nowrap; text-transform: uppercase;}
-    .tab-btn.active { color: #1976d2; border-bottom: 4px solid #1976d2; }
-    .tab-content { display: none; padding: 15px 10px; animation: fadeIn 0.2s;}
-    .tab-content.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* ====== THANH ĐIỀU HƯỚNG DƯỚI ĐÁY ====== */
     .bottom-nav-container {
@@ -81,7 +83,7 @@
     /* ====== GIAO DIỆN TRANG CHỦ LƯỚI ====== */
     .dash-header { padding: 30px 15px 10px 15px; text-align: center; }
     .dash-header h2 { color: #1976d2; margin: 0; font-size: var(--fs-header); font-weight: 800; letter-spacing: 1px; }
-    .grid-dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; max-width: 600px; margin: 0 auto; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; max-width: 600px; margin: 0 auto; }
     .dash-card {
       background: #fff; border-radius: 16px; padding: 20px 5px; text-align: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: pointer; transition: 0.2s;
@@ -90,21 +92,28 @@
     .dash-card-icon { font-size: 35px; margin-bottom: 10px; }
     .dash-card-title { font-size: 13px; font-weight: 800; color: #1976d2; text-transform: uppercase; line-height: 1.2;}
 
+    /* ====== CÁC TAB NỘI DUNG ====== */
+    .tab-content { display: none; padding: 15px 10px; }
+    .tab-content.active { display: block; animation: fadeIn 0.2s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
     .container { max-width: 900px; margin: 0 auto; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .card { background: #fff; border-radius: 18px; padding: 14px; box-shadow: 0 6px 16px rgba(0,0,0,0.08); margin-bottom: 15px; position: relative; }
     .card-title { text-align: center; font-weight: 800; font-size: var(--fs-card-title); color: #1976d2; margin-bottom: 10px; text-transform: uppercase; }
-    label { display: block; font-size: var(--fs-label); color: #555; margin-top: 8px; margin-bottom: 4px; font-weight: bold; text-align: left; }
 
-    input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select {
+    /* ====== STYLE NHẬP LIỆU GỐC ====== */
+    label { display: block; font-size: var(--fs-label); color: #555; margin-top: 8px; margin-bottom: 4px; font-weight: bold; text-align: left; }
+    
+    input:not([type="checkbox"]):not([type="file"]), select {
       width: 100%; padding: 12px; font-size: var(--fs-input); text-align: center; border-radius: 12px; border: 1px solid #ddd; background: #fdfdfd; box-sizing: border-box; appearance: none; -webkit-appearance: none; color: #333;
     }
     input:focus, select:focus { outline: none; border: 2px solid #ff9800; }
 
     .time-flex { display: flex; align-items: center; gap: 10px; margin-bottom: 10px;}
     .time-flex span { font-weight: bold; color: #555; }
-    .btn-main { margin: 5px 0 15px 0; width: 100%; padding: 14px; font-size: var(--fs-button); font-weight: bold; border: none; border-radius: 999px; background: #4caf50; color: #fff; cursor: pointer; box-shadow: 0 6px 14px rgba(76,175,80,0.4); touch-action: manipulation; text-transform: uppercase;}
-    .btn-main:active { transform: scale(0.98); }
+    .btn { margin: 5px 0 15px 0; width: 100%; padding: 14px; font-size: var(--fs-button); font-weight: bold; border: none; border-radius: 999px; background: #4caf50; color: #fff; cursor: pointer; box-shadow: 0 6px 14px rgba(76,175,80,0.4); touch-action: manipulation; }
+    .btn:active { transform: scale(0.98); }
 
     .mo-ta-box { background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px; border-radius: 8px; font-size: var(--fs-label); color: #333; line-height: 1.5; margin-top: 15px; }
     .mo-ta-box ul { margin: 5px 0 0 0; padding-left: 20px; }
@@ -118,13 +127,13 @@
 
     .result-title { text-align: center; font-weight: 800; font-size: var(--fs-result-title); margin-bottom: 10px; }
     .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid #eee; margin-top: 10px; }
-    .base-table { width: 100%; border-collapse: collapse; font-size: clamp(14px, 4.5vw, 18px); text-align: center; min-width: 340px; }
-    .base-table th, .base-table td { padding: 12px 2px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; }
-    .base-table th:last-child, .base-table td:last-child { border-right: none; }
-    .base-table th { background: #e9f5ff; color: #1976d2; font-weight: 800; font-size: clamp(13px, 4vw, 16px); vertical-align: middle; }
+    table { width: 100%; border-collapse: collapse; font-size: clamp(14px, 4.5vw, 18px); text-align: center; min-width: 340px; }
+    th, td { padding: 12px 2px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; }
+    th:last-child, td:last-child { border-right: none; }
+    th { background: #e9f5ff; color: #1976d2; font-weight: 800; font-size: clamp(13px, 4vw, 16px); vertical-align: middle; }
     .th-group { background: #d4ebff; border-bottom: 2px solid #fff; }
-    .base-table td { font-weight: 600; color: #333; }
-    .base-table tr:last-child td { border-bottom: none; }
+    td { font-weight: 600; color: #333; }
+    tr:last-child td { border-bottom: none; }
     .td-highlight { color: #ff9800; font-weight: 800; font-size: clamp(15px, 5vw, 19px); }
 
     .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -135,115 +144,104 @@
     .ok { background: #e0f7e9; color: #1b5e20; }
     .no { background: #fff3e0; color: #bf360c; }
 
-    /* ====== THỜI TIẾT & DANH MỤC ====== */
+    /* ====== THỜI TIẾT & DANH MỤC & CÀI ĐẶT ====== */
     .weather-res-box { background: #f0f7ff; border-radius: 15px; padding: 20px; text-align: center; margin-top: 15px; border: 2px solid #1976d2; display: none; }
     .w-val { font-size: 32px; font-weight: 800; color: #ff9800; margin: 5px 0; }
     .w-label { font-size: 14px; color: #555; font-weight: bold; }
     .loading-text { color: #888; font-style: italic; margin: 10px 0; display: none; text-align: center; }
+
+    .search-bar-container { display: flex; gap: 8px; margin-bottom: 10px; }
+    .search-input { flex: 1; padding: 12px 15px !important; font-size: 16px !important; border-radius: 12px !important; border: 1px solid #ddd !important; background: #fdfdfd !important; text-align: left !important; }
+    .search-input:focus { outline: none; border: 2px solid #1976d2 !important; }
+    .action-btn { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: white; border-radius: 50%; font-size: 22px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     
     .setting-panel { background: #fff9e6; border: 2px solid #ff9800; border-radius: 12px; padding: 15px; margin-bottom: 15px; display: none; }
     .set-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 14px; font-weight: bold; color: #333; }
     .set-row input[type="number"] { width: 60px !important; padding: 8px 5px !important; font-size: 16px !important; text-align: center !important; border-radius: 6px !important; border: 1px solid #ccc !important; background: #fff !important; }
     .set-row input[type="checkbox"] { transform: scale(1.5); margin-right: 15px; width: auto !important; }
-
-    .search-bar-container { display: flex; gap: 8px; margin-bottom: 10px; }
-    .search-input { flex: 1; padding: 12px 15px !important; font-size: 16px !important; border-radius: 12px !important; border: 1px solid #ddd !important; background: #fdfdfd !important; text-align: left !important; }
-    .action-btn { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: white; border-radius: 50%; font-size: 22px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    
     #bang-danh-muc { table-layout: fixed; }
     #bang-danh-muc th { background: #5c6bc0; color: #fff; position: sticky; top: 0; z-index: 10; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;}
     #bang-danh-muc td { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
 
     .sort-btn { background: #eaf6ff; color: #1976d2; border: 1px solid #1976d2; border-radius: 6px; padding: 4px 10px; font-size: 16px; cursor: pointer; margin-left: 5px; font-weight: bold;}
+    .sort-btn:active { background: #1976d2; color: #fff; }
     
-    .loc-suggestions { position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #1976d2; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 20; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    /* Giao diện tìm kiếm địa điểm */
+    .loc-suggestions {
+        position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
+        border: 1px solid #1976d2; border-radius: 8px; max-height: 200px;
+        overflow-y: auto; z-index: 20; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
 
     /* ========================================== */
-    /* ====== CSS CÔ LẬP RIÊNG CHO CHẤM CÔNG ====== */
+    /* ====== CSS CÔ LẬP CHO TAB CHẤM CÔNG ====== */
     /* ========================================== */
+    #tab-cham-cong { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 10px; }
     .cc-nav { display: flex; background: #eaf6ff; padding: 4px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #b3d4fc;}
-    .cc-nav-btn { flex: 1; border: none; background: transparent; padding: 10px 4px; font-size: 12px; font-weight: 900; color: #1976d2; border-radius: 8px; cursor: pointer; text-align: center; transition: 0.2s; white-space: nowrap;}
+    .cc-nav-btn { flex: 1; border: none; background: transparent; padding: 8px 2px; font-size: 11px; font-weight: 900; color: #1976d2; border-radius: 8px; cursor: pointer; text-align: center; transition: 0.2s; white-space: nowrap;}
     .cc-nav-btn.active { background: #1976d2; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
     .cc-sub-content { display: none; animation: fadeIn 0.2s; }
     .cc-sub-content.active { display: block; }
-
-    .cc-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.04); border: 1px solid #f0f0f0;}
+    .cc-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.04); border: 1px solid #eee;}
     .cc-card-title { font-size: 13px; font-weight: 800; color: #1976d2; border-bottom: 2px solid #eaf6ff; padding-bottom: 8px; margin-bottom: 12px; margin-top: 0; text-transform: uppercase; }
 
-    .cc-label { display: block; font-size: 12px; font-weight: bold; color: #555; margin: 10px 0 4px 0; text-align:left;}
-    .cc-input, .cc-select { width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 8px; background: #fafafa; color: #333; text-align:left;}
-    .cc-input:focus, .cc-select:focus { outline: none; border-color: #1976d2; background: #fff;}
-
-    .cc-btn { display: block; width: 100%; padding: 12px; font-size: 13px; font-weight: 800; text-align: center; border: none; border-radius: 8px; cursor: pointer; color: white; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-transform: uppercase;}
+    .cc-btn { display: block; width: 100%; padding: 10px; font-size: 13px; font-weight: 800; text-align: center; border: none; border-radius: 8px; cursor: pointer; color: white; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-transform: uppercase;}
     .cc-btn:active { transform: scale(0.97); }
     .cc-btn-primary { background: #1976d2; } .cc-btn-warning { background: #f39c12; } .cc-btn-info { background: #00bcd4; } .cc-btn-danger { background: #e74c3c; } .cc-btn-success { background: #27ae60; }
-    
-    .cc-quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;}
+    .cc-btn-small { padding: 4px 8px; font-size: 11px; border-radius: 6px; font-weight: bold; border: 1px solid #1976d2; background: #eaf6ff; color: #1976d2; cursor: pointer; }
+
+    .cc-quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;}
     .cc-quick-btn { background: #f8f9fa; border: 1px solid #ddd; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; text-align: center; transition: 0.2s;}
     .cc-quick-btn.active { background: #1976d2; color: #fff; border-color: #1976d2; box-shadow: 0 2px 8px rgba(25,118,210,0.3); }
 
     .cc-toggle-group { display: flex; background: #eee; border-radius: 8px; overflow: hidden; margin-top: 5px; border: 1px solid #ddd;}
     .cc-toggle-group input[type="radio"] { display: none; }
-    .cc-toggle-group label { flex: 1; text-align: center; padding: 10px 5px; margin: 0; font-size: 12px; font-weight: bold; color: #666; cursor: pointer; transition: 0.2s; }
+    .cc-toggle-group label { flex: 1; text-align: center; padding: 8px 4px; margin: 0; font-size: 12px; font-weight: bold; color: #666; cursor: pointer; transition: 0.2s; }
     .cc-toggle-group input[type="radio"]:checked + label { background: #1976d2; color: white; }
 
-    .cc-checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 6px; max-height: 35vh; overflow-y: auto; padding: 4px; margin-bottom:10px; border: 1px solid #eee; border-radius: 8px;}
-    .cc-check-item { display: flex; align-items: center; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eee; cursor: pointer; transition: 0.2s; margin: 0;}
+    .cc-checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 6px; max-height: 200px; overflow-y: auto; padding: 4px; margin-bottom:10px;}
+    .cc-check-item { display: flex; align-items: center; background: #f8f9fa; padding: 8px; border-radius: 8px; border: 1px solid #eee; cursor: pointer; transition: 0.2s; margin: 0;}
     .cc-check-item.active { background: #eaf6ff; border-color: #1976d2; color: #1976d2; font-weight: bold; }
     .cc-check-item input { display: none; }
-    .cc-check-icon { width: 18px; height: 18px; border-radius: 3px; border: 2px solid #ccc; margin-right: 8px; display: flex; align-items: center; justify-content: center; }
+    .cc-check-icon { width: 16px; height: 16px; border-radius: 3px; border: 2px solid #ccc; margin-right: 6px; display: flex; align-items: center; justify-content: center; }
     .cc-check-item.active .cc-check-icon { background: #1976d2; border-color: #1976d2; }
-    .cc-check-item.active .cc-check-icon::after { content: "✔"; color: white; font-size: 13px; font-weight: bold; }
+    .cc-check-item.active .cc-check-icon::after { content: "✔"; color: white; font-size: 11px; font-weight: bold; }
 
-    .cc-list-item { background: #fff; border-left: 4px solid #1976d2; padding: 12px; border-radius: 8px; margin-bottom: 10px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #eee;}
+    .cc-list-item { background: #fff; border-left: 4px solid #1976d2; padding: 10px; border-radius: 8px; margin-bottom: 8px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #eee;}
     .cc-list-item.type-hoctap { border-left-color: #00bcd4; } .cc-list-item.type-viec { border-left-color: #f39c12; } .cc-list-item.type-nghi-auto { border-left-color: #e74c3c; background: #fffcfc; }
-    .cc-list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding-right: 25px;}
-    .cc-list-item-title { font-weight: 900; font-size: 14px; color: #333; }
-    .cc-list-item-badge { font-size: 11px; padding: 3px 6px; border-radius: 4px; background: #eee; font-weight: bold; color: #555; }
-    .cc-list-item-users { font-size: 13px; color: #2c3e50; line-height: 1.4; font-weight: bold;}
-    .cc-btn-delete { position: absolute; top: 10px; right: 10px; color: #e74c3c; background: #ffeeee; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+    .cc-list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-right: 25px;}
+    .cc-list-item-title { font-weight: 900; font-size: 13px; color: #333; }
+    .cc-list-item-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #eee; font-weight: bold; color: #555; }
+    .cc-list-item-users { font-size: 12px; color: #2c3e50; line-height: 1.4; font-weight: bold;}
+    .cc-btn-del { position: absolute; top: 8px; right: 8px; color: #e74c3c; background: #ffeeee; border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;}
 
-    /* Bảng Tổng Hợp Chấm Công Ép Vừa Màn Hình */
+    /* Bảng Tổng Hợp Chấm Công */
     .cc-table-wrapper { width: 100%; border-radius: 8px; border: 1px solid #eee; overflow: hidden; }
-    .cc-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; table-layout: fixed; background: white; }
-    .cc-table th, .cc-table td { padding: 8px 4px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; vertical-align: top; word-break: break-word;}
-    .cc-table th { background: #eaf6ff; color: #1976d2; font-weight: 800; font-size: 10px; text-transform: uppercase; }
-    .cc-table td.td-left { text-align: left; font-weight: 800; color: #333; font-size: 12px; width: 22%; padding-left: 6px;}
+    .cc-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; table-layout: fixed; background: white; }
+    .cc-table th, .cc-table td { padding: 6px 4px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; vertical-align: top; word-break: break-word;}
+    .cc-table th { background: #eaf6ff; color: #1976d2; font-weight: 800; font-size: 9px; text-transform: uppercase; }
+    .cc-table td.td-left { text-align: left; font-weight: 800; color: #333; font-size: 11px; width: 22%; padding-left: 4px;}
     .cc-table td.td-number { color: #e74c3c; width: 26%; }
     .cc-table td.td-hoctap { color: #00bcd4; width: 26%; }
     .cc-table td.td-task { color: #f39c12; width: 26%; }
-    .cc-table tr.total-row td { background: #fdf2e9; font-weight: 900; color: #d35400; font-size: 14px; }
-    .cc-main-val { font-weight: 900; font-size: 15px; margin-bottom: 2px;}
+    .cc-table tr.total-row td { background: #fdf2e9; font-weight: 900; color: #d35400; font-size: 13px; }
+    .cc-main-val { font-weight: 900; font-size: 14px; margin-bottom: 2px;}
     .cc-detail-text { font-size: 10px; color: #666; font-weight: normal; display: block; line-height: 1.3; text-align: left; padding-left:2px;}
 
-    /* Tóm tắt Ngày / Toàn đội (LÀM TO CHỮ) */
-    .cc-summary-box { background: #eaf6ff; border: 1px solid #b3d4fc; padding: 12px; border-radius: 10px; margin-bottom: 15px; }
-    .cc-summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; font-size: 12px; color: #333; margin-top: 8px;}
-    .cc-summary-grid div { background: #fff; padding: 10px 4px; border-radius: 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .cc-val-b { font-weight: 900; font-size: 20px; display: block; margin-top: 6px; }
-    .cc-summary-details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #b3d4fc; font-size: 12px; color: #444; line-height: 1.5; text-align: left; }
+    .cc-summary-box { background: #eaf6ff; border: 1px solid #b3d4fc; padding: 10px; border-radius: 10px; margin-bottom: 12px; }
+    .cc-summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; font-size: 11px; color: #333; margin-top: 6px;}
+    .cc-summary-grid div { background: #fff; padding: 8px 2px; border-radius: 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .cc-val-b { font-weight: 900; font-size: 15px; display: block; margin-top: 4px; }
+    .cc-summary-details { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #b3d4fc; font-size: 11px; color: #444; line-height: 1.5; text-align: left; }
 
-    /* Modal Chấm Công: Hiện giữa màn hình, Scroll mượt */
-    .cc-modal-overlay { 
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-      background: rgba(0,0,0,0.6); display: none; 
-      justify-content: center; align-items: center; /* CHÍNH GIỮA MÀN HÌNH */
-      z-index: 200000; padding: 15px; 
-    }
-    .cc-modal-content { 
-      background: white; width: 100%; max-width: 500px; 
-      border-radius: 16px; padding: 20px 15px; 
-      max-height: 85vh; /* KHỐNG CHẾ ĐỘ CAO ĐỂ CHỐNG TRÀN */
-      display: flex; flex-direction: column;
-      position: relative; animation: zoomIn 0.2s ease; 
-    }
-    .cc-modal-body {
-      overflow-y: auto; /* THANH CUỘN DỌC */
-      -webkit-overflow-scrolling: touch; /* VUỐT MƯỢT TRÊN IPHONE */
-      flex: 1; padding-right: 5px; margin-top: 5px;
-    }
-    @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .cc-close-modal { position: absolute; top: 12px; right: 12px; font-size: 26px; color: #888; cursor: pointer; line-height: 1; background: #f0f0f0; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;}
-    .cc-tag-chip { display: inline-block; background: #eaf6ff; color: #1976d2; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin: 0 4px 6px 0; border: 1px solid #b3d4fc; }
+    .cc-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); display: none; justify-content: center; align-items: flex-end; z-index: 200; }
+    .cc-modal-content { background: white; width: 100%; max-width: 600px; border-radius: 16px 16px 0 0; padding: 15px; max-height: 90vh; overflow-y: auto; position: relative; animation: slideUp 0.3s ease; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .cc-close-modal { position: absolute; top: 10px; right: 10px; font-size: 24px; color: #888; cursor: pointer; line-height: 1; background: #f0f0f0; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;}
+
+    .cc-tag-chip { display: inline-block; background: #eaf6ff; color: #1976d2; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; margin: 0 4px 6px 0; border: 1px solid #b3d4fc; }
+    .cc-tag-chip.task { background: #fff8e1; color: #f39c12; border-color: #ffe0b2; }
   </style>
 </head>
 <body>
@@ -251,7 +249,7 @@
   <div id="lock-screen">
     <div class="lock-box">
       <div id="lock-spinner" class="lock-icon">🔒</div>
-      <h2 id="lock-title" style="margin: 0 0 5px 0; color:#1976d2; font-size: 18px;">ỨNG DỤNG ĐÃ KHÓA</h2>
+      <h2 id="lock-title" style="margin: 0 0 5px 0; color:#1976d2;">ỨNG DỤNG ĐÃ KHÓA</h2>
       
       <button id="btn-faceid-trigger" onclick="quetFaceIDThoCong()" class="btn-faceid" style="display:none;">
         <span style="font-size:24px;">👤</span> MỞ KHÓA BẰNG FACE ID
@@ -267,445 +265,425 @@
 
   <div id="app-content">
 
-    <div class="tabs" id="main-tab-container">
-      <button class="tab-btn" onclick="capNhatPhienBanMoi()" style="color: #ff9800; padding: 15px 5px;">🔄 TẢI MỚI</button>
+    <div id="tab-home" class="tab-content active container">
+      <div class="dash-header">
+        <h2>QUẢN LÝ NHÀ</h2>
+      </div>
+      <div class="grid-3" id="dashboard-grid">
+         </div>
     </div>
 
-    <div class="container">
-
-      <div id="tab-home" class="tab-content active">
-        <div class="dash-header">
-          <h2>QUẢN LÝ NHÀ</h2>
-        </div>
-        <div class="grid-dashboard" id="dashboard-grid"></div>
-      </div>
-
-      <div id="tab-thong-gio" class="tab-content">
-        <div class="grid-2">
-          <div class="card">
-            <div class="card-title">TRONG NHÀ</div>
-            <label class="base-label">Nhiệt độ (°C)</label>
-            <input id="nt" class="base-input" type="text" inputmode="decimal" value="22" onclick="this.setSelectionRange(0, this.value.length);" onfocus="this.setSelectionRange(0, this.value.length);" />
-            <label class="base-label">Độ ẩm (%)</label>
-            <input id="dt" class="base-input" type="text" inputmode="decimal" value="73" onclick="this.setSelectionRange(0, this.value.length);" onfocus="this.setSelectionRange(0, this.value.length);" />
-          </div>
-
-          <div class="card">
-            <div class="card-title">NGOÀI NHÀ</div>
-            <label class="base-label">Nhiệt độ (°C)</label>
-            <input id="nn" class="base-input" type="text" inputmode="decimal" value="28" onclick="this.setSelectionRange(0, this.value.length);" onfocus="this.setSelectionRange(0, this.value.length);" />
-            <label class="base-label">Độ ẩm (%)</label>
-            <input id="dn" class="base-input" type="text" inputmode="decimal" value="75" onclick="this.setSelectionRange(0, this.value.length);" onfocus="this.setSelectionRange(0, this.value.length);" />
-          </div>
-        </div>
-
-        <button id="btnTinh" class="btn-main">TÍNH TOÁN</button>
-
-        <div id="ketqua" class="card" style="display:none">
-          <div class="result-title">KẾT QUẢ</div>
-          <div class="result-grid">
-            <div class="result-box">
-              <p>Độ ẩm tuyệt đối</p>
-              <div id="daTrong" class="value">--</div>
-              <p>Nhiệt độ điểm sương</p>
-              <div id="ndTrong" class="value">--</div>
-            </div>
-            <div class="result-box">
-              <p>Độ ẩm tuyệt đối</p>
-              <div id="daNgoai" class="value">--</div>
-              <p>Nhiệt độ điểm sương</p>
-              <div id="ndNgoai" class="value">--</div>
-            </div>
-          </div>
-          <div id="final" class="final"></div>
-        </div>
-      </div>
-
-      <div id="tab-chia-gio" class="tab-content">
+    <div id="tab-thong-gio" class="tab-content container">
+      <div class="grid-2">
         <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <button onclick="toggleLichSu()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">🕒 LỊCH SỬ</button>
-            <div class="card-title" style="margin: 0; flex: 1; text-align: center;">THỜI GIAN LÀM VIỆC</div>
-            <button onclick="toggleMoTa()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">ℹ️ MÔ TẢ</button>
+          <div class="card-title">TRONG NHÀ</div>
+          <label>Nhiệt độ (°C)</label>
+          <input id="nt" type="text" inputmode="decimal" value="22" />
+          <label>Độ ẩm (%)</label>
+          <input id="dt" type="text" inputmode="decimal" value="73" />
+        </div>
+
+        <div class="card">
+          <div class="card-title">NGOÀI NHÀ</div>
+          <label>Nhiệt độ (°C)</label>
+          <input id="nn" type="text" inputmode="decimal" value="28" />
+          <label>Độ ẩm (%)</label>
+          <input id="dn" type="text" inputmode="decimal" value="75" />
+        </div>
+      </div>
+
+      <button id="btnTinh" class="btn">TÍNH TOÁN</button>
+
+      <div id="ketqua" class="card" style="display:none">
+        <div class="result-title">KẾT QUẢ</div>
+        <div class="result-grid">
+          <div class="result-box">
+            <p>Độ ẩm tuyệt đối</p>
+            <div id="daTrong" class="value">--</div>
+            <p>Nhiệt độ điểm sương</p>
+            <div id="ndTrong" class="value">--</div>
           </div>
+          <div class="result-box">
+            <p>Độ ẩm tuyệt đối</p>
+            <div id="daNgoai" class="value">--</div>
+            <p>Nhiệt độ điểm sương</p>
+            <div id="ndNgoai" class="value">--</div>
+          </div>
+        </div>
+        <div id="final" class="final"></div>
+      </div>
+    </div>
+
+    <div id="tab-chia-gio" class="tab-content container">
+
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <button onclick="toggleLichSu()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">🕒 LỊCH SỬ</button>
+          <div class="card-title" style="margin: 0; flex: 1; text-align: center;">THỜI GIAN LÀM VIỆC</div>
+          <button onclick="toggleMoTa()" style="background:#eaf6ff; color:#1976d2; border:1px solid #b3d4fc; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px;">ℹ️ MÔ TẢ</button>
+        </div>
+        
+        <div id="view-lich-su" class="mo-ta-box" style="display: none; background: #eef7ff; border-left: 4px solid #1976d2;">
+          <div style="font-weight: 800; color: #1976d2; margin-bottom: 10px; text-align: center; font-size: 15px;">🕒 LỊCH SỬ 30 NGÀY</div>
+          <div id="danh-sach-lich-su" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto;"></div>
+        </div>
+
+        <div id="view-summary" class="summary-box" onclick="moKhungSua()">
+          <div style="position: absolute; right: 12px; top: 12px; color: #1976d2; font-weight: bold; font-size: 13px; background: #e9f5ff; padding: 4px 8px; border-radius: 6px;">✏️ SỬA</div>
+          <div class="summary-line"><strong>Sáng:</strong> <span id="sum-sang" class="sum-val">06:45 - 11:15</span></div>
+          <div class="summary-line"><strong>Chiều:</strong> <span id="sum-chieu" class="sum-val">13:15 - 16:45</span></div>
+          <div class="summary-line" style="margin-bottom: 0;"><strong>Số nhà:</strong> <span id="sum-nha" class="sum-val">3 Nhà</span></div>
+        </div>
+
+        <div id="view-edit" style="display: none; padding-top: 5px;">
+          <label>Ca Sáng (Vào - Ra)</label>
+          <div class="time-flex" style="margin-bottom: 10px;">
+            <input type="time" id="sang-vao" value="06:45"> 
+            <span>-</span>
+            <input type="time" id="sang-ra" value="11:15">
+          </div>
+
+          <label>Ca Chiều (Vào - Ra)</label>
+          <div class="time-flex" style="margin-bottom: 10px;">
+            <input type="time" id="chieu-vao" value="13:15"> 
+            <span>-</span>
+            <input type="time" id="chieu-ra" value="16:45">
+          </div>
+
+          <label>Số lượng nhà</label>
+          <select id="so-nha">
+            <option value="1">1 Nhà</option>
+            <option value="2">2 Nhà</option>
+            <option value="3" selected>3 Nhà</option>
+            <option value="4">4 Nhà</option>
+            <option value="5">5 Nhà</option>
+            <option value="6">6 Nhà</option>
+          </select>
           
-          <div id="view-lich-su" class="mo-ta-box" style="display: none; background: #eef7ff; border-left: 4px solid #1976d2;">
-            <div style="font-weight: 800; color: #1976d2; margin-bottom: 10px; text-align: center; font-size: 15px;">🕒 LỊCH SỬ 30 NGÀY</div>
-            <div id="danh-sach-lich-su" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto;"></div>
+          <button onclick="luuKhungSua()" class="btn" style="margin-top: 15px; margin-bottom: 0; background-color: #ff9800; font-size: 16px; padding: 12px;">XONG</button>
+        </div>
+
+        <div id="mo-ta-content" class="mo-ta-box" style="display: none;">
+          <strong>1. Các thông tin cần chọn:</strong>
+          <ul>
+            <li>Nhập giờ làm việc và Chọn số lượng nhà.</li>
+          </ul>
+          <strong style="display:inline-block; margin-top: 8px;">2. Ứng dụng tự động chia:</strong>
+          <ul>
+            <li><strong>Lịch đi:</strong> Nhà 1 luôn mở đầu tiên, N2, N3... tiếp theo. Giãn cách ngẫu nhiên 5-10 phút.</li>
+            <li><strong>Mốc 1:</strong> Cùng lúc với giờ "Vào".</li>
+            <li><strong>Mốc 2:</strong> Cách Mốc 1 ít nhất 1 tiếng (60 phút).</li>
+          </ul>
+          <strong style="display:inline-block; margin-top: 8px;">3. Tự động thông minh:</strong>
+          <ul>
+            <li>Mỗi ngày tự tạo lịch 1 lần và lưu vào <b>Lịch sử</b>.</li>
+            <li>Để chia lại lịch mới cho hôm nay, hãy <strong>bấm nhanh 3 lần</strong> vào nút CHIA LỊCH.</li>
+          </ul>
+        </div>
+      </div>
+
+      <button onclick="xuLyNhanChiaLich()" class="btn">CHIA LỊCH TỰ ĐỘNG</button>
+
+      <div id="ket-qua-chia-gio" style="display:none">
+        <div class="card">
+          <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div id="title-ra-vao" class="result-title" style="color: #1976d2; margin: 0;">1. LỊCH RA VÀO</div>
+            <button onclick="moCaiDatCoDinh()" style="background:#eaf6ff; color:#1976d2; border:1px solid #1976d2; border-radius:6px; padding:4px 8px; font-size:12px; font-weight:bold; cursor:pointer;">⚙️ CỐ ĐỊNH</button>
           </div>
 
-          <div id="view-summary" class="summary-box" onclick="moKhungSua()">
-            <div style="position: absolute; right: 12px; top: 12px; color: #1976d2; font-weight: bold; font-size: 13px; background: #e9f5ff; padding: 4px 8px; border-radius: 6px;">✏️ SỬA</div>
-            <div class="summary-line"><strong>Sáng:</strong> <span id="sum-sang" class="sum-val">06:45 - 11:15</span></div>
-            <div class="summary-line"><strong>Chiều:</strong> <span id="sum-chieu" class="sum-val">13:15 - 16:45</span></div>
-            <div class="summary-line" style="margin-bottom: 0;"><strong>Số nhà:</strong> <span id="sum-nha" class="sum-val">3 Nhà</span></div>
-          </div>
-
-          <div id="view-edit" style="display: none; padding-top: 5px;">
-            <label class="base-label">Ca Sáng (Vào - Ra)</label>
-            <div class="time-flex" style="margin-bottom: 10px;">
-              <input type="time" class="base-input" id="sang-vao" value="06:45"> 
-              <span>-</span>
-              <input type="time" class="base-input" id="sang-ra" value="11:15">
-            </div>
-
-            <label class="base-label">Ca Chiều (Vào - Ra)</label>
-            <div class="time-flex" style="margin-bottom: 10px;">
-              <input type="time" class="base-input" id="chieu-vao" value="13:15"> 
-              <span>-</span>
-              <input type="time" class="base-input" id="chieu-ra" value="16:45">
-            </div>
-
-            <label class="base-label">Số lượng nhà</label>
-            <select id="so-nha" class="base-select">
-              <option value="1">1 Nhà</option>
-              <option value="2">2 Nhà</option>
-              <option value="3" selected>3 Nhà</option>
-              <option value="4">4 Nhà</option>
-              <option value="5">5 Nhà</option>
-              <option value="6">6 Nhà</option>
-            </select>
+          <div id="panel-co-dinh" class="setting-panel" style="display: none; border-color: #1976d2; background: #f0f7ff; margin-bottom: 10px;">
+            <div style="text-align: center; color: #1976d2; font-weight: 800; margin-bottom: 15px; font-size: 15px;">CỐ ĐỊNH LỊCH RA VÀO</div>
             
-            <button onclick="luuKhungSua()" class="btn-main" style="margin-top: 15px; margin-bottom: 0; background-color: #ff9800;">XONG</button>
+            <label style="display:flex; align-items:center; font-size:14px; cursor:pointer; color:#333; margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px;">
+              <input type="checkbox" id="chk-co-dinh" style="transform:scale(1.3); margin-right:10px; width:auto;" onchange="toggleFormCoDinh()"> Bật cố định lịch
+            </label>
+            
+            <div id="form-co-dinh-list" style="display:none; max-height:40vh; overflow-y:auto; padding-right:5px;"></div>
+            
+            <button onclick="luuCaiDatCoDinh()" class="btn" style="background:#1976d2; padding:10px; margin-bottom:0; font-size: 14px; margin-top:10px;">LƯU LỊCH CỐ ĐỊNH</button>
           </div>
 
-          <div id="mo-ta-content" class="mo-ta-box" style="display: none;">
-            <strong>1. Các thông tin cần chọn:</strong>
-            <ul>
-              <li>Nhập giờ làm việc và Chọn số lượng nhà.</li>
-            </ul>
-            <strong style="display:inline-block; margin-top: 8px;">2. Ứng dụng tự động chia:</strong>
-            <ul>
-              <li><strong>Lịch đi:</strong> Nhà 1 luôn mở đầu tiên, N2, N3... tiếp theo. Giãn cách ngẫu nhiên 5-10 phút.</li>
-              <li><strong>Mốc 1:</strong> Cùng lúc với giờ "Vào".</li>
-              <li><strong>Mốc 2:</strong> Cách Mốc 1 ít nhất 1 tiếng (60 phút).</li>
-            </ul>
-            <strong style="display:inline-block; margin-top: 8px;">3. Tự động thông minh:</strong>
-            <ul>
-              <li>Mỗi ngày tự tạo lịch 1 lần và lưu vào <b>Lịch sử</b>.</li>
-              <li>Để chia lại lịch mới cho hôm nay, hãy <strong>bấm nhanh 3 lần</strong> vào nút CHIA LỊCH.</li>
-            </ul>
+          <div id="wrap-bang-ra-vao" class="table-container">
+            <table id="bang-ra-vao">
+              <thead>
+                <tr><th rowspan="2">Nhà</th><th colspan="2" class="th-group">Sáng</th><th colspan="2" class="th-group">Chiều</th></tr>
+                <tr><th>Vào</th><th>Ra</th><th>Vào</th><th>Ra</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
           </div>
         </div>
 
-        <button onclick="xuLyNhanChiaLich()" class="btn-main">CHIA LỊCH TỰ ĐỘNG</button>
-
-        <div id="ket-qua-chia-gio" style="display:none">
-          <div class="card">
-            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <div id="title-ra-vao" class="result-title" style="margin: 0; text-align: left;">1. LỊCH RA VÀO</div>
-              <button onclick="moCaiDatCoDinh()" style="background:#eaf6ff; color:#1976d2; border:1px solid #1976d2; border-radius:6px; padding:4px 8px; font-size:12px; font-weight:bold; cursor:pointer;">⚙️ CỐ ĐỊNH</button>
-            </div>
-
-            <div id="panel-co-dinh" class="setting-panel" style="display: none; border-color: #1976d2; background: #f0f7ff; margin-bottom: 10px;">
-              <div style="text-align: center; color: #1976d2; font-weight: 800; margin-bottom: 15px; font-size: 15px;">CỐ ĐỊNH LỊCH RA VÀO</div>
-              
-              <label style="display:flex; align-items:center; font-size:14px; cursor:pointer; color:#333; margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px;">
-                <input type="checkbox" id="chk-co-dinh" style="transform:scale(1.3); margin-right:10px; width:auto;" onchange="toggleFormCoDinh()"> Bật cố định lịch
-              </label>
-              
-              <div id="form-co-dinh-list" style="display:none; max-height:40vh; overflow-y:auto; padding-right:5px;"></div>
-              
-              <button onclick="luuCaiDatCoDinh()" class="btn-main" style="background:#1976d2; padding:10px; margin-bottom:0; font-size: 14px; margin-top:10px;">LƯU LỊCH CỐ ĐỊNH</button>
-            </div>
-
-            <div id="wrap-bang-ra-vao" class="table-container">
-              <table id="bang-ra-vao" class="base-table">
-                <thead>
-                  <tr><th rowspan="2">Nhà</th><th colspan="2" class="th-group">Sáng</th><th colspan="2" class="th-group">Chiều</th></tr>
-                  <tr><th>Vào</th><th>Ra</th><th>Vào</th><th>Ra</th></tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="card">
-            <div id="title-thong-gio" class="result-title" style="margin: 0; text-align: left;">2. LỊCH THÔNG GIÓ</div>
-            <div class="table-container">
-              <table id="bang-thong-gio" class="base-table">
-                <thead>
-                  <tr><th rowspan="2">Nhà</th><th colspan="2" class="th-group">Sáng</th><th colspan="2" class="th-group">Chiều</th></tr>
-                  <tr><th>Mốc 1</th><th>Mốc 2</th><th>Mốc 1</th><th>Mốc 2</th></tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="tab-thoi-tiet" class="tab-content">
         <div class="card">
-          <div class="card-title">TRA CỨU THỜI TIẾT VÂN NHAM</div>
-          
-          <label class="base-label">Vị trí đo thời tiết:</label>
-          <div style="position: relative;">
-            <input type="text" class="base-input" id="weather-location-search" placeholder="Nhập tên Xã, Tỉnh... (VD: Vân Nham)" autocomplete="off" oninput="debounceSearchLocation(this.value)">
-            <div id="location-suggestions" class="loc-suggestions" style="display:none;"></div>
-          </div>
-          
-          <div style="display:flex; justify-content:space-between; margin-top:10px;">
-            <button onclick="getCurrentLocation()" style="background:none; border:none; color:#1976d2; font-weight:bold; font-size:13px; padding:0; cursor:pointer;">📍 Dùng vị trí hiện tại</button>
-            <div id="location-status" style="font-size: 12px; color: #4caf50; font-weight: bold;">Mặc định: Vân Nham</div>
-          </div>
-
-          <label class="base-label" style="margin-top: 15px;">Chọn ngày (Hôm nay & 10 ngày trước):</label>
-          <select class="base-select" id="weather-date"></select>
-
-          <label class="base-label" style="margin-top: 15px;">Chọn giờ (00:00 - 23:00):</label>
-          <select class="base-select" id="weather-hour"></select>
-
-          <button onclick="fetchWeather()" class="btn-main" style="background:#1976d2; margin-top:15px;">LẤY DỮ LIỆU NGAY</button>
-
-          <div id="weather-loading" class="loading-text">Đang kết nối hệ thống vệ tinh...</div>
-
-          <div id="weather-result" class="weather-res-box">
-            <div class="w-label">NHIỆT ĐỘ</div>
-            <div id="res-temp" class="w-val">--°C</div>
-            <div style="height:15px;"></div>
-            <div class="w-label">ĐỘ ẨM</div>
-            <div id="res-hum" class="w-val">--%</div>
+          <div id="title-thong-gio" class="result-title" style="color: #1976d2; margin: 0;">2. LỊCH THÔNG GIÓ</div>
+          <div class="table-container">
+            <table id="bang-thong-gio">
+              <thead>
+                <tr><th rowspan="2">Nhà</th><th colspan="2" class="th-group">Sáng</th><th colspan="2" class="th-group">Chiều</th></tr>
+                <tr><th>Mốc 1</th><th>Mốc 2</th><th>Mốc 1</th><th>Mốc 2</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
           </div>
         </div>
       </div>
+    </div>
 
-      <div id="tab-danh-muc" class="tab-content">
-        <div class="search-bar-container">
-          <input type="text" id="search-danh-muc" class="search-input base-input" placeholder="Tìm kiếm đạn dược..." onkeyup="timKiemDanhMuc()">
-          <button class="action-btn btn-setting" style="background:#ff9800" onclick="toggleCaiDatDanhMuc()">⚙️</button>
-          <button class="action-btn btn-upload" style="background:#4caf50" onclick="document.getElementById('excel-upload').click()">+</button>
-          <input type="file" id="excel-upload" style="display:none;" accept=".xlsx, .xls, .csv" onchange="xuLyFileExcel(event)">
+    <div id="tab-thoi-tiet" class="tab-content container">
+      <div class="card">
+        <div class="card-title">TRA CỨU THỜI TIẾT VÂN NHAM</div>
+        
+        <label>Chọn vị trí:</label>
+        <div style="position: relative;">
+          <input type="text" id="weather-location-search" placeholder="Nhập tên Xã, Tỉnh... (VD: Vân Nham)" autocomplete="off" oninput="debounceSearchLocation(this.value)">
+          <div id="location-suggestions" class="loc-suggestions" style="display:none;"></div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; margin-top:10px;">
+          <button onclick="getCurrentLocation()" style="background:none; border:none; color:#1976d2; font-weight:bold; font-size:13px; padding:0; cursor:pointer;">📍 Dùng vị trí hiện tại</button>
+          <div id="location-status" style="font-size: 12px; color: #4caf50; font-weight: bold;">Mặc định: Vân Nham</div>
         </div>
 
-        <div id="panel-cai-dat-danh-muc" class="setting-panel">
-          <div style="text-align: center; color: #ff9800; font-weight: 800; margin-bottom: 10px; font-size: 16px;">CÀI ĐẶT BẢNG</div>
-          
-          <div class="set-row">
-            <span>Cỡ chữ hiển thị:</span>
-            <select id="set-fontsize" class="base-select" style="width: 100px !important; padding: 5px !important; font-size: 16px !important; border-radius:6px; background:#fff; border: 1px solid #ccc;">
-              <option value="5">5 px</option><option value="6">6 px</option><option value="7">7 px</option>
-              <option value="8">8 px</option><option value="9">9 px</option><option value="10">10 px</option>
-              <option value="11">11 px</option><option value="12">12 px</option><option value="13">13 px</option>
-              <option value="14" selected>14 px</option><option value="15">15 px</option><option value="16">16 px</option>
-              <option value="17">17 px</option><option value="18">18 px</option><option value="19">19 px</option>
-              <option value="20">20 px</option>
-            </select>
-          </div>
+        <label style="margin-top: 15px;">Chọn ngày (Hôm nay & 10 ngày trước):</label>
+        <select id="weather-date"></select>
 
-          <div style="border-top: 1px dashed #ccc; margin: 15px 0 10px 0;"></div>
-          <div style="font-size: 13px; color: #1976d2; font-weight: bold; margin-bottom: 10px;">
-            * Nếu bỏ tích, % của cột bị ẩn sẽ TỰ ĐỘNG NHẢY sang cột kế tiếp:
-          </div>
-          
-          <div id="danh-sach-cot-cai-dat"></div>
+        <label style="margin-top: 15px;">Chọn giờ (00:00 - 23:00):</label>
+        <select id="weather-hour"></select>
 
-          <button onclick="luuCaiDatDanhMuc()" class="btn-main" style="background:#ff9800; padding:12px; margin-bottom:0; margin-top:10px; font-size: 16px;">LƯU VÀ ÁP DỤNG</button>
+        <button onclick="fetchWeather()" class="btn" style="background:#1976d2; margin-top:15px;">LẤY DỮ LIỆU NGAY</button>
+
+        <div id="weather-loading" class="loading-text">
+          Đang kết nối hệ thống vệ tinh...
         </div>
 
-        <div class="card" style="padding: 0; overflow: hidden; border-radius: 12px;">
-          <div class="table-container" style="max-height: 65vh; overflow-y: auto; margin-top:0; border: none;">
-            <table id="bang-danh-muc" class="base-table">
-              <thead><tr id="dm-header"><th>DỮ LIỆU DANH MỤC</th></tr></thead>
-              <tbody id="dm-body">
-                <tr><td style="color:#999; padding: 30px; text-align: center;">Chưa có dữ liệu.<br><br>Bấm nút <b>+</b> màu xanh để tải file Excel.</td></tr>
-              </tbody>
+        <div id="weather-result" class="weather-res-box">
+          <div class="w-label">NHIỆT ĐỘ</div>
+          <div id="res-temp" class="w-val">--°C</div>
+          <div style="height:15px;"></div>
+          <div class="w-label">ĐỘ ẨM</div>
+          <div id="res-hum" class="w-val">--%</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-danh-muc" class="tab-content container">
+      <div class="search-bar-container">
+        <input type="text" id="search-danh-muc" class="search-input" placeholder="Tìm kiếm đạn dược..." onkeyup="timKiemDanhMuc()">
+        <button class="action-btn btn-setting" style="background:#ff9800" onclick="toggleCaiDatDanhMuc()">⚙️</button>
+        <button class="action-btn btn-upload" style="background:#4caf50" onclick="document.getElementById('excel-upload').click()">+</button>
+        <input type="file" id="excel-upload" style="display:none;" accept=".xlsx, .xls, .csv" onchange="xuLyFileExcel(event)">
+      </div>
+
+      <div id="panel-cai-dat-danh-muc" class="setting-panel">
+        <div style="text-align: center; color: #ff9800; font-weight: 800; margin-bottom: 10px; font-size: 16px;">CÀI ĐẶT BẢNG</div>
+        
+        <div class="set-row">
+          <span>Cỡ chữ hiển thị:</span>
+          <select id="set-fontsize" style="width: 100px !important; padding: 5px !important; font-size: 16px !important; border-radius:6px; background:#fff; border: 1px solid #ccc;">
+            <option value="5">5 px</option><option value="6">6 px</option><option value="7">7 px</option>
+            <option value="8">8 px</option><option value="9">9 px</option><option value="10">10 px</option>
+            <option value="11">11 px</option><option value="12">12 px</option><option value="13">13 px</option>
+            <option value="14" selected>14 px</option><option value="15">15 px</option><option value="16">16 px</option>
+            <option value="17">17 px</option><option value="18">18 px</option><option value="19">19 px</option>
+            <option value="20">20 px</option>
+          </select>
+        </div>
+
+        <div style="border-top: 1px dashed #ccc; margin: 15px 0 10px 0;"></div>
+        <div style="font-size: 13px; color: #1976d2; font-weight: bold; margin-bottom: 10px;">
+          * Nếu bỏ tích, % của cột bị ẩn sẽ TỰ ĐỘNG NHẢY sang cột kế tiếp:
+        </div>
+        
+        <div id="danh-sach-cot-cai-dat"></div>
+
+        <button onclick="luuCaiDatDanhMuc()" class="btn" style="background:#ff9800; padding:12px; margin-bottom:0; margin-top:10px; font-size: 16px;">LƯU VÀ ÁP DỤNG</button>
+      </div>
+
+      <div class="card" style="padding: 0; overflow: hidden; border-radius: 12px;">
+        <div class="table-container" style="max-height: 65vh; overflow-y: auto; margin-top:0; border: none;">
+          <table id="bang-danh-muc">
+            <thead><tr id="dm-header"><th>DỮ LIỆU DANH MỤC</th></tr></thead>
+            <tbody id="dm-body">
+              <tr><td style="color:#999; padding: 30px; text-align: center;">Chưa có dữ liệu.<br><br>Bấm nút <b>+</b> màu xanh để tải file Excel.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-cham-cong" class="tab-content container">
+      
+      <div class="cc-nav">
+        <button class="cc-nav-btn active" id="cc-btn-ngay" onclick="switchCCTab('cc-ngay')">📅 NGÀY</button>
+        <button class="cc-nav-btn" id="cc-btn-nghi" onclick="switchCCTab('cc-nghi')">⛱️ NGHỈ</button>
+        <button class="cc-nav-btn" id="cc-btn-tonghop" onclick="switchCCTab('cc-tonghop')">📊 TỔNG HỢP</button>
+        <button class="cc-nav-btn" id="cc-btn-caidat" onclick="switchCCTab('cc-caidat')">⚙️ DATA</button>
+      </div>
+
+      <div id="cc-ngay" class="cc-sub-content active">
+        
+        <div class="cc-summary-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #b3d4fc; padding-bottom:8px; margin-bottom:8px;">
+             <div style="font-weight:900; color:#1976d2; font-size:12px;">TỔNG KẾT QUÂN SỐ</div>
+             <input type="date" id="cc-date-picker" style="width:130px; padding:4px; font-size:13px; border:1px solid #1976d2; color:#1976d2; font-weight:bold; background:#fff; border-radius:4px;" onchange="ccLoadDuLieuNgay()">
+          </div>
+
+          <div class="cc-summary-grid">
+            <div>⛱️ Nghỉ: <span id="cc-sum-nghi" class="cc-val-b" style="color:#e74c3c;">0</span></div>
+            <div>⚡ T.Cường: <span id="cc-sum-tc" class="cc-val-b" style="color:#f39c12;">0</span></div>
+            <div>📘 Học/CT: <span id="cc-sum-ht" class="cc-val-b" style="color:#00bcd4;">0</span></div>
+            <div>✅ C.Lại: <span id="cc-sum-bqtx" class="cc-val-b" style="color:#27ae60;">0</span></div>
+          </div>
+          
+          <div class="cc-summary-details" id="cc-summary-details-text"></div>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-bottom: 12px;">
+          <button class="cc-btn cc-btn-info" style="margin: 0; box-shadow:none; padding:10px;" onclick="ccMoModal('cc-modal-hoctap')">📘 HỌC TẬP/C.TÁC</button>
+          <button class="cc-btn cc-btn-warning" style="margin: 0; box-shadow:none; padding:10px;" onclick="ccMoModal('cc-modal-tang-cuong')">⚡ TĂNG CƯỜNG</button>
+        </div>
+
+        <div class="cc-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+            <h3 class="cc-card-title" style="margin:0; border:none; padding:0;">CHI TIẾT BÁO CÁO</h3>
+            <span id="cc-count-records" style="font-size:10px; font-weight:bold; color:#888; background:#eee; padding:2px 6px; border-radius:6px;">0 bản ghi</span>
+          </div>
+          <div id="cc-list-records-today"></div>
+        </div>
+      </div>
+
+      <div id="cc-nghi" class="cc-sub-content">
+        <div style="display:flex; gap:8px; margin-bottom: 12px;">
+          <button class="cc-btn cc-btn-danger" style="margin:0; padding:10px;" onclick="ccMoModal('cc-modal-nghi')">⛱️ TẠO LỊCH NGHỈ</button>
+          <button class="cc-btn cc-btn-primary" style="margin:0; background:#9b59b6; padding:10px;" onclick="ccMoModal('cc-modal-thongke-nghi')">📊 THỐNG KÊ NĂM</button>
+        </div>
+        <div class="cc-card">
+          <h3 class="cc-card-title">LỊCH SỬ ĐĂNG KÝ NGHỈ</h3>
+          <div id="cc-list-nghi-dai-han"></div>
+        </div>
+      </div>
+
+      <div id="cc-tonghop" class="cc-sub-content">
+        <div class="cc-card">
+          <div class="cc-quick-actions">
+            <button class="cc-quick-btn" id="cc-btn-tuan-truoc" onclick="ccChonTuanTruoc()">Tuần trước</button>
+            <button class="cc-quick-btn" id="cc-btn-tuan-nay" onclick="ccChonTuanNay()">Tuần này</button>
+            <button class="cc-quick-btn" id="cc-btn-thang-truoc" onclick="ccChonThangTruoc()">Tháng trước</button>
+            <button class="cc-quick-btn" id="cc-btn-thang-nay" onclick="ccChonThangNay()">Tháng này</button>
+          </div>
+          <div class="date-group-cc">
+            <div class="date-row-cc"><label class="cc-label" style="width:60px; margin:0;">Từ ngày:</label><input type="date" class="cc-input" id="cc-cycle-start" onchange="ccClearQuickActive(); ccAutoCalcEndDate();"></div>
+            <div class="date-row-cc"><label class="cc-label" style="width:60px; margin:0;">Đến ngày:</label><input type="date" class="cc-input" id="cc-cycle-end" onchange="ccClearQuickActive();"></div>
+          </div>
+          <button class="cc-btn cc-btn-primary" onclick="ccXemTongHop()" style="margin-top: 10px; padding:10px;">📊 TẠO BẢNG TỔNG HỢP</button>
+        </div>
+
+        <div id="cc-cycle-summary-box" class="cc-summary-box" style="display:none; margin-bottom: 12px;">
+            <div style="font-weight: 900; color: #1976d2; font-size: 12px; text-align: center; border-bottom: 1px solid #b3d4fc; padding-bottom: 6px; margin-bottom: 8px;">📊 TỔNG KẾT TOÀN ĐỘI KỲ NÀY</div>
+            <div id="cc-cycle-summary-text" style="font-size: 11px; color: #333; line-height: 1.5; text-align:left;"></div>
+        </div>
+
+        <div class="cc-card" style="padding: 0; border: 1px solid #eee;">
+          <div class="cc-table-wrapper">
+            <table id="cc-table-tong-hop" class="cc-table">
+              <thead><tr><th>NHÂN SỰ</th><th>N.PHÉP/BÙ</th><th>H.TẬP/CT</th><th>T.CƯỜNG</th></tr></thead>
+              <tbody><tr><td colspan="4" style="padding: 20px; color:#888; text-align:center;">Bấm "Tạo Bảng Tổng Hợp"</td></tr></tbody>
+              <tfoot id="cc-table-footer"></tfoot>
             </table>
           </div>
         </div>
       </div>
 
-      <div id="tab-cham-cong" class="tab-content">
+      <div id="cc-caidat" class="cc-sub-content">
+        <div class="cc-card" style="background:#f4fbff; border-color:#b3d4fc; text-align:center;">
+          <h3 class="cc-card-title" style="color:#27ae60; margin-bottom:5px;">💾 SAO LƯU & PHỤC HỒI</h3>
+          <p style="font-size:10px; color:#555; margin-bottom:10px;">Lưu file (.json) để cất giữ dữ liệu chấm công. Dùng file đó để phục hồi nếu chuyển máy.</p>
+          <div style="display:flex; gap:8px;">
+            <button class="cc-btn cc-btn-success" style="padding: 8px; font-size: 11px;" onclick="ccExportBackupJSON()">📥 TẢI BACKUP</button>
+            <button class="cc-btn cc-btn-warning" style="padding: 8px; font-size: 11px;" onclick="document.getElementById('cc-import-file').click()">📤 PHỤC HỒI</button>
+          </div>
+          <input type="file" id="cc-import-file" style="display:none;" accept=".json" onchange="ccImportBackupJSON(event)">
+          <button class="cc-btn" style="background:#fff; color:#1976d2; border:1px solid #1976d2; margin-top: 10px; padding:8px; font-size:11px;" onclick="ccXuatDuLieuRaExcel()">Xuất Excel để xem / nộp báo cáo</button>
+        </div>
+
+        <div class="cc-card">
+          <h3 class="cc-card-title">👥 DANH SÁCH NHÂN SỰ</h3>
+          <div style="display:flex; gap:6px;">
+            <input type="text" class="cc-input" id="cc-input-new-user" placeholder="Tên..." style="padding:8px;">
+            <input type="text" class="cc-input" id="cc-input-new-role" placeholder="Chức vụ" style="width: 80px; padding:8px;">
+            <button class="cc-btn cc-btn-primary" style="margin:0; width: 60px; padding: 8px; font-size: 11px;" onclick="ccThemNhanVien()">Thêm</button>
+          </div>
+          <div id="cc-list-users" style="margin-top: 12px; max-height: 250px; overflow-y: auto;"></div>
+        </div>
+
+        <div class="cc-card">
+          <h3 class="cc-card-title">⚡ MẪU VIỆC TĂNG CƯỜNG</h3>
+          <div style="display:flex; gap:6px;">
+            <input type="text" class="cc-input" id="cc-input-new-task" placeholder="Việc tăng cường..." style="padding:8px;">
+            <button class="cc-btn cc-btn-primary" style="margin:0; width: 60px; padding: 8px; font-size: 11px;" onclick="ccThemViec()">Thêm</button>
+          </div>
+          <div id="cc-list-tasks" style="margin-top: 12px;"></div>
+        </div>
+
+        <div class="cc-card">
+          <h3 class="cc-card-title">⛱️ MẪU LÝ DO NGHỈ</h3>
+          <div style="display:flex; gap:6px;">
+            <input type="text" class="cc-input" id="cc-input-new-leave" placeholder="Loại nghỉ..." style="padding:8px;">
+            <button class="cc-btn cc-btn-primary" style="margin:0; width: 60px; padding: 8px; font-size: 11px;" onclick="ccThemLoaiNghi()">Thêm</button>
+          </div>
+          <div id="cc-list-leaves" style="margin-top: 12px;"></div>
+        </div>
+      </div>
+    </div> <div id="tab-cai-dat" class="tab-content container">
+      <div class="card">
+        <h3 class="card-title">CÀI ĐẶT HỆ THỐNG CHUNG</h3>
         
-        <div class="cc-nav">
-          <button class="cc-nav-btn active" id="cc-btn-ngay" onclick="switchCCTab('cc-ngay')">📅 NGÀY</button>
-          <button class="cc-nav-btn" id="cc-btn-nghi" onclick="switchCCTab('cc-nghi')">⛱️ NGHỈ</button>
-          <button class="cc-nav-btn" id="cc-btn-tonghop" onclick="switchCCTab('cc-tonghop')">📊 TỔNG HỢP</button>
-          <button class="cc-nav-btn" id="cc-btn-caidat" onclick="switchCCTab('cc-caidat')">⚙️ DATA</button>
+        <div class="set-row" style="margin-top: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+          <label style="margin:0; font-size:15px; color:#333; display:flex; align-items:center;">
+            <input type="checkbox" id="chk-app-lock" style="transform:scale(1.5); margin-right:15px; width:auto;"> Bật Khóa App (Mật khẩu / Face ID)
+          </label>
         </div>
 
-        <div id="cc-ngay" class="cc-sub-content active">
-          
-          <div class="cc-summary-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #b3d4fc; padding-bottom:8px; margin-bottom:8px;">
-               <div style="font-weight:900; color:#1976d2; font-size:13px; text-transform:uppercase;">📊 TỔNG KẾT QUÂN SỐ</div>
-               <input type="date" id="cc-date-picker" class="cc-input" style="width:135px; padding:6px; font-size:13px; border:1px solid #1976d2; color:#1976d2; font-weight:bold; background:#fff; border-radius:6px;" onchange="ccLoadDuLieuNgay()">
-            </div>
-
-            <div class="cc-summary-grid">
-              <div>⛱️ Nghỉ: <span id="cc-sum-nghi" class="cc-val-b" style="color:#e74c3c;">0</span></div>
-              <div>⚡ T.Cường: <span id="cc-sum-tc" class="cc-val-b" style="color:#f39c12;">0</span></div>
-              <div>📘 Học/CT: <span id="cc-sum-ht" class="cc-val-b" style="color:#00bcd4;">0</span></div>
-              <div>✅ C.Lại: <span id="cc-sum-bqtx" class="cc-val-b" style="color:#27ae60;">0</span></div>
-            </div>
-            
-            <div class="cc-summary-details" id="cc-summary-details-text"></div>
-          </div>
-
-          <div style="display:flex; gap:8px; margin-bottom: 12px;">
-            <button class="cc-btn cc-btn-info" style="margin: 0; box-shadow:none; padding:10px;" onclick="ccMoModal('cc-modal-hoctap')">📘 HỌC TẬP/C.TÁC</button>
-            <button class="cc-btn cc-btn-warning" style="margin: 0; box-shadow:none; padding:10px;" onclick="ccMoModal('cc-modal-tang-cuong')">⚡ TĂNG CƯỜNG</button>
-          </div>
-
-          <div class="cc-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-              <h3 class="cc-card-title" style="margin:0; border:none; padding:0;">CHI TIẾT BÁO CÁO</h3>
-              <span id="cc-count-records" style="font-size:10px; font-weight:bold; color:#888; background:#eee; padding:3px 8px; border-radius:10px;">0 bản ghi</span>
-            </div>
-            <div id="cc-list-records-today"></div>
-          </div>
+        <div class="set-row" style="border-bottom: 1px solid #eee; padding-bottom: 15px;">
+          <span style="font-size:15px; font-weight:bold; color:#333;">Đổi Mật khẩu:</span>
+          <input type="text" id="set-app-password" style="width: 120px !important; padding: 8px !important; font-size: 18px !important; text-align: center !important; border-radius: 8px !important; border: 1px solid #1976d2 !important;" maxlength="8" inputmode="numeric">
         </div>
 
-        <div id="cc-nghi" class="cc-sub-content">
-          <div style="display:flex; gap:8px; margin-bottom: 12px;">
-            <button class="cc-btn cc-btn-danger" style="margin:0; padding:10px;" onclick="ccMoModal('cc-modal-nghi')">⛱️ TẠO LỊCH NGHỈ</button>
-            <button class="cc-btn cc-btn-primary" style="margin:0; background:#9b59b6; padding:10px;" onclick="ccMoModal('cc-modal-thongke-nghi')">📊 THỐNG KÊ NGHỈ</button>
-          </div>
-          <div class="cc-card">
-            <h3 class="cc-card-title">LỊCH SỬ ĐĂNG KÝ NGHỈ</h3>
-            <div id="cc-list-nghi-dai-han"></div>
-          </div>
-        </div>
+        <div style="font-size: 15px; color: #333; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">Sắp xếp Menu Tab chính:</div>
+        <div id="sort-tab-list" style="margin-bottom: 20px;"></div>
 
-        <div id="cc-tonghop" class="cc-sub-content">
-          <div class="cc-card">
-            <div class="cc-quick-actions">
-              <button class="cc-quick-btn" id="cc-btn-tuan-truoc" onclick="ccChonTuanTruoc()">Tuần trước</button>
-              <button class="cc-quick-btn" id="cc-btn-tuan-nay" onclick="ccChonTuanNay()">Tuần này</button>
-              <button class="cc-quick-btn" id="cc-btn-thang-truoc" onclick="ccChonThangTruoc()">Tháng trước</button>
-              <button class="cc-quick-btn" id="cc-btn-thang-nay" onclick="ccChonThangNay()">Tháng này</button>
-            </div>
-            <div class="cc-date-group">
-              <div class="cc-date-row"><label class="cc-label" style="width:60px; margin:0;">Từ ngày:</label><input type="date" class="cc-input" id="cc-cycle-start" onchange="ccClearQuickActive(); ccAutoCalcEndDate();"></div>
-              <div class="cc-date-row"><label class="cc-label" style="width:60px; margin:0;">Đến ngày:</label><input type="date" class="cc-input" id="cc-cycle-end" onchange="ccClearQuickActive();"></div>
-            </div>
-            <button class="cc-btn cc-btn-primary" onclick="ccXemTongHop()" style="margin-top: 10px; padding:10px;">📊 TẠO BẢNG TỔNG HỢP</button>
-          </div>
-
-          <div id="cc-cycle-summary-box" class="cc-summary-box" style="display:none; margin-bottom: 12px;">
-              <div style="font-weight: 900; color: #1976d2; font-size: 13px; text-align: center; border-bottom: 1px solid #b3d4fc; padding-bottom: 8px; margin-bottom: 10px;">📊 TỔNG KẾT TOÀN ĐỘI KỲ NÀY</div>
-              <div id="cc-cycle-summary-text" style="font-size: 12px; color: #333; line-height: 1.6; text-align:left;"></div>
-          </div>
-
-          <div class="cc-card" style="padding: 0; border: 1px solid #eee;">
-            <div class="cc-table-wrapper">
-              <table id="cc-table-tong-hop" class="cc-table">
-                <thead><tr><th>NHÂN SỰ</th><th>N.PHÉP/BÙ</th><th>H.TẬP/CT</th><th>T.CƯỜNG</th></tr></thead>
-                <tbody><tr><td colspan="4" style="padding: 20px; color:#888; text-align:center;">Bấm "Tạo Bảng Tổng Hợp"</td></tr></tbody>
-                <tfoot id="cc-table-footer"></tfoot>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div id="cc-caidat" class="cc-sub-content">
-          <div class="cc-card" style="background:#f4fbff; border-color:#b3d4fc; text-align:center;">
-            <h3 class="cc-card-title" style="color:#27ae60; margin-bottom:5px;">💾 SAO LƯU & PHỤC HỒI</h3>
-            <p style="font-size:11px; color:#555; margin-bottom:12px; line-height:1.4;">
-              <b>Lưu ý quan trọng:</b> Mọi thao tác đều được tự động lưu ngầm. <br>👉 Nút <b>TẢI BACKUP</b> để xuất file json cất đi. Khi cần đổi máy, bấm <b>PHỤC HỒI</b> và chọn file json đã tải để lấy lại toàn bộ.
-            </p>
-            <div style="display:flex; gap:8px;">
-              <button class="cc-btn cc-btn-success" style="padding: 10px; font-size: 11px;" onclick="ccExportBackupJSON()">📥 TẢI BACKUP</button>
-              <button class="cc-btn cc-btn-warning" style="padding: 10px; font-size: 11px;" onclick="document.getElementById('cc-import-file').click()">📤 PHỤC HỒI</button>
-            </div>
-            <input type="file" id="cc-import-file" style="display:none;" accept=".json" onchange="ccImportBackupJSON(event)">
-            <button class="cc-btn" style="background:#fff; color:#1976d2; border:1px solid #1976d2; margin-top: 10px; padding:10px; font-size:11px;" onclick="ccXuatDuLieuRaExcel()">Xuất Excel để nộp báo cáo</button>
-          </div>
-
-          <div class="cc-card">
-            <h3 class="cc-card-title">👥 DANH SÁCH NHÂN SỰ</h3>
-            <div style="display:flex; gap:6px;">
-              <input type="text" class="cc-input" id="cc-input-new-user" placeholder="Tên..." style="padding:8px;">
-              <input type="text" class="cc-input" id="cc-input-new-role" placeholder="Chức vụ" style="width: 80px; padding:8px;">
-              <button class="cc-btn cc-btn-primary" style="margin:0; width: 60px; padding: 8px; font-size: 11px;" onclick="ccThemNhanVien()">Thêm</button>
-            </div>
-            <div id="cc-list-users" style="margin-top: 12px; max-height: 250px; overflow-y: auto;"></div>
-          </div>
-
-          <div class="cc-card">
-            <h3 class="cc-card-title">⚡ MẪU VIỆC TĂNG CƯỜNG</h3>
-            <div style="display:flex; gap:6px;">
-              <input type="text" class="cc-input" id="cc-input-new-task" placeholder="Việc tăng cường..." style="padding:8px;">
-              <button class="cc-btn cc-btn-primary" style="margin:0; width: 60px; padding: 8px; font-size: 11px;" onclick="ccThemViec()">Thêm</button>
-            </div>
-            <div id="cc-list-tasks" style="margin-top: 12px;"></div>
-          </div>
-
-          <div class="cc-card">
-            <h3 class="cc-card-title">⛱️ MẪU LÝ DO NGHỈ</h3>
-            <div style="display:flex; gap:6px;">
-              <input type="text" class="cc-input" id="cc-input-new-leave" placeholder="Loại nghỉ..." style="padding:8px;">
-              <button class="cc-btn cc-btn-primary" style="margin:0; width: 60px; padding: 8px; font-size: 11px;" onclick="ccThemLoaiNghi()">Thêm</button>
-            </div>
-            <div id="cc-list-leaves" style="margin-top: 12px;"></div>
-          </div>
-        </div>
+        <button onclick="luuCaiDatApp()" class="btn" style="background:#1976d2; padding:12px; font-size: 16px; margin-bottom: 10px;">LƯU CÀI ĐẶT</button>
       </div>
 
-      <div id="tab-cai-dat" class="tab-content">
-        <div class="card">
-          <div class="card-title">CÀI ĐẶT HỆ THỐNG</div>
-          
-          <div class="set-row" style="margin-top: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
-            <label style="margin:0; font-size:15px; color:#333; display:flex; align-items:center;">
-              <input type="checkbox" id="chk-app-lock" style="transform:scale(1.5); margin-right:15px; width:auto;"> Bật Khóa App (Mật khẩu / Face ID)
-            </label>
-          </div>
-
-          <div class="set-row" style="border-bottom: 1px solid #eee; padding-bottom: 15px;">
-            <span style="font-size:15px; font-weight:bold; color:#333;">Đổi Mật khẩu:</span>
-            <input type="text" class="base-input" id="set-app-password" style="width: 120px !important; padding: 10px !important; font-size: 18px !important; text-align: center !important; border-radius: 8px !important; border: 1px solid #1976d2 !important;" maxlength="8" inputmode="numeric">
-          </div>
-
-          <div style="font-size: 15px; color: #333; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">Sắp xếp Menu Tab chính:</div>
-          <div id="sort-tab-list" style="margin-bottom: 20px;"></div>
-
-          <button onclick="luuCaiDatApp()" class="btn-main" style="background:#1976d2; margin-bottom: 10px;">LƯU CÀI ĐẶT</button>
-        </div>
-
-        <div class="card">
-          <div class="card-title" style="color:#ff9800;">DỌN DẸP DỮ LIỆU</div>
-          <button onclick="xoaLichSuChiaGio()" class="btn-main" style="background:#f44336; margin-bottom: 10px;">XÓA LỊCH SỬ CHIA GIỜ</button>
-          <button onclick="xoaDuLieuExcel()" class="btn-main" style="background:#f44336; margin-bottom: 0;">XÓA DANH MỤC EXCEL</button>
-        </div>
-
-        <div class="card">
-          <div class="card-title" style="color:#1976d2;">CẬP NHẬT ỨNG DỤNG</div>
-          <button onclick="capNhatPhienBanMoi()" class="btn-main" style="background:#1976d2; margin-bottom: 0;">🔄 TẢI MỚI PHIÊN BẢN</button>
-        </div>
+      <div class="card">
+        <h3 class="card-title" style="color:#ff9800;">DỌN DẸP DỮ LIỆU</h3>
+        <button onclick="xoaLichSuChiaGio()" class="btn" style="background:#f44336; padding:12px; font-size: 15px; margin-bottom: 10px;">XÓA LỊCH SỬ CHIA GIỜ</button>
+        <button onclick="xoaDuLieuExcel()" class="btn" style="background:#f44336; padding:12px; font-size: 15px; margin-bottom: 0;">XÓA DANH MỤC EXCEL</button>
       </div>
-
     </div>
-  </div> 
 
-  <div class="bottom-nav-container">
-    <button class="home-btn-fixed nav-btn active" id="nav-tab-home" onclick="switchTab('tab-home')">
+  </div> <div class="bottom-nav-container">
+    <button class="home-btn-fixed nav-btn active" id="nav-tab-home" onclick="switchMainTab('tab-home')">
       <span class="nav-icon">🏠</span>Home
     </button>
-    <div class="scrollable-tabs" id="scrollable-tab-container">
+    <div class="scrollable-tabs" id="main-tab-container">
       </div>
   </div>
 
   <div class="cc-modal-overlay" id="cc-modal-thongke-nghi">
     <div class="cc-modal-content">
       <div class="cc-close-modal" onclick="ccDongModal('cc-modal-thongke-nghi')">&times;</div>
-      <h3 style="margin-top:0; font-size:15px; color:#9b59b6; border-bottom:1px solid #eee; padding-bottom:10px; text-transform:uppercase;">📊 THỐNG KÊ NGHỈ</h3>
-      <div class="cc-modal-body">
-        <div style="display:flex; gap:8px; align-items:center; margin-bottom: 15px;">
-          <select id="cc-tk-thang" class="cc-input" style="padding: 8px; font-size:14px; width: 100px;">
-             <option value="all">Cả năm</option>
-             <option value="01">Tháng 1</option><option value="02">Tháng 2</option><option value="03">Tháng 3</option><option value="04">Tháng 4</option><option value="05">Tháng 5</option><option value="06">Tháng 6</option>
-             <option value="07">Tháng 7</option><option value="08">Tháng 8</option><option value="09">Tháng 9</option><option value="10">Tháng 10</option><option value="11">Tháng 11</option><option value="12">Tháng 12</option>
-          </select>
-          <input type="number" class="cc-input" id="cc-tk-nam" value="2026" style="padding: 8px; font-size:14px; width:80px;">
-          <button class="cc-btn cc-btn-primary" style="margin:0; padding:8px 15px;" onclick="ccTinhThongKeNghi()">XEM</button>
-        </div>
-        <div class="cc-table-wrapper">
-          <table id="cc-table-thongke-nam" class="cc-table">
-            <thead><tr><th>NHÂN SỰ</th><th style="width:25%;">TỔNG NGHỈ</th><th>CHI TIẾT</th></tr></thead>
-            <tbody><tr><td colspan="3" style="color:#888; padding:20px;">Bấm XEM để hiển thị</td></tr></tbody>
-          </table>
-        </div>
+      <h3 style="margin-top:0; font-size:13px; color:#9b59b6; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">📊 THỐNG KÊ NGHỈ NĂM</h3>
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom: 12px;">
+        <label class="cc-label" style="margin:0; width:70px;">Chọn Năm:</label>
+        <input type="number" class="cc-input" id="cc-tk-nam" value="2026" style="padding: 8px; font-size:14px;">
+        <button class="cc-btn cc-btn-primary" style="margin:0; padding:8px 15px;" onclick="ccTinhThongKeNghiNam()">XEM</button>
+      </div>
+      <div class="cc-table-wrapper" style="max-height: 400px; overflow-y: auto;">
+        <table id="cc-table-thongke-nam" class="cc-table">
+          <thead><tr><th>NHÂN SỰ</th><th style="width:25%;">TỔNG NGHỈ</th><th>CHI TIẾT</th></tr></thead>
+          <tbody><tr><td colspan="3" style="color:#888; padding:20px;">Bấm XEM để hiển thị</td></tr></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -713,29 +691,24 @@
   <div class="cc-modal-overlay" id="cc-modal-hoctap">
     <div class="cc-modal-content">
       <div class="cc-close-modal" onclick="ccDongModal('cc-modal-hoctap')">&times;</div>
-      <h3 style="margin-top:0; font-size:15px; color:#00bcd4; border-bottom:1px solid #eee; padding-bottom:10px; text-transform:uppercase;">📘 Học tập / Công tác</h3>
-      <div class="cc-modal-body">
-        <label class="cc-label">1. Phân loại:</label>
-        <select id="cc-sel-loai-hoctap" class="cc-select" style="font-weight:bold; color:#1976d2;"><option value="Học tập">Học tập</option><option value="Công tác">Công tác</option><option value="Đi tuyến">Đi tuyến</option><option value="khac">-- ✍️ Nhập lý do khác --</option></select>
-        <input type="text" class="cc-input" id="cc-txt-hoctap-moi" placeholder="Nhập lý do cụ thể..." style="display:none; margin-top:10px;">
-        
-        <label class="cc-label">2. Thời lượng (Ngày <span class="cc-lbl-modal-date" style="color:#1976d2;"></span>):</label>
-        <div class="cc-toggle-group">
-          <input type="radio" id="cc-h-all" name="cc_sess_hoctap" value="all" checked><label for="cc-h-all">Cả ngày</label>
-          <input type="radio" id="cc-h-mor" name="cc_sess_hoctap" value="morning"><label for="cc-h-mor">Sáng</label>
-          <input type="radio" id="cc-h-aft" name="cc_sess_hoctap" value="afternoon"><label for="cc-h-aft">Chiều</label>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 15px;">
-          <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
-          <button class="cc-btn-small" style="padding:6px 12px; font-size:12px; border-radius:6px; font-weight:bold; border:1px solid #1976d2; background:#eaf6ff; color:#1976d2;" onclick="ccSelectAll('cc-grid-user-hoctap')">☑ Chọn hết</button>
-        </div>
-        <div class="cc-checkbox-grid" id="cc-grid-user-hoctap"></div>
-        
-        <div style="display:flex; gap:10px; margin-top:20px;">
-          <button class="cc-btn" style="background:#bdc3c7; color:#333; box-shadow:none;" onclick="ccDongModal('cc-modal-hoctap')">HỦY</button>
-          <button class="cc-btn cc-btn-info" onclick="ccLuuRecordDaily('hoctap')">LƯU BÁO CÁO</button>
-        </div>
+      <h3 style="margin-top:0; font-size:13px; color:#00bcd4; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">📘 Học tập / Công tác</h3>
+      <label class="cc-label">1. Phân loại:</label>
+      <select id="cc-sel-loai-hoctap" class="cc-select" style="font-weight:bold; color:#1976d2;"><option value="Học tập">Học tập</option><option value="Công tác">Công tác</option><option value="Đi tuyến">Đi tuyến</option><option value="khac">-- ✍️ Nhập lý do khác --</option></select>
+      <input type="text" class="cc-input" id="cc-txt-hoctap-moi" placeholder="Nhập lý do cụ thể..." style="display:none; margin-top:8px;">
+      <label class="cc-label">2. Thời lượng (Ngày <span class="cc-lbl-modal-date" style="color:#1976d2;"></span>):</label>
+      <div class="cc-toggle-group">
+        <input type="radio" id="cc-h-all" name="cc_sess_hoctap" value="all" checked><label for="cc-h-all">Cả ngày</label>
+        <input type="radio" id="cc-h-mor" name="cc_sess_hoctap" value="morning"><label for="cc-h-mor">Sáng</label>
+        <input type="radio" id="cc-h-aft" name="cc_sess_hoctap" value="afternoon"><label for="cc-h-aft">Chiều</label>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 12px;">
+        <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
+        <button class="cc-btn-small" onclick="ccSelectAll('cc-grid-user-hoctap')">☑ Chọn hết</button>
+      </div>
+      <div class="cc-checkbox-grid" id="cc-grid-user-hoctap"></div>
+      <div style="display:flex; gap:8px; margin-top:15px;">
+        <button class="cc-btn" style="background:#bdc3c7; color:#333;" onclick="ccDongModal('cc-modal-hoctap')">HỦY</button>
+        <button class="cc-btn cc-btn-info" onclick="ccLuuRecordDaily('hoctap')">LƯU BÁO CÁO</button>
       </div>
     </div>
   </div>
@@ -743,31 +716,26 @@
   <div class="cc-modal-overlay" id="cc-modal-tang-cuong">
     <div class="cc-modal-content">
       <div class="cc-close-modal" onclick="ccDongModal('cc-modal-tang-cuong')">&times;</div>
-      <h3 style="margin-top:0; font-size:15px; color:#f39c12; border-bottom:1px solid #eee; padding-bottom:10px; text-transform:uppercase;">⚡ Ghi nhận Tăng Cường</h3>
-      <div class="cc-modal-body">
-        <label class="cc-label">1. Chọn công việc:</label>
-        <select id="cc-sel-loai-viec" class="cc-select" style="font-weight:bold; color:#1976d2;"></select>
-        <div id="cc-wrap-viec-moi" style="display:none; margin-top:10px;">
-          <input type="text" class="cc-input" id="cc-txt-viec-moi" placeholder="Nhập việc cụ thể...">
-        </div>
-
-        <label class="cc-label">2. Thời lượng (Ngày <span class="cc-lbl-modal-date" style="color:#1976d2;"></span>):</label>
-        <div class="cc-toggle-group">
-          <input type="radio" id="cc-t-all" name="cc_sess_viec" value="all" checked><label for="cc-t-all">Cả ngày</label>
-          <input type="radio" id="cc-t-mor" name="cc_sess_viec" value="morning"><label for="cc-t-mor">Sáng</label>
-          <input type="radio" id="cc-t-aft" name="cc_sess_viec" value="afternoon"><label for="cc-t-aft">Chiều</label>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 15px;">
-          <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
-          <button class="cc-btn-small" style="padding:6px 12px; font-size:12px; border-radius:6px; font-weight:bold; border:1px solid #1976d2; background:#eaf6ff; color:#1976d2;" onclick="ccSelectAll('cc-grid-user-viec')">☑ Chọn hết</button>
-        </div>
-        <div class="cc-checkbox-grid" id="cc-grid-user-viec"></div>
-        
-        <div style="display:flex; gap:10px; margin-top:20px;">
-          <button class="cc-btn" style="background:#bdc3c7; color:#333; box-shadow:none;" onclick="ccDongModal('cc-modal-tang-cuong')">HỦY</button>
-          <button class="cc-btn cc-btn-warning" onclick="ccLuuRecordDaily('viec')">LƯU BÁO CÁO</button>
-        </div>
+      <h3 style="margin-top:0; font-size:13px; color:#f39c12; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">⚡ Ghi nhận Tăng Cường</h3>
+      <label class="cc-label">1. Chọn công việc:</label>
+      <select id="cc-sel-loai-viec" class="cc-select" style="font-weight:bold; color:#1976d2;"></select>
+      <div id="cc-wrap-viec-moi" style="display:none; margin-top:8px;">
+        <input type="text" class="cc-input" id="cc-txt-viec-moi" placeholder="Nhập việc cụ thể...">
+      </div>
+      <label class="cc-label">2. Thời lượng (Ngày <span class="cc-lbl-modal-date" style="color:#1976d2;"></span>):</label>
+      <div class="cc-toggle-group">
+        <input type="radio" id="cc-t-all" name="cc_sess_viec" value="all" checked><label for="cc-t-all">Cả ngày</label>
+        <input type="radio" id="cc-t-mor" name="cc_sess_viec" value="morning"><label for="cc-t-mor">Sáng</label>
+        <input type="radio" id="cc-t-aft" name="cc_sess_viec" value="afternoon"><label for="cc-t-aft">Chiều</label>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 12px;">
+        <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
+        <button class="cc-btn-small" onclick="ccSelectAll('cc-grid-user-viec')">☑ Chọn hết</button>
+      </div>
+      <div class="cc-checkbox-grid" id="cc-grid-user-viec"></div>
+      <div style="display:flex; gap:8px; margin-top:15px;">
+        <button class="cc-btn" style="background:#bdc3c7; color:#333;" onclick="ccDongModal('cc-modal-tang-cuong')">HỦY</button>
+        <button class="cc-btn cc-btn-warning" onclick="ccLuuRecordDaily('viec')">LƯU BÁO CÁO</button>
       </div>
     </div>
   </div>
@@ -775,51 +743,35 @@
   <div class="cc-modal-overlay" id="cc-modal-nghi">
     <div class="cc-modal-content">
       <div class="cc-close-modal" onclick="ccDongModal('cc-modal-nghi')">&times;</div>
-      <h3 style="margin-top:0; font-size:15px; color:#e74c3c; border-bottom:1px solid #eee; padding-bottom:10px; text-transform:uppercase;">⛱️ Đăng ký Nghỉ</h3>
-      <div class="cc-modal-body">
-        <label class="cc-label">1. Phân loại nghỉ:</label>
-        <select id="cc-sel-loai-nghi" class="cc-select" style="font-weight:bold; color:#1976d2;"></select>
-        
-        <label class="cc-label">2. Thời gian nghỉ:</label>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <div style="display: flex; align-items: center; gap: 10px;"><label class="cc-label" style="margin:0; width:65px; color:#888;">Từ ngày:</label><input type="date" class="cc-input" id="cc-nghi-tu" onchange="ccKiemTraHienThiBuoiNghi()"></div>
-          <div style="display: flex; align-items: center; gap: 10px;"><label class="cc-label" style="margin:0; width:65px; color:#888;">Đến ngày:</label><input type="date" class="cc-input" id="cc-nghi-den" onchange="ccKiemTraHienThiBuoiNghi()"></div>
+      <h3 style="margin-top:0; font-size:13px; color:#e74c3c; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">⛱️ Đăng ký Nghỉ</h3>
+      <label class="cc-label">1. Phân loại nghỉ:</label>
+      <select id="cc-sel-loai-nghi" class="cc-select" style="font-weight:bold; color:#1976d2;"></select>
+      <label class="cc-label">2. Thời gian nghỉ:</label>
+      <div class="date-group-cc">
+        <div class="date-row-cc"><label class="cc-label" style="margin:0; width:60px; color:#888;">Từ ngày:</label><input type="date" class="cc-input" id="cc-nghi-tu" onchange="ccKiemTraHienThiBuoiNghi()"></div>
+        <div class="date-row-cc"><label class="cc-label" style="margin:0; width:60px; color:#888;">Đến ngày:</label><input type="date" class="cc-input" id="cc-nghi-den" onchange="ccKiemTraHienThiBuoiNghi()"></div>
+      </div>
+      <div id="cc-wrap-buoi-nghi" style="margin-top: 10px;">
+        <span style="font-size:11px; color:#888; font-weight:bold;">Nghỉ theo buổi (Chỉ áp dụng khi chọn 1 ngày):</span>
+        <div class="cc-toggle-group">
+          <input type="radio" id="cc-n-all" name="cc_sess_nghi" value="all" checked><label for="cc-n-all">Cả ngày</label>
+          <input type="radio" id="cc-n-mor" name="cc_sess_nghi" value="morning"><label for="cc-n-mor">Sáng</label>
+          <input type="radio" id="cc-n-aft" name="cc_sess_nghi" value="afternoon"><label for="cc-n-aft">Chiều</label>
         </div>
-
-        <div id="cc-wrap-buoi-nghi" style="margin-top: 12px;">
-          <span style="font-size:12px; color:#888; font-weight:bold;">Nghỉ theo buổi (Chỉ áp dụng khi chọn 1 ngày):</span>
-          <div class="cc-toggle-group">
-            <input type="radio" id="cc-n-all" name="cc_sess_nghi" value="all" checked><label for="cc-n-all">Cả ngày</label>
-            <input type="radio" id="cc-n-mor" name="cc_sess_nghi" value="morning"><label for="cc-n-mor">Sáng</label>
-            <input type="radio" id="cc-n-aft" name="cc_sess_nghi" value="afternoon"><label for="cc-n-aft">Chiều</label>
-          </div>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 15px;">
-          <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
-          <button class="cc-btn-small" style="padding:6px 12px; font-size:12px; border-radius:6px; font-weight:bold; border:1px solid #1976d2; background:#eaf6ff; color:#1976d2;" onclick="ccSelectAll('cc-grid-user-nghi')">☑ Chọn hết</button>
-        </div>
-        <div class="cc-checkbox-grid" id="cc-grid-user-nghi"></div>
-        
-        <div style="display:flex; gap:10px; margin-top:20px;">
-          <button class="cc-btn" style="background:#bdc3c7; color:#333; box-shadow:none;" onclick="ccDongModal('cc-modal-nghi')">HỦY</button>
-          <button class="cc-btn cc-btn-danger" onclick="ccLuuRecordLeave()">LƯU BÁO CÁO</button>
-        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 12px;">
+        <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
+        <button class="cc-btn-small" onclick="ccSelectAll('cc-grid-user-nghi')">☑ Chọn hết</button>
+      </div>
+      <div class="cc-checkbox-grid" id="cc-grid-user-nghi"></div>
+      <div style="display:flex; gap:8px; margin-top:15px;">
+        <button class="cc-btn" style="background:#bdc3c7; color:#333;" onclick="ccDongModal('cc-modal-nghi')">HỦY</button>
+        <button class="cc-btn cc-btn-danger" onclick="ccLuuRecordLeave()">LƯU BÁO CÁO</button>
       </div>
     </div>
   </div>
 
 <script>
-  // ==========================================
-  // HỆ THỐNG PARSE JSON AN TOÀN TRÁNH CRASH APP
-  // ==========================================
-  function safeParseJSON(key, defaultVal) {
-      try {
-          let val = localStorage.getItem(key);
-          return val ? JSON.parse(val) : defaultVal;
-      } catch(e) { return defaultVal; }
-  }
-
   // ==========================================
   // KHỞI TẠO MẶC ĐỊNH CHẤM CÔNG (ÉP BUỘC NẠP DỮ LIỆU NẾU TRỐNG)
   // ==========================================
@@ -832,26 +784,26 @@
   const DEFAULT_TASKS = ["Trạm KA", "Cần vụ", "Tu bổ", "Bảo quản 1", "Bảo quản 3"];
   const DEFAULT_LEAVES = ["Nghỉ phép", "Nghỉ bù"];
 
-  let dsNhanVien = safeParseJSON('cc_users', null);
+  let dsNhanVien = JSON.parse(localStorage.getItem('cc_users'));
   if (!dsNhanVien || !Array.isArray(dsNhanVien) || dsNhanVien.length === 0 || typeof dsNhanVien[0] === 'string') {
       dsNhanVien = [...DEFAULT_USERS];
       localStorage.setItem('cc_users', JSON.stringify(dsNhanVien));
   }
 
-  let dsLoaiNghi = safeParseJSON('cc_leaves', null);
+  let dsLoaiNghi = JSON.parse(localStorage.getItem('cc_leaves'));
   if (!dsLoaiNghi || !Array.isArray(dsLoaiNghi) || dsLoaiNghi.length === 0) {
       dsLoaiNghi = [...DEFAULT_LEAVES];
       localStorage.setItem('cc_leaves', JSON.stringify(dsLoaiNghi));
   }
 
-  let dsViecTangCuong = safeParseJSON('cc_tasks', null);
+  let dsViecTangCuong = JSON.parse(localStorage.getItem('cc_tasks'));
   if (!dsViecTangCuong || !Array.isArray(dsViecTangCuong) || dsViecTangCuong.length === 0) {
       dsViecTangCuong = [...DEFAULT_TASKS];
       localStorage.setItem('cc_tasks', JSON.stringify(dsViecTangCuong));
   }
 
-  let dsDaily = safeParseJSON('cc_daily', []);
-  let dsLeaves = safeParseJSON('cc_leaves_data', []);
+  let dsDaily = JSON.parse(localStorage.getItem('cc_daily')) || [];
+  let dsLeaves = JSON.parse(localStorage.getItem('cc_leaves_data')) || [];
   
   document.getElementById('cc-date-picker').value = new Date().toISOString().split('T')[0];
   document.getElementById('cc-tk-nam').value = new Date().getFullYear();
@@ -862,253 +814,149 @@
   function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 
   // ==========================================
-  // HỆ THỐNG MẬT KHẨU TÙY CHỈNH & FACE ID
+  // 1. QUẢN LÝ ĐIỀU HƯỚNG CHÍNH (MAIN TABS)
   // ==========================================
-  function getAppPassword() { return localStorage.getItem('appPin') || "18121997"; }
-  function isAppLocked() { return localStorage.getItem('isAppLocked') !== 'false'; } 
+  const dashData = {
+    'tab-thong-gio': { icon: '💨', title: 'Thông gió', fullTitle: 'TÍNH TOÁN THÔNG GIÓ' },
+    'tab-chia-gio': { icon: '⏰', title: 'Chia giờ', fullTitle: 'CHIA GIỜ LỊCH TRÌNH' },
+    'tab-thoi-tiet': { icon: '🌤️', title: 'Thời tiết', fullTitle: 'TRA CỨU THỜI TIẾT' },
+    'tab-danh-muc': { icon: '📋', title: 'Danh mục', fullTitle: 'QUẢN LÝ DANH MỤC' },
+    'tab-cham-cong': { icon: '📝', title: 'Chấm Công', fullTitle: 'CHẤM CÔNG NHÂN SỰ' },
+    'tab-cai-dat': { icon: '⚙️', title: 'Cài đặt', fullTitle: 'CÀI ĐẶT HỆ THỐNG' }
+  };
+
+  const defaultMainTabs = ['tab-thong-gio', 'tab-chia-gio', 'tab-thoi-tiet', 'tab-danh-muc', 'tab-cham-cong', 'tab-cai-dat'];
+
+  function getMainTabOrder() { let saved = localStorage.getItem('mainTabOrder'); if(saved) return JSON.parse(saved); return defaultMainTabs; }
+
+  function switchMainTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    
+    let btnTop = document.getElementById('nav-' + tabId);
+    if(btnTop) {
+        btnTop.classList.add('active');
+        let tabBar = document.getElementById('main-tab-container');
+        tabBar.scrollTo({ left: btnTop.offsetLeft - (tabBar.offsetWidth/2) + (btnTop.offsetWidth/2), behavior: 'smooth' });
+        document.getElementById('header-title').innerText = dashData[tabId].fullTitle;
+    } else { 
+        document.getElementById('nav-tab-home').classList.add('active'); 
+        document.getElementById('header-title').innerText = "QUẢN LÝ TỔNG HỢP";
+    }
+    
+    window.scrollTo(0,0);
+    if(tabId === 'tab-cai-dat') renderCaiDatApp();
+    if(tabId === 'tab-cham-cong') switchCCTab('cc-ngay');
+  }
+
+  function renderCaiDatApp() {
+    document.getElementById('chk-app-lock').checked = localStorage.getItem('isAppLocked') !== 'false';
+    document.getElementById('set-app-password').value = localStorage.getItem('appPin') || "18121997";
+
+    let order = getMainTabOrder(); let html = '';
+    order.forEach(id => {
+      if(id === 'tab-cai-dat') return; 
+      html += `<div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 15px; border-radius:10px; border:1px solid #eee; margin-bottom:8px;"><span style="font-weight:bold; color:#1976d2; font-size:14px;">${dashData[id].title}</span><div><button class="sort-btn" onclick="moveMainTabUp('${id}')">▲</button><button class="sort-btn" onclick="moveMainTabDown('${id}')">▼</button></div></div>`;
+    });
+    document.getElementById('sort-tab-list').innerHTML = html;
+  }
+  function moveMainTabUp(id) { let arr = getMainTabOrder(); let idx = arr.indexOf(id); if(idx > 0) { let temp = arr[idx]; arr[idx] = arr[idx-1]; arr[idx-1] = temp; localStorage.setItem('mainTabOrder', JSON.stringify(arr)); location.reload(); } }
+  function moveMainTabDown(id) { let arr = getMainTabOrder(); let idx = arr.indexOf(id); if(idx < arr.length - 2) { let temp = arr[idx]; arr[idx] = arr[idx+1]; arr[idx+1] = temp; localStorage.setItem('mainTabOrder', JSON.stringify(arr)); location.reload(); } }
+  function luuCaiDatApp() { localStorage.setItem('isAppLocked', document.getElementById('chk-app-lock').checked); let pass = document.getElementById('set-app-password').value; if(pass && pass.length >= 4) { localStorage.setItem('appPin', pass); } alert("Lưu Cài đặt Hệ thống thành công!"); }
+  function xoaToanBoDuLieuApp() { if(confirm("CẢNH BÁO: Thao tác này sẽ xóa vĩnh viễn mọi dữ liệu (Excel, Chấm Công, Cài đặt). Khôi phục App về trạng thái xuất xưởng?")) { localStorage.clear(); location.reload(); } }
+  function xoaLichSuChiaGio() { if(confirm("Bạn có muốn xóa toàn bộ lịch sử Chia giờ không?")) { localStorage.removeItem('lichSuChiaGio'); alert("Đã xóa Lịch sử chia giờ!"); } }
+  function xoaDuLieuExcel() { if(confirm("Bạn có muốn xóa dữ liệu Excel đã tải lên không?")) { localStorage.removeItem('duLieuExcelOffline'); localStorage.removeItem('cauHinhBangExcel'); alert("Đã xóa dữ liệu Danh mục!"); location.reload();} }
+
+
+  // KHỞI ĐỘNG CHUNG
+  window.onload = () => { 
+      let order = getMainTabOrder(); 
+      let containerTop = document.getElementById('main-tab-container');
+      let grid = document.getElementById('dashboard-grid');
+
+      order.forEach(id => {
+         let btnTop = document.createElement('button'); btnTop.className = 'nav-btn'; btnTop.id = 'nav-' + id;
+         btnTop.onclick = () => switchMainTab(id); btnTop.innerHTML = `<span class="nav-icon">${dashData[id].icon}</span>${dashData[id].title}`;
+         containerTop.appendChild(btnTop);
+
+         let card = document.createElement('div'); card.className = 'dash-card'; card.onclick = () => switchMainTab(id);
+         card.innerHTML = `<div class="dash-card-icon">${dashData[id].icon}</div><div class="dash-card-title">${dashData[id].title}</div>`;
+         grid.appendChild(card);
+      });
+
+      if (sessionStorage.getItem('appUnlocked') !== 'true' && (localStorage.getItem('isAppLocked') !== 'false')) {
+          khoiDongKhoa();
+      } else { moKhoaThanhCong(); }
+  };
 
   async function khoiDongKhoa() {
-    if (!isAppLocked() || sessionStorage.getItem('appUnlocked') === 'true') {
-      moKhoaThanhCong();
-      return;
-    }
     let daDangKyFaceID = localStorage.getItem('faceID_Registered');
     if (window.PublicKeyCredential && daDangKyFaceID === 'true') {
-      try {
-        document.getElementById('lock-screen').style.display = 'flex';
-        const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge);
-        const assertion = await navigator.credentials.get({ publicKey: { challenge: challenge, userVerification: "required", timeout: 60000 } });
-        if (assertion) { moKhoaThanhCong(); return; }
-      } catch (err) { hienThiNhapPin(true); }
-    } else {
-      document.getElementById('lock-screen').style.display = 'flex'; hienThiNhapPin(false);
-    }
+      try { const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge); const assertion = await navigator.credentials.get({ publicKey: { challenge: challenge, userVerification: "required", timeout: 60000 } }); if (assertion) { moKhoaThanhCong(); return; } } 
+      catch (err) { document.getElementById('fallback-login').style.display = 'block'; document.getElementById('btn-faceid-trigger').style.display='block';}
+    } else { document.getElementById('fallback-login').style.display = 'block'; }
   }
 
-  function hienThiNhapPin(coHienNutFaceID) {
-    document.getElementById('lock-spinner').innerText = "🔒";
-    document.getElementById('lock-spinner').style.animation = "none";
-    document.getElementById('lock-title').innerText = "VUI LÒNG MỞ KHÓA";
-    document.getElementById('fallback-login').style.display = 'block';
-    if (coHienNutFaceID) { document.getElementById('btn-faceid-trigger').style.display = 'flex'; }
-  }
-
-  async function quetFaceIDThoCong() {
-    try { const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge); const assertion = await navigator.credentials.get({ publicKey: { challenge: challenge, userVerification: "required", timeout: 60000 } }); if (assertion) { moKhoaThanhCong(); } } 
-    catch (err) { alert("Xác thực Face ID / Vân tay không thành công."); }
-  }
-
-  function checkMatKhau() {
-    const input = document.getElementById('pin-input').value;
-    if (input === getAppPassword()) {
-      let daDangKy = localStorage.getItem('faceID_Registered');
-      if (!daDangKy && window.PublicKeyCredential) {
-        let hoi = confirm("Bạn có muốn bật xác thực bằng Vân tay / Face ID cho các lần mở ứng dụng sau không?");
-        if (hoi) {
-          try {
-            const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge);
-            navigator.credentials.create({
-              publicKey: {
-                rp: { name: "Quản Lý Nhà", id: window.location.hostname },
-                user: { id: new Uint8Array(16), name: "admin", displayName: "Chủ Nhân" },
-                challenge: challenge, pubKeyCredParams: [{alg: -7, type: "public-key"}],
-                authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }, timeout: 60000
-              }
-            }).then(cred => { if (cred) { localStorage.setItem('faceID_Registered', 'true'); alert("Đã bật Face ID / Vân tay thành công!"); } });
-          } catch (e) { console.log("Lỗi tạo Face ID"); }
-        }
-      }
-      moKhoaThanhCong();
-    } else { alert("Sai mật khẩu!"); document.getElementById('pin-input').value = ""; }
-  }
+  function checkMatKhau() { const input = document.getElementById('pin-input').value; let pass = localStorage.getItem('appPin') || "18121997"; if (input === pass) { moKhoaThanhCong(); } else { alert("Sai mật khẩu!"); document.getElementById('pin-input').value = ""; } }
+  async function quetFaceIDThoCong() { try { const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge); const assertion = await navigator.credentials.get({ publicKey: { challenge: challenge, userVerification: "required", timeout: 60000 } }); if (assertion) { moKhoaThanhCong(); } } catch (err) { alert("Xác thực Face ID thất bại."); } }
 
   function moKhoaThanhCong() {
     document.getElementById('lock-screen').style.opacity = '0';
-    setTimeout(() => { document.getElementById('lock-screen').style.display = 'none'; document.getElementById('app-content').style.display = 'block'; }, 300);
+    setTimeout(() => { document.getElementById('lock-screen').style.display = 'none'; document.getElementById('app-content').style.display = 'block'; khoiChayTatCaDuLieuGoc(); }, 300);
     sessionStorage.setItem('appUnlocked', 'true');
-    if(!window.daKhoiTaoDuLieu) { khoiChayTatCaDuLieuGoc(); window.daKhoiTaoDuLieu = true; }
+  }
+
+  function khoiChayTatCaDuLieuGoc() {
+    // App 1
+    initWeatherOptions();
+    let history = getHistoryLich(); let ngayHienTai = new Date().toLocaleDateString('vi-VN'); let todayData = history.find(x => x.date === ngayHienTai);
+    if (todayData) { document.querySelector('#bang-ra-vao tbody').innerHTML = todayData.bangRaVao; document.querySelector('#bang-thong-gio tbody').innerHTML = todayData.bangThongGio; document.getElementById('wrap-bang-ra-vao').style.display = todayData.isFixed ? 'none' : 'block'; document.getElementById('ket-qua-chia-gio').style.display = 'block'; } else { taoDuLieu(); }
+    let savedDanhMuc = localStorage.getItem('duLieuExcelOffline'); if (savedDanhMuc) { duLieuDanhMuc = JSON.parse(savedDanhMuc); let savedConfig = localStorage.getItem('cauHinhBangExcel'); if (savedConfig) { cauHinhBang = JSON.parse(savedConfig); } else { taoCauHinhMacDinh(); } hienThiBangDanhMuc(duLieuDanhMuc); }
   }
 
   // ==========================================
-  // ĐIỀU HƯỚNG CHUNG
+  // 2. LOGIC QUẢN LÝ NHÀ (CŨ)
   // ==========================================
-  function switchTab(tabId) {
-    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-    
-    document.getElementById(tabId).classList.add('active');
-    
-    let btnTop = document.querySelector(`.tab-btn[onclick="switchTab('${tabId}')"]`);
-    if (btnTop) btnTop.classList.add('active');
-
-    let btnBot = document.getElementById('nav-' + tabId);
-    if(btnBot) {
-        btnBot.classList.add('active');
-        let tabBar = document.getElementById('scrollable-tab-container');
-        if(tabBar) tabBar.scrollTo({ left: btnBot.offsetLeft - (tabBar.offsetWidth/2) + (btnBot.offsetWidth/2), behavior: 'smooth' });
-    } else { 
-        let homeBot = document.getElementById('nav-tab-home');
-        if(homeBot) homeBot.classList.add('active'); 
-    }
-    
-    if(tabId === 'tab-cai-dat') { renderCaiDatMenu(); }
-    if(tabId === 'tab-cham-cong') { switchCCTab(window.currentCcTab || 'cc-ngay'); }
-
-    window.scrollTo(0,0);
-  }
-
-  const dashData = {
-    'tab-thong-gio': { icon: '💨', title: 'Thông gió' },
-    'tab-chia-gio': { icon: '⏰', title: 'Chia giờ' },
-    'tab-thoi-tiet': { icon: '🌤️', title: 'Thời tiết' },
-    'tab-danh-muc': { icon: '📋', title: 'Danh mục' },
-    'tab-cham-cong': { icon: '📝', title: 'Chấm Công' },
-    'tab-cai-dat': { icon: '⚙️', title: 'Cài đặt' }
-  };
-
-  function getTabOrderArray() {
-    let order = safeParseJSON('tabOrder', ['tab-thong-gio', 'tab-chia-gio', 'tab-thoi-tiet', 'tab-danh-muc', 'tab-cai-dat']);
-    if (!order.includes('tab-cham-cong')) { order.splice(order.length - 1, 0, 'tab-cham-cong'); localStorage.setItem('tabOrder', JSON.stringify(order)); }
-    return order;
-  }
-
-  function loadTabOrder() {
-    let order = getTabOrderArray();
-    let container = document.getElementById('scrollable-tab-container');
-    let gridHtml = '';
-    
-    order.forEach((id) => {
-        let btn = document.getElementById('nav-' + id);
-        if(btn && container) container.appendChild(btn); 
-        if (id !== 'tab-cai-dat') {
-            gridHtml += `<div class="dash-card" onclick="switchTab('${id}')"><div class="dash-card-icon">${dashData[id].icon}</div><div class="dash-card-title">${dashData[id].title}</div></div>`;
-        }
-    });
-    let dGrid = document.getElementById('dashboard-grid');
-    if(dGrid) dGrid.innerHTML = gridHtml;
-  }
-
-  function renderCaiDatMenu() {
-    let elLock = document.getElementById('chk-app-lock'); let elPass = document.getElementById('set-app-password');
-    if(elLock) elLock.checked = isAppLocked(); if(elPass) elPass.value = getAppPassword();
-    let order = getTabOrderArray(); let html = '';
-    order.forEach((id) => {
-      if(id === 'tab-cai-dat') return; 
-      html += `<div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 15px; border-radius:8px; border:1px solid #eee; margin-bottom:5px;"><span style="font-weight:bold; color:#1976d2; font-size:15px;">${dashData[id].title}</span><div><button class="sort-btn" onclick="moveTabUp('${id}')">▲</button><button class="sort-btn" onclick="moveTabDown('${id}')">▼</button></div></div>`;
-    });
-    let stl = document.getElementById('sort-tab-list'); if(stl) stl.innerHTML = html;
-  }
-
-  function moveTabUp(id) { let arr = getTabOrderArray(); let idx = arr.indexOf(id); if(idx > 0) { let temp = arr[idx]; arr[idx] = arr[idx-1]; arr[idx-1] = temp; localStorage.setItem('tabOrder', JSON.stringify(arr)); renderCaiDatMenu(); loadTabOrder(); } }
-  function moveTabDown(id) { let arr = getTabOrderArray(); let idx = arr.indexOf(id); if(idx < arr.length - 2) { let temp = arr[idx]; arr[idx] = arr[idx+1]; arr[idx+1] = temp; localStorage.setItem('tabOrder', JSON.stringify(arr)); renderCaiDatMenu(); loadTabOrder(); } }
-  function luuCaiDatApp() { let isLocked = document.getElementById('chk-app-lock').checked; localStorage.setItem('isAppLocked', isLocked); let pass = document.getElementById('set-app-password').value; if(pass && pass.length >= 4) { localStorage.setItem('appPin', pass); } alert("Lưu Cài đặt Hệ thống thành công!"); }
-  function xoaLichSuChiaGio() { if(confirm("Bạn có muốn xóa toàn bộ lịch sử Chia giờ không?")) { localStorage.removeItem('lichSuChiaGio'); alert("Đã xóa Lịch sử chia giờ!"); } }
-  function xoaDuLieuExcel() { if(confirm("Bạn có muốn xóa dữ liệu Excel đã tải lên không?")) { localStorage.removeItem('duLieuExcelOffline'); localStorage.removeItem('cauHinhBangExcel'); alert("Đã xóa dữ liệu Danh mục!"); location.reload();} }
-  function xoaToanBoDuLieuApp() { if(confirm("CẢNH BÁO: Xóa trắng hoàn toàn Ứng dụng về mặc định xuất xưởng?")) { localStorage.clear(); location.reload(); } }
-  function capNhatPhienBanMoi() { if (confirm("Tải lại ứng dụng để cập nhật mã nguồn mới nhất?")) { window.location.href = window.location.origin + window.location.pathname + "?v=" + new Date().getTime(); } }
-
-  // XỬ LÝ VUỐT MÀN HÌNH CHUYỂN TAB
-  let touchstartX = 0; let touchendX = 0;
-  const appContainer = document.getElementById('app-content');
-  appContainer.addEventListener('touchstart', e => { touchstartX = e.changedTouches[0].screenX; }, {passive: true});
-  appContainer.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; handleSwipe(); }, {passive: true});
-
-  function handleSwipe() {
-    let swipeDist = touchendX - touchstartX;
-    if (Math.abs(swipeDist) > 70) { 
-      let activeTabEl = document.querySelector('.tab-content.active');
-      if(!activeTabEl) return;
-      let activeTab = activeTabEl.id;
-      if (activeTab === 'tab-home') return; 
-
-      let order = getTabOrderArray();
-      let currentIndex = order.indexOf(activeTab);
-      if (swipeDist < 0 && currentIndex < order.length - 1) { switchTab(order[currentIndex + 1]); } 
-      else if (swipeDist > 0 && currentIndex > 0) { switchTab(order[currentIndex - 1]); }
-    }
-  }
-
-  // KHỞI ĐỘNG APP KHI LOAD TRANG
-  window.addEventListener('DOMContentLoaded', () => {
-    loadTabOrder();
-    khoiDongKhoa();
-  });
-
-  // ==========================================
-  // CÁC HÀM GIAO DIỆN CON TỪ APP GỐC
-  // ==========================================
-  function toggleMoTa() { const box = document.getElementById('mo-ta-content'); document.getElementById('view-lich-su').style.display = 'none'; box.style.display = box.style.display === 'none' ? 'block' : 'none'; }
-  function toggleLichSu() { const box = document.getElementById('view-lich-su'); document.getElementById('mo-ta-content').style.display = 'none'; document.getElementById('view-edit').style.display = 'none'; document.getElementById('view-summary').style.display = 'block'; if (box.style.display === 'none') { renderDanhSachLichSu(); box.style.display = 'block'; } else { box.style.display = 'none'; } }
-  function moKhungSua() { document.getElementById('view-summary').style.display = 'none'; document.getElementById('view-edit').style.display = 'block'; document.getElementById('mo-ta-content').style.display = 'none'; document.getElementById('view-lich-su').style.display = 'none'; }
-  function luuKhungSua() {
-    const sv = document.getElementById('sang-vao').value; const sr = document.getElementById('sang-ra').value;
-    const cv = document.getElementById('chieu-vao').value; const cr = document.getElementById('chieu-ra').value;
-    const n = document.getElementById('so-nha').value;
-    document.getElementById('sum-sang').innerText = sv + ' - ' + sr; document.getElementById('sum-chieu').innerText = cv + ' - ' + cr; document.getElementById('sum-nha').innerText = n + ' Nhà';
-    document.getElementById('view-summary').style.display = 'block'; document.getElementById('view-edit').style.display = 'none';
-    let fixedConfig = safeParseJSON('fixedSchedule', {isFixed: false, data: []});
-    if(fixedConfig.isFixed && fixedConfig.data.length !== parseInt(n)) { fixedConfig.isFixed = false; localStorage.setItem('fixedSchedule', JSON.stringify(fixedConfig)); }
-  }
-
-  // ==========================================
-  // LOGIC TAB 1: THÔNG GIÓ
-  // ==========================================
-  const BANG_DO_AM = [[3.11,3.17,3.22,3.27,3.32,3.37,3.43,3.48,3.53,3.58,3.63,3.68,3.74,3.79,3.84,3.94,4,4,4.05,4.1,4.15,4.2,4.25,4.31,4.36,4.41,4.46,4.52,4.57,4.62,4.67,4.72,4.77,4.83,4.88,4.93,4.65,5.04,5.09,5.14],[3.33,3.39,3.45,3.5,3.56,3.61,3.67,3.72,3.78,3.83,3.89,3.94,4,4.06,4.11,4.22,4.28,4.28,4.33,4.39,4.45,4.5,4.56,4.61,4.67,4.72,4.78,4.83,4.89,4.95,5,5.06,5.11,5.17,5.22,5.28,4.98,5.39,5.45,5.5],[3.57,3.63,3.69,3.75,3.81,3.86,3.92,3.98,4.04,4.1,4.16,4.22,4.28,4.34,4.4,4.52,4.58,4.58,4.64,4.7,4.76,4.82,4.87,4.93,4.99,5.05,5.11,5.17,5.23,5.29,5.35,5.41,5.47,5.53,5.59,5.65,5.34,5.77,5.83,5.89],[3.82,3.88,3.94,4.01,4.07,4.13,4.2,4.26,4.32,4.39,4.45,4.52,4.59,4.64,4.7,4.83,4.83,4.9,4.96,5.02,5.1,5.16,5.22,5.29,5.35,5.42,5.48,5.54,5.61,5.67,5.72,5.79,5.85,5.91,5.98,6.04,6.1,6.17,6.23,6.29],[4.08,4.14,4.21,4.21,4.35,4.42,4.49,4.55,4.62,4.69,4.76,4.82,4.89,4.96,5.03,5.1,5.16,5.23,5.3,5.37,5.44,5.5,5.57,5.64,5.71,5.78,5.84,5.91,5.98,6.05,6.12,6.18,6.25,6.32,6.39,6.46,6.52,6.59,6.66,6.73],[4.36,4.43,4.5,4.57,4.65,4.72,4.79,4.86,4.94,5.01,5.08,5.15,5.23,5.3,5.37,5.44,5.52,5.59,5.66,5.74,5.81,5.88,5.95,6.03,6.1,6.17,6.24,6.32,6.39,6.46,6.53,6.61,6.68,6.75,6.82,6.9,6.97,7.04,7.11,7.19],[4.65,4.73,4.8,4.88,4.96,5.04,5.11,5.19,5.27,5.35,5.42,5.5,5.58,5.66,5.73,5.81,5.89,5.97,6.04,6.12,6.2,6.28,6.35,6.43,6.51,6.59,6.67,6.74,6.82,6.9,6.97,7.05,7.13,7.21,7.28,7.36,7.44,7.52,7.59,7.67],[4.96,5.04,5.13,5.21,5.29,5.38,5.46,5.54,5.62,5.71,5.79,5.87,5.95,6.04,6.12,6.2,6.28,6.37,6.45,6.53,6.62,6.7,6.78,6.86,6.95,7.03,7.11,7.19,7.29,7.36,7.44,7.53,7.61,7.69,7.77,7.86,7.94,8.02,8.1,8.19],[5.29,5.38,5.47,5.56,5.64,5.73,5.82,5.91,6,6.09,6.17,6.26,6.35,6.45,6.53,6.61,6.7,6.79,6.88,6.97,7.06,7.14,7.29,7.32,7.41,7.5,7.59,7.67,7.76,7.85,7.94,8.05,8.13,8.2,8.29,8.38,8.47,8.56,8.64,8.73],[5.64,5.73,5.83,5.92,6.02,6.11,6.2,6.3,6.39,6.49,6.58,6.67,6.77,6.86,6.96,7.05,7.17,7.24,7.33,7.43,7.52,7.61,7.71,7.8,7.9,7.99,8.08,8.18,8.27,8.37,8.46,8.55,8.65,8.74,8.84,8.93,9.02,9.12,9.21,9.31],[6.01,6.11,6.21,6.31,6.41,6.51,6.61,6.71,6.81,6.91,7.01,7.11,7.21,7.31,7.41,7.51,7.61,7.71,7.81,7.91,8.01,8.11,8.21,8.31,8.41,8.51,8.61,8.71,8.81,8.91,9.01,9.11,9.21,9.31,9.41,9.51,9.61,9.71,9.81,9.91],[6.4,6.5,6.61,6.72,6.82,6.93,7.04,7.14,7.25,7.36,7.46,7.57,7.68,7.78,7.89,8,8.1,8.21,8.32,8.42,8.59,8.64,8.74,8.85,8.96,9.06,9.17,9.28,9.38,9.49,9.6,9.7,9.81,9.92,10.02,10.13,10.24,10.34,10.45,10.56],[6.81,6.92,7.03,7.15,7.26,7.38,7.49,7.6,7.72,7.83,7.94,8.06,8.17,8.28,8.4,8.51,8.62,8.74,8.85,8.96,9.08,9.19,9.3,9.42,9.53,9.64,9.76,9.87,9.98,10.1,10.21,10.33,10.44,10.55,10.67,10.78,10.89,11.01,11.12,11.23],[7.24,7.36,7.48,7.6,7.72,7.84,7.97,8.09,8.21,8.33,8.45,8.57,8.69,8.81,8.93,9.05,9.17,9.29,9.41,9.53,9.66,9.78,9.9,10.02,10.14,10.26,10.38,10.5,10.62,10.74,10.86,10.89,11.09,11.22,11.34,11.47,11.59,11.71,11.83,11.95],[7.7,7.83,7.95,8.08,8.21,8.34,8.47,8.6,8.72,8.85,8.98,9.11,9.24,9.37,9.49,9.62,9.75,9.88,10.01,10.14,10.26,10.39,10.52,10.65,10.78,10.91,11.06,11.16,11.29,11.42,11.55,11.68,11.8,11.93,12.06,12.19,12.32,12.45,12.57,12.7],[8.18,8.32,8.45,8.59,8.73,8.86,9,9.13,9.27,9.41,9.54,9.68,9.82,9.95,10.09,10.23,10.36,10.5,10.63,10.77,10.91,11.04,11.18,11.32,11.45,11.59,11.78,11.86,12,12.19,12.33,12.54,12.68,12.82,12.95,13.09,13.15,13.22,13.36,13.5],[8.69,8.83,8.98,9.12,9.27,9.41,9.56,9.7,9.85,9.99,10.14,10.28,10.43,10.57,10.72,10.86,11.01,11.15,11.29,11.44,11.58,11.73,11.87,12.02,12.16,12.31,12.45,12.6,12.74,12.95,13.03,13.18,13.32,13.47,13.61,13.76,13.9,14.05,14.19,14.34],[9.22,9.38,9.53,9.68,9.84,9.99,10.15,10.3,10.45,10.61,10.76,10.91,11.07,11.22,11.38,11.53,11.68,11.84,11.99,12.14,12.3,12.45,12.6,12.76,12.91,13.07,13.22,13.37,13.53,13.68,13.83,13.99,14.14,14.3,14.45,14.6,14.76,14.91,15.06,15.22],[9.79,9.95,10.11,10.27,10.44,10.6,10.76,10.93,11.09,11.25,11.42,11.58,11.74,11.91,12.07,12.23,12.4,12.56,12.73,12.88,13.05,13.21,13.37,13.54,13.7,13.86,14.03,14.19,14.35,14.52,14.68,14.84,15.01,15.17,15.33,15.49,15.66,15.82,15.98,16.15],[10.38,10.55,10.73,10.9,11.07,11.24,11.42,11.59,11.76,11.94,12.11,12.28,12.46,12.63,12.8,12.97,13.15,13.32,13.49,13.67,13.84,14.01,14.19,14.36,14.53,14.7,14.88,15.05,15.22,15.4,15.57,15.74,15.92,16.09,16.26,16.43,16.61,16.78,16.95,17.13],[11,11.19,11.37,11.55,11.74,11.92,12.1,12.29,12.47,12.67,12.84,13.12,13.2,13.39,13.57,13.75,13.94,14.12,14.3,14.49,14.67,14.85,15.09,15.22,15.4,15.59,15.77,15.95,16.14,16.32,16.5,16.71,16.87,17.05,17.24,17.42,17.6,17.79,17.97,18.15],[11.66,11.85,12.05,12.24,12.43,12.63,12.82,13.02,13.21,13.41,13.6,13.79,14.02,14.18,14.38,14.57,14.77,14.96,15.15,15.35,15.54,15.74,15.93,16.13,16.32,16.51,16.71,16.9,17.1,17.29,17.49,17.68,17.87,18.07,18.26,18.46,18.65,18.85,19.04,19.23],[12.35,12.55,12.76,12.96,13.17,13.37,13.58,13.79,13.99,14.2,14.4,14.61,14.89,15.02,15.23,15.43,15.64,15.84,16.06,16.26,16.46,16.67,16.85,17.68,17.28,17.4,17.7,17.9,18.11,18.31,18.52,18.72,18.93,19.14,19.34,19.55,19.75,19.96,20.17,20.37],[13.07,13.29,13.5,13.72,13.94,14.16,14.38,14.59,14.81,15.13,15.25,15.46,15.68,15.9,16.12,16.34,16.55,16.77,16.99,17.21,17.43,17.64,17.86,18.03,18.3,18.51,18.73,18.95,19.17,19.39,19.6,19.83,20.04,20.26,20.48,20.64,20.91,21.13,21.35,21.56],[13.83,14.06,14.29,14.52,14.75,14.98,15.21,15.44,15.67,15.9,16.13,16.36,16.59,16.82,17.06,17.29,17.52,17.75,17.98,18.21,18.44,18.67,18.9,19.13,19.36,19.59,19.82,20.05,20.28,20.51,20.74,20.97,21.2,21.45,21.67,21.89,22.13,22.36,22.59,22.82],[14.63,14.87,15.11,15.36,15.6,15.84,16.09,16.33,16.58,16.82,17.06,17.31,17.55,17.79,18.04,18.28,18.53,18.77,19.01,19.26,19.5,19.75,19.99,20.23,20.48,20.72,20.96,21.21,21.45,21.7,21.94,22.18,22.43,22.67,22.91,23.16,23.4,23.65,23.89,24.13],[15.46,15.72,15.98,16.23,16.49,16.75,17.01,17.27,17.52,17.78,18.04,18.3,18.55,18.81,19.07,19.33,19.58,19.84,20.1,20.36,20.62,20.87,21.13,21.39,21.65,21.9,22.16,22.42,22.68,22.94,23.19,23.45,23.71,23.97,24.2,24.49,24.74,25,25.25,25.51],[16.34,16.61,16.88,17.16,17.43,17.7,17.97,18.25,18.52,18.79,19.06,19.34,19.61,19.88,20.15,20.42,20.7,20.97,21.24,21.51,21.79,22.06,22.33,22.6,22.87,23.15,23.42,23.69,23.96,24.24,24.51,24.78,25.05,25.33,25.4,25.87,26.14,26.42,26.69,26.96],[17.26,17.55,17.83,18.12,18.41,18.7,18.98,19.27,19.56,19.85,20.13,20.42,20.71,21,21.29,21.57,22.08,22.15,22.44,22.72,23.01,23.3,23.59,23.87,24.16,24.45,24.74,25.02,25.31,25.61,25.89,26.18,26.46,26.75,27.01,27.33,27.59,27.9,28.19,28.48],[18.22,18.53,18.83,19.13,19.44,19.74,20.04,20.35,20.65,20.91,21.26,21.56,21.87,22.17,22.47,23.08,23.22,23.38,23.69,23.99,24.3,24.56,24.96,25.21,25.51,25.81,26.12,26.42,26.73,27.03,27.33,27.64,27.94,28.24,28.55,28.85,29.16,29.46,29.79,30.07],[19.23,19.55,19.87,20.19,20.51,20.83,21.15,21.47,21.79,22.03,22.44,22.76,23.08,23.4,23.72,24.36,24.48,24.68,25.1,25.32,25.64,25.96,26.28,26.61,26.92,27.24,27.56,27.88,28.2,28.53,28.85,29.17,29.49,29.81,30.13,30.45,30.77,31.09,31.41,31.73],[20.29,20.62,20.96,21.3,21.64,21.98,22.31,22.65,22.94,23.32,23.67,25.31,24.34,24.68,25.02,25.37,25.73,26.03,26.37,26.71,27.05,27.39,27.72,28.06,28.4,28.74,29.08,29.42,29.75,30.09,30.43,30.77,31.31,31.44,31.78,32.12,32.46,32.8,33.13,33.47],[21.39,21.75,22.1,22.46,22.82,23.18,23.53,23.83,24.25,24.61,24.96,26.68,25.67,26.03,26.38,26.75,27.1,27.45,27.81,28.17,28.51,28.88,29.26,29.59,29.95,30.31,30.66,31.02,31.38,31.73,32.09,32.45,32.8,33.16,33.52,33.87,34.33,34.59,34.4,35.3],[22.55,22.92,23.3,23.68,24.05,24.43,24.81,25.18,25.56,25.93,26.31,26.68,27.06,27.43,27.81,28.16,28.56,28.94,29.31,29.69,30.07,30.44,30.85,31.19,31.57,31.94,32.32,32.76,33.07,33.45,33.82,34.2,34.57,34.65,35.33,35.7,36.08,36.45,36.83,37.21]];
-  function layDoAmTuyetDoi(n, d) { let iN=Math.round(n)-1; let iD=Math.round(d)-60; if(iN<0)iN=0; if(iN>=34)iN=33; if(iD<0)iD=0; if(iD>=40)iD=39; return BANG_DO_AM[iN][iD]; }
-  function tinhDS(da) { const b=[5.18,5.55,5.94,6.33,6.8,7.27,7.74,8.28,8.82,9.41,10.01,10.66,11.45,12.11,12.83,13.64,14.49,15.4,16.32,17.31,18.33,19.43,20.57,21.75,23.02,24.35,25.76,27.2,28.78,30.37]; let b8=0; for(let i=0;i<b.length;i++){if(da>=b[i])b8=i;else break;} const b9=b[b8]; const b10=(b8+1<b.length)?b[b8+1]:b9; const b11=Math.abs(b9-da); const b7=Math.min(Math.abs(da-b9),Math.abs(da-b10)); const b12=(b11===b7)?b9:b10; const b13=(b11===b7)?(b8+1):(b8+2); return Math.round(da*b13/b12*10)/10; }
-  
   document.getElementById('btnTinh').addEventListener('click', function() {
+    const BANG_DO_AM = [[3.11,3.17,3.22,3.27,3.32,3.37,3.43,3.48,3.53,3.58,3.63,3.68,3.74,3.79,3.84,3.94,4,4,4.05,4.1,4.15,4.2,4.25,4.31,4.36,4.41,4.46,4.52,4.57,4.62,4.67,4.72,4.77,4.83,4.88,4.93,4.65,5.04,5.09,5.14],[3.33,3.39,3.45,3.5,3.56,3.61,3.67,3.72,3.78,3.83,3.89,3.94,4,4.06,4.11,4.22,4.28,4.28,4.33,4.39,4.45,4.5,4.56,4.61,4.67,4.72,4.78,4.83,4.89,4.95,5,5.06,5.11,5.17,5.22,5.28,4.98,5.39,5.45,5.5],[3.57,3.63,3.69,3.75,3.81,3.86,3.92,3.98,4.04,4.1,4.16,4.22,4.28,4.34,4.4,4.52,4.58,4.58,4.64,4.7,4.76,4.82,4.87,4.93,4.99,5.05,5.11,5.17,5.23,5.29,5.35,5.41,5.47,5.53,5.59,5.65,5.34,5.77,5.83,5.89],[3.82,3.88,3.94,4.01,4.07,4.13,4.2,4.26,4.32,4.39,4.45,4.52,4.59,4.64,4.7,4.83,4.83,4.9,4.96,5.02,5.1,5.16,5.22,5.29,5.35,5.42,5.48,5.54,5.61,5.67,5.72,5.79,5.85,5.91,5.98,6.04,6.1,6.17,6.23,6.29],[4.08,4.14,4.21,4.21,4.35,4.42,4.49,4.55,4.62,4.69,4.76,4.82,4.89,4.96,5.03,5.1,5.16,5.23,5.3,5.37,5.44,5.5,5.57,5.64,5.71,5.78,5.84,5.91,5.98,6.05,6.12,6.18,6.25,6.32,6.39,6.46,6.52,6.59,6.66,6.73],[4.36,4.43,4.5,4.57,4.65,4.72,4.79,4.86,4.94,5.01,5.08,5.15,5.23,5.3,5.37,5.44,5.52,5.59,5.66,5.74,5.81,5.88,5.95,6.03,6.1,6.17,6.24,6.32,6.39,6.46,6.53,6.61,6.68,6.75,6.82,6.9,6.97,7.04,7.11,7.19],[4.65,4.73,4.8,4.88,4.96,5.04,5.11,5.19,5.27,5.35,5.42,5.5,5.58,5.66,5.73,5.81,5.89,5.97,6.04,6.12,6.2,6.28,6.35,6.43,6.51,6.59,6.67,6.74,6.82,6.9,6.97,7.05,7.13,7.21,7.28,7.36,7.44,7.52,7.59,7.67],[4.96,5.04,5.13,5.21,5.29,5.38,5.46,5.54,5.62,5.71,5.79,5.87,5.95,6.04,6.12,6.2,6.28,6.37,6.45,6.53,6.62,6.7,6.78,6.86,6.95,7.03,7.11,7.19,7.29,7.36,7.44,7.53,7.61,7.69,7.77,7.86,7.94,8.02,8.1,8.19],[5.29,5.38,5.47,5.56,5.64,5.73,5.82,5.91,6,6.09,6.17,6.26,6.35,6.45,6.53,6.61,6.7,6.79,6.88,6.97,7.06,7.14,7.29,7.32,7.41,7.5,7.59,7.67,7.76,7.85,7.94,8.05,8.13,8.2,8.29,8.38,8.47,8.56,8.64,8.73],[5.64,5.73,5.83,5.92,6.02,6.11,6.2,6.3,6.39,6.49,6.58,6.67,6.77,6.86,6.96,7.05,7.17,7.24,7.33,7.43,7.52,7.61,7.71,7.8,7.9,7.99,8.08,8.18,8.27,8.37,8.46,8.55,8.65,8.74,8.84,8.93,9.02,9.12,9.21,9.31],[6.01,6.11,6.21,6.31,6.41,6.51,6.61,6.71,6.81,6.91,7.01,7.11,7.21,7.31,7.41,7.51,7.61,7.71,7.81,7.91,8.01,8.11,8.21,8.31,8.41,8.51,8.61,8.71,8.81,8.91,9.01,9.11,9.21,9.31,9.41,9.51,9.61,9.71,9.81,9.91],[6.4,6.5,6.61,6.72,6.82,6.93,7.04,7.14,7.25,7.36,7.46,7.57,7.68,7.78,7.89,8,8.1,8.21,8.32,8.42,8.59,8.64,8.74,8.85,8.96,9.06,9.17,9.28,9.38,9.49,9.6,9.7,9.81,9.92,10.02,10.13,10.24,10.34,10.45,10.56],[6.81,6.92,7.03,7.15,7.26,7.38,7.49,7.6,7.72,7.83,7.94,8.06,8.17,8.28,8.4,8.51,8.62,8.74,8.85,8.96,9.08,9.19,9.3,9.42,9.53,9.64,9.76,9.87,9.98,10.1,10.21,10.33,10.44,10.55,10.67,10.78,10.89,11.01,11.12,11.23],[7.24,7.36,7.48,7.6,7.72,7.84,7.97,8.09,8.21,8.33,8.45,8.57,8.69,8.81,8.93,9.05,9.17,9.29,9.41,9.53,9.66,9.78,9.9,10.02,10.14,10.26,10.38,10.5,10.62,10.74,10.86,10.89,11.09,11.22,11.34,11.47,11.59,11.71,11.83,11.95],[7.7,7.83,7.95,8.08,8.21,8.34,8.47,8.6,8.72,8.85,8.98,9.11,9.24,9.37,9.49,9.62,9.75,9.88,10.01,10.14,10.26,10.39,10.52,10.65,10.78,10.91,11.06,11.16,11.29,11.42,11.55,11.68,11.8,11.93,12.06,12.19,12.32,12.45,12.57,12.7],[8.18,8.32,8.45,8.59,8.73,8.86,9,9.13,9.27,9.41,9.54,9.68,9.82,9.95,10.09,10.23,10.36,10.5,10.63,10.77,10.91,11.04,11.18,11.32,11.45,11.59,11.78,11.86,12,12.19,12.33,12.54,12.68,12.82,12.95,13.09,13.15,13.22,13.36,13.5],[8.69,8.83,8.98,9.12,9.27,9.41,9.56,9.7,9.85,9.99,10.14,10.28,10.43,10.57,10.72,10.86,11.01,11.15,11.29,11.44,11.58,11.73,11.87,12.02,12.16,12.31,12.45,12.6,12.74,12.95,13.03,13.18,13.32,13.47,13.61,13.76,13.9,14.05,14.19,14.34],[9.22,9.38,9.53,9.68,9.84,9.99,10.15,10.3,10.45,10.61,10.76,10.91,11.07,11.22,11.38,11.53,11.68,11.84,11.99,12.14,12.3,12.45,12.6,12.76,12.91,13.07,13.22,13.37,13.53,13.68,13.83,13.99,14.14,14.3,14.45,14.6,14.76,14.91,15.06,15.22],[9.79,9.95,10.11,10.27,10.44,10.6,10.76,10.93,11.09,11.25,11.42,11.58,11.74,11.91,12.07,12.23,12.4,12.56,12.73,12.88,13.05,13.21,13.37,13.54,13.7,13.86,14.03,14.19,14.35,14.52,14.68,14.84,15.01,15.17,15.33,15.49,15.66,15.82,15.98,16.15],[10.38,10.55,10.73,10.9,11.07,11.24,11.42,11.59,11.76,11.94,12.11,12.28,12.46,12.63,12.8,12.97,13.15,13.32,13.49,13.67,13.84,14.01,14.19,14.36,14.53,14.7,14.88,15.05,15.22,15.4,15.57,15.74,15.92,16.09,16.26,16.43,16.61,16.78,16.95,17.13],[11,11.19,11.37,11.55,11.74,11.92,12.1,12.29,12.47,12.67,12.84,13.12,13.2,13.39,13.57,13.75,13.94,14.12,14.3,14.49,14.67,14.85,15.09,15.22,15.4,15.59,15.77,15.95,16.14,16.32,16.5,16.71,16.87,17.05,17.24,17.42,17.6,17.79,17.97,18.15],[11.66,11.85,12.05,12.24,12.43,12.63,12.82,13.02,13.21,13.41,13.6,13.79,14.02,14.18,14.38,14.57,14.77,14.96,15.15,15.35,15.54,15.74,15.93,16.13,16.32,16.51,16.71,16.9,17.1,17.29,17.49,17.68,17.87,18.07,18.26,18.46,18.65,18.85,19.04,19.23],[12.35,12.55,12.76,12.96,13.17,13.37,13.58,13.79,13.99,14.2,14.4,14.61,14.89,15.02,15.23,15.43,15.64,15.84,16.06,16.26,16.46,16.67,16.85,17.68,17.28,17.4,17.7,17.9,18.11,18.31,18.52,18.72,18.93,19.14,19.34,19.55,19.75,19.96,20.17,20.37],[13.07,13.29,13.5,13.72,13.94,14.16,14.38,14.59,14.81,15.13,15.25,15.46,15.68,15.9,16.12,16.34,16.55,16.77,16.99,17.21,17.43,17.64,17.86,18.03,18.3,18.51,18.73,18.95,19.17,19.39,19.6,19.83,20.04,20.26,20.48,20.64,20.91,21.13,21.35,21.56],[13.83,14.06,14.29,14.52,14.75,14.98,15.21,15.44,15.67,15.9,16.13,16.36,16.59,16.82,17.06,17.29,17.52,17.75,17.98,18.21,18.44,18.67,18.9,19.13,19.36,19.59,19.82,20.05,20.28,20.51,20.74,20.97,21.2,21.45,21.67,21.89,22.13,22.36,22.59,22.82],[14.63,14.87,15.11,15.36,15.6,15.84,16.09,16.33,16.58,16.82,17.06,17.31,17.55,17.79,18.04,18.28,18.53,18.77,19.01,19.26,19.5,19.75,19.99,20.23,20.48,20.72,20.96,21.21,21.45,21.7,21.94,22.18,22.43,22.67,22.91,23.16,23.4,23.65,23.89,24.13],[15.46,15.72,15.98,16.23,16.49,16.75,17.01,17.27,17.52,17.78,18.04,18.3,18.55,18.81,19.07,19.33,19.58,19.84,20.1,20.36,20.62,20.87,21.13,21.39,21.65,21.9,22.16,22.42,22.68,22.94,23.19,23.45,23.71,23.97,24.2,24.49,24.74,25,25.25,25.51],[16.34,16.61,16.88,17.16,17.43,17.7,17.97,18.25,18.52,18.79,19.06,19.34,19.61,19.88,20.15,20.42,20.7,20.97,21.24,21.51,21.79,22.06,22.33,22.6,22.87,23.15,23.42,23.69,23.96,24.24,24.51,24.78,25.05,25.33,25.4,25.87,26.14,26.42,26.69,26.96],[17.26,17.55,17.83,18.12,18.41,18.7,18.98,19.27,19.56,19.85,20.13,20.42,20.71,21,21.29,21.57,22.08,22.15,22.44,22.72,23.01,23.3,23.59,23.87,24.16,24.45,24.74,25.02,25.31,25.61,25.89,26.18,26.46,26.75,27.01,27.33,27.59,27.9,28.19,28.48],[18.22,18.53,18.83,19.13,19.44,19.74,20.04,20.35,20.65,20.91,21.26,21.56,21.87,22.17,22.47,23.08,23.22,23.38,23.69,23.99,24.3,24.56,24.96,25.21,25.51,25.81,26.12,26.42,26.73,27.03,27.33,27.64,27.94,28.24,28.55,28.85,29.16,29.46,29.79,30.07],[19.23,19.55,19.87,20.19,20.51,20.83,21.15,21.47,21.79,22.03,22.44,22.76,23.08,23.4,23.72,24.36,24.48,24.68,25.1,25.32,25.64,25.96,26.28,26.61,26.92,27.24,27.56,27.88,28.2,28.53,28.85,29.17,29.49,29.81,30.13,30.45,30.77,31.09,31.41,31.73],[20.29,20.62,20.96,21.3,21.64,21.98,22.31,22.65,22.94,23.32,23.67,25.31,24.34,24.68,25.02,25.37,25.73,26.03,26.37,26.71,27.05,27.39,27.72,28.06,28.4,28.74,29.08,29.42,29.75,30.09,30.43,30.77,31.31,31.44,31.78,32.12,32.46,32.8,33.13,33.47],[21.39,21.75,22.1,22.46,22.82,23.18,23.53,23.83,24.25,24.61,24.96,26.68,25.67,26.03,26.38,26.75,27.1,27.45,27.81,28.17,28.51,28.88,29.26,29.59,29.95,30.31,30.66,31.02,31.38,31.73,32.09,32.45,32.8,33.16,33.52,33.87,34.33,34.59,34.4,35.3],[22.55,22.92,23.3,23.68,24.05,24.43,24.81,25.18,25.56,25.93,26.31,26.68,27.06,27.43,27.81,28.16,28.56,28.94,29.31,29.69,30.07,30.44,30.85,31.19,31.57,31.94,32.32,32.76,33.07,33.45,33.82,34.2,34.57,34.65,35.33,35.7,36.08,36.45,36.83,37.21]];
     const nt=parseFloat(document.getElementById('nt').value.replace(',','.')); const dt=parseFloat(document.getElementById('dt').value.replace(',','.')); const nn=parseFloat(document.getElementById('nn').value.replace(',','.')); const dn=parseFloat(document.getElementById('dn').value.replace(',','.'));
     if([nt,dt,nn,dn].some(v=>isNaN(v))){alert('Vui lòng nhập đủ số hợp lệ');return;}
-    const daT=layDoAmTuyetDoi(nt,dt); const daN=layDoAmTuyetDoi(nn,dn); const ndT=tinhDS(daT); const ndN=tinhDS(daN);
+    let iN1=Math.round(nt)-1; let iD1=Math.round(dt)-60; if(iN1<0)iN1=0; if(iN1>=34)iN1=33; if(iD1<0)iD1=0; if(iD1>=40)iD1=39; let daT=BANG_DO_AM[iN1][iD1];
+    let iN2=Math.round(nn)-1; let iD2=Math.round(dn)-60; if(iN2<0)iN2=0; if(iN2>=34)iN2=33; if(iD2<0)iD2=0; if(iD2>=40)iD2=39; let daN=BANG_DO_AM[iN2][iD2];
+    const b=[5.18,5.55,5.94,6.33,6.8,7.27,7.74,8.28,8.82,9.41,10.01,10.66,11.45,12.11,12.83,13.64,14.49,15.4,16.32,17.31,18.33,19.43,20.57,21.75,23.02,24.35,25.76,27.2,28.78,30.37];
+    let b8T=0; for(let i=0;i<b.length;i++){if(daT>=b[i])b8T=i;else break;} let b9T=b[b8T]; let b10T=(b8T+1<b.length)?b[b8T+1]:b9T; let b11T=Math.abs(b9T-daT); let b7T=Math.min(Math.abs(daT-b9T),Math.abs(daT-b10T)); let b12T=(b11T===b7T)?b9T:b10T; let b13T=(b11T===b7T)?(b8T+1):(b8T+2); let ndT=Math.round(daT*b13T/b12T*10)/10;
+    let b8N=0; for(let i=0;i<b.length;i++){if(daN>=b[i])b8N=i;else break;} let b9N=b[b8N]; let b10N=(b8N+1<b.length)?b[b8N+1]:b9N; let b11N=Math.abs(b9N-daN); let b7N=Math.min(Math.abs(daN-b9N),Math.abs(daN-b10N)); let b12N=(b11N===b7N)?b9N:b10N; let b13N=(b11N===b7N)?(b8N+1):(b8N+2); let ndN=Math.round(daN*b13N/b12N*10)/10;
     document.getElementById('daTrong').innerText=daT.toFixed(2); document.getElementById('daNgoai').innerText=daN.toFixed(2); document.getElementById('ndTrong').innerText=ndT.toFixed(1); document.getElementById('ndNgoai').innerText=ndN.toFixed(1);
     let kq=''; if(nn>32) kq='Không thông gió (Ngoài > 32°C)'; else if(nn<10) kq='Không thông gió (Ngoài < 10°C)'; else if(daT<=daN) kq='Không thông gió (Độ ẩm tuyệt đối ngoài cao hơn)'; else if(nn>nt && ndN>=nt) kq='Không thông gió (Điểm sương ngoài cao hơn nhiệt độ trong)'; else if(nn<=nt && ndT>=nn) kq='Không thông gió (Điểm sương trong cao hơn nhiệt độ ngoài)'; else kq='Thông gió';
     const final=document.getElementById('final'); final.innerText=kq; final.className='final '+(kq.includes('Không')?'no':'ok'); document.getElementById('ketqua').style.display='block';
   });
 
-  // ==========================================
-  // LOGIC TAB 2: CHIA GIỜ TĂNG DẦN & CỐ ĐỊNH LỊCH 
-  // ==========================================
+  // CHIA GIỜ
   function addMinutes(timeStr, mins) { if(!timeStr) return "00:00"; let parts = timeStr.split(':'); let h = parseInt(parts[0], 10); let m = parseInt(parts[1], 10); m += mins; h += Math.floor(m / 60); m = m % 60; return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m); }
-  function generateFixedData(num) {
-    let data = []; let sv = "06:45", sr = "11:00", cv = "13:30", cr = "16:30";
-    for (let i=0; i<num; i++) {
-      data.push({sv, sr, cv, cr});
-      let stepSV = (i%2 === 0) ? 7 : 8; let stepSR = (i%2 === 0) ? 8 : 7; let stepCV = (i%2 === 0) ? 8 : 7; let stepCR = (i%2 === 0) ? 8 : 7;
-      sv = addMinutes(sv, stepSV); sr = addMinutes(sr, stepSR); cv = addMinutes(cv, stepCV); cr = addMinutes(cr, stepCR);
-    }
-    return data;
-  }
   function formatTime(mins) { let h=Math.floor(mins/60); let m=mins%60; return (h<10?'0'+h:h)+':'+(m<10?'0'+m:m); }
   function parseTime(t) { let p=t.split(':'); return parseInt(p[0])*60+parseInt(p[1]); }
   function getRandom(min, max) { return Math.floor(Math.random()*(max-min+1))+min; }
   function taoDayThoiGianTheoThuTu(baseMin, isForward, numHouses) { let t=[]; let c=baseMin; for(let i=0; i<numHouses; i++) { t.push(c); let s=getRandom(5,10); c=isForward?c+s:c-s; } return t.sort((a,b)=>a-b); }
-  function getHistoryLich() { let h=safeParseJSON('lichSuChiaGio', []); return h; }
-  function saveHistoryLich(dateStr, raVao, thongGio, isFixed) {
-    let h = getHistoryLich(); h = h.filter(item => item.date !== dateStr); 
-    h.push({ date: dateStr, bangRaVao: raVao, bangThongGio: thongGio, isFixed: isFixed });
-    if(h.length > 30) h.shift(); localStorage.setItem('lichSuChiaGio', JSON.stringify(h));
-  }
+  function getHistoryLich() { let h=localStorage.getItem('lichSuChiaGio'); return h?JSON.parse(h):[]; }
+  function saveHistoryLich(dateStr, raVao, thongGio, isFixed) { let h = getHistoryLich(); h = h.filter(item => item.date !== dateStr); h.push({ date: dateStr, bangRaVao: raVao, bangThongGio: thongGio, isFixed: isFixed }); if(h.length > 30) h.shift(); localStorage.setItem('lichSuChiaGio', JSON.stringify(h)); }
   function toggleMoTa() { const box = document.getElementById('mo-ta-content'); document.getElementById('view-lich-su').style.display = 'none'; box.style.display = box.style.display === 'none' ? 'block' : 'none'; }
   function toggleLichSu() { const box = document.getElementById('view-lich-su'); document.getElementById('mo-ta-content').style.display = 'none'; document.getElementById('view-edit').style.display = 'none'; document.getElementById('view-summary').style.display = 'block'; if (box.style.display === 'none') { renderDanhSachLichSu(); box.style.display = 'block'; } else { box.style.display = 'none'; } }
   function moKhungSua() { document.getElementById('view-summary').style.display = 'none'; document.getElementById('view-edit').style.display = 'block'; document.getElementById('mo-ta-content').style.display = 'none'; document.getElementById('view-lich-su').style.display = 'none'; }
-  function luuKhungSua() {
-    const sv = document.getElementById('sang-vao').value; const sr = document.getElementById('sang-ra').value; const cv = document.getElementById('chieu-vao').value; const cr = document.getElementById('chieu-ra').value; const n = document.getElementById('so-nha').value;
-    document.getElementById('sum-sang').innerText = sv + ' - ' + sr; document.getElementById('sum-chieu').innerText = cv + ' - ' + cr; document.getElementById('sum-nha').innerText = n + ' Nhà';
-    document.getElementById('view-summary').style.display = 'block'; document.getElementById('view-edit').style.display = 'none';
-    let fixedConfig = safeParseJSON('fixedSchedule', {"isFixed": false, "data": []});
-    if(fixedConfig.isFixed && fixedConfig.data.length !== parseInt(n)) { fixedConfig.isFixed = false; localStorage.setItem('fixedSchedule', JSON.stringify(fixedConfig)); }
-  }
+  function luuKhungSua() { const sv = document.getElementById('sang-vao').value; const sr = document.getElementById('sang-ra').value; const cv = document.getElementById('chieu-vao').value; const cr = document.getElementById('chieu-ra').value; const n = document.getElementById('so-nha').value; document.getElementById('sum-sang').innerText = sv + ' - ' + sr; document.getElementById('sum-chieu').innerText = cv + ' - ' + cr; document.getElementById('sum-nha').innerText = n + ' Nhà'; document.getElementById('view-summary').style.display = 'block'; document.getElementById('view-edit').style.display = 'none'; let fixedConfig = JSON.parse(localStorage.getItem('fixedSchedule') || '{"isFixed": false, "data": []}'); if(fixedConfig.isFixed && fixedConfig.data.length !== parseInt(n)) { fixedConfig.isFixed = false; localStorage.setItem('fixedSchedule', JSON.stringify(fixedConfig)); } }
   function toggleFormCoDinh() { document.getElementById('form-co-dinh-list').style.display = document.getElementById('chk-co-dinh').checked ? 'block' : 'none'; }
   function moCaiDatCoDinh() {
     let n = parseInt(document.getElementById('so-nha').value); let listDiv = document.getElementById('form-co-dinh-list'); listDiv.innerHTML = '';
-    let fixedConfig = safeParseJSON('fixedSchedule', {"isFixed": false, "data": []});
-    if(fixedConfig.data.length !== n) { fixedConfig.data = generateFixedData(n); }
+    let fixedConfig = JSON.parse(localStorage.getItem('fixedSchedule') || '{"isFixed": false, "data": []}');
+    if(fixedConfig.data.length !== n) { 
+        let data = []; let sv = "06:45", sr = "11:00", cv = "13:30", cr = "16:30";
+        for (let i=0; i<n; i++) { data.push({sv, sr, cv, cr}); sv = addMinutes(sv, (i%2 === 0)?7:8); sr = addMinutes(sr, (i%2 === 0)?8:7); cv = addMinutes(cv, (i%2 === 0)?8:7); cr = addMinutes(cr, (i%2 === 0)?8:7); }
+        fixedConfig.data = data;
+    }
     document.getElementById('chk-co-dinh').checked = fixedConfig.isFixed;
     for(let i=0; i<n; i++) {
         let sv = fixedConfig.data[i].sv; let sr = fixedConfig.data[i].sr; let cv = fixedConfig.data[i].cv; let cr = fixedConfig.data[i].cr;
-        listDiv.innerHTML += `<div style="background:#fff; padding:10px; border-radius:8px; margin-bottom:10px; border:1px solid #ddd;"><div style="font-size:13px; font-weight:bold; color:#1976d2; margin-bottom:8px;">🏠 NHÀ ${i+1}</div><div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;"><span style="font-size:13px; width:45px; font-weight:bold;">Sáng:</span><input type="time" class="base-input" id="fix-sv-${i}" value="${sv}" style="flex:1; margin:0 5px; padding:6px; border-radius:6px;"> <span style="font-weight:bold;">-</span><input type="time" class="base-input" id="fix-sr-${i}" value="${sr}" style="flex:1; margin:0 5px; padding:6px; border-radius:6px;"></div><div style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; width:45px; font-weight:bold;">Chiều:</span><input type="time" class="base-input" id="fix-cv-${i}" value="${cv}" style="flex:1; margin:0 5px; padding:6px; border-radius:6px;"> <span style="font-weight:bold;">-</span><input type="time" class="base-input" id="fix-cr-${i}" value="${cr}" style="flex:1; margin:0 5px; padding:6px; border-radius:6px;"></div></div>`;
+        listDiv.innerHTML += `<div style="background:#fff; padding:8px; border-radius:8px; margin-bottom:8px; border:1px solid #ddd;"><div style="font-size:12px; font-weight:bold; color:#1976d2; margin-bottom:6px;">🏠 NHÀ ${i+1}</div><div style="display:flex; align-items:center; margin-bottom:6px;"><span style="font-size:11px; width:40px; font-weight:bold;">Sáng:</span><input type="time" class="base-input" id="fix-sv-${i}" value="${sv}" style="flex:1; padding:4px;"><span style="margin:0 4px;">-</span><input type="time" class="base-input" id="fix-sr-${i}" value="${sr}" style="flex:1; padding:4px;"></div><div style="display:flex; align-items:center;"><span style="font-size:11px; width:40px; font-weight:bold;">Chiều:</span><input type="time" class="base-input" id="fix-cv-${i}" value="${cv}" style="flex:1; padding:4px;"><span style="margin:0 4px;">-</span><input type="time" class="base-input" id="fix-cr-${i}" value="${cr}" style="flex:1; padding:4px;"></div></div>`;
     }
     toggleFormCoDinh(); document.getElementById('panel-co-dinh').style.display = document.getElementById('panel-co-dinh').style.display === 'none' ? 'block' : 'none';
   }
@@ -1120,7 +968,7 @@
   let soLanBam=0; let thoiGianCho=null;
   function xuLyNhanChiaLich() { soLanBam++; if(soLanBam===1) thoiGianCho=setTimeout(()=>{soLanBam=0;},800); if(soLanBam===3){ clearTimeout(thoiGianCho); soLanBam=0; if(confirm("Tạo lại Lịch chia cho ngày HÔM NAY?")) taoDuLieu(); } }
   function taoDuLieu() {
-    let n=parseInt(document.getElementById('so-nha').value); let fixedConfig = safeParseJSON('fixedSchedule', {"isFixed": false, "data": []});
+    let n=parseInt(document.getElementById('so-nha').value); let fixedConfig = JSON.parse(localStorage.getItem('fixedSchedule') || '{"isFixed": false, "data": []}');
     if(fixedConfig.isFixed && fixedConfig.data.length !== n) { fixedConfig.isFixed = false; localStorage.setItem('fixedSchedule', JSON.stringify(fixedConfig)); }
     let assignSV=[], assignSR=[], assignCV=[], assignCR=[];
     if(fixedConfig.isFixed) { for(let i=0; i<n; i++) { assignSV.push(parseTime(fixedConfig.data[i].sv)); assignSR.push(parseTime(fixedConfig.data[i].sr)); assignCV.push(parseTime(fixedConfig.data[i].cv)); assignCR.push(parseTime(fixedConfig.data[i].cr)); } } 
@@ -1128,30 +976,31 @@
     let mSV=Math.max(...assignSV); let mCV=Math.max(...assignCV); let sM2=Math.max(480+getRandom(0,15), mSV+60); let aM2=taoDayThoiGianTheoThuTu(sM2,true,n); let sM4=Math.max(840+getRandom(0,15), mCV+60); let aM4=taoDayThoiGianTheoThuTu(sM4,true,n);
     let b1=document.querySelector('#bang-ra-vao tbody'); let b2=document.querySelector('#bang-thong-gio tbody'); b1.innerHTML=''; b2.innerHTML='';
     for(let i=0;i<n;i++){ b1.innerHTML+=`<tr><td>N${i+1}</td><td class="td-highlight">${formatTime(assignSV[i])}</td><td>${formatTime(assignSR[i])}</td><td class="td-highlight">${formatTime(assignCV[i])}</td><td>${formatTime(assignCR[i])}</td></tr>`; b2.innerHTML+=`<tr><td>N${i+1}</td><td class="td-highlight">${formatTime(assignSV[i])}</td><td>${formatTime(aM2[i])}</td><td class="td-highlight">${formatTime(assignCV[i])}</td><td>${formatTime(aM4[i])}</td></tr>`; }
-    let ngayHienTai=new Date().toLocaleDateString('vi-VN'); saveHistoryLich(ngayHienTai, b1.innerHTML, b2.innerHTML, fixedConfig.isFixed);
+    saveHistoryLich(new Date().toLocaleDateString('vi-VN'), b1.innerHTML, b2.innerHTML, fixedConfig.isFixed);
     document.getElementById('wrap-bang-ra-vao').style.display = fixedConfig.isFixed ? 'none' : 'block';
-    let labelFixed = fixedConfig.isFixed ? '<span style="color:#888; font-size:14px;">(Đã cố định - Ẩn)</span>' : '<span style="color:#888; font-size:14px;">(Hôm nay)</span>';
-    document.getElementById('title-ra-vao').innerHTML = `1. LỊCH RA VÀO ${labelFixed}`; document.getElementById('title-thong-gio').innerHTML = `2. LỊCH THÔNG GIÓ <span style="color:#888; font-size:14px;">(Hôm nay)</span>`; document.getElementById('ket-qua-chia-gio').style.display='block'; localStorage.setItem('sumSang',document.getElementById('sum-sang').innerText); localStorage.setItem('sumChieu',document.getElementById('sum-chieu').innerText); localStorage.setItem('sumNha',document.getElementById('sum-nha').innerText);
+    document.getElementById('title-ra-vao').innerHTML = `1. LỊCH RA VÀO ${fixedConfig.isFixed ? '<span style="color:#888; font-size:11px;">(Đã cố định - Ẩn)</span>' : '<span style="color:#888; font-size:11px;">(Hôm nay)</span>'}`;
+    document.getElementById('title-thong-gio').innerHTML = `2. LỊCH THÔNG GIÓ <span style="color:#888; font-size:11px;">(Hôm nay)</span>`;
+    document.getElementById('ket-qua-chia-gio').style.display='block'; localStorage.setItem('sumSang',document.getElementById('sum-sang').innerText); localStorage.setItem('sumChieu',document.getElementById('sum-chieu').innerText); localStorage.setItem('sumNha',document.getElementById('sum-nha').innerText);
   }
   function renderDanhSachLichSu() {
     let history = getHistoryLich(); let container = document.getElementById('danh-sach-lich-su'); container.innerHTML = '';
-    if (history.length === 0) { container.innerHTML = '<div style="font-size: 13px; color: #888; text-align: center;">Chưa có dữ liệu lịch sử.</div>'; return; }
+    if (history.length === 0) { container.innerHTML = '<div style="font-size: 12px; color: #888; text-align: center;">Chưa có dữ liệu.</div>'; return; }
     let ngayHienTai = new Date().toLocaleDateString('vi-VN');
     history.slice().reverse().forEach(item => {
       let isToday = (item.date === ngayHienTai); let btn = document.createElement('button'); btn.innerHTML = isToday ? `Hôm nay (${item.date})` : item.date;
-      btn.style.cssText = `padding: 10px; border: 1px solid ${isToday ? '#ff9800' : '#1976d2'}; border-radius: 8px; background: ${isToday ? '#fff9e6' : '#fff'}; color: ${isToday ? '#ff9800' : '#1976d2'}; font-weight: bold; cursor: pointer; text-align: left;`;
+      btn.style.cssText = `padding: 8px; border: 1px solid ${isToday ? '#ff9800' : '#1976d2'}; border-radius: 6px; background: ${isToday ? '#fff9e6' : '#fff'}; color: ${isToday ? '#ff9800' : '#1976d2'}; font-weight: bold; cursor: pointer; font-size:12px; text-align:left;`;
       btn.onclick = () => xemLichSuNgay(item.date, item.bangRaVao, item.bangThongGio, isToday, item.isFixed); container.appendChild(btn);
     });
   }
   function xemLichSuNgay(dateStr, raVao, thongGio, isToday, isFixed) {
     document.querySelector('#bang-ra-vao tbody').innerHTML = raVao; document.querySelector('#bang-thong-gio tbody').innerHTML = thongGio;
     let label = isToday ? 'Hôm nay' : dateStr; let labelFixed = isFixed ? `(${label} - Đã cố định)` : `(${label})`;
-    document.getElementById('title-ra-vao').innerHTML = `1. LỊCH RA VÀO <span style="color:#888; font-size:14px;">${labelFixed}</span>`; document.getElementById('title-thong-gio').innerHTML = `2. LỊCH THÔNG GIÓ <span style="color:#888; font-size:14px;">(${label})</span>`; document.getElementById('wrap-bang-ra-vao').style.display = isFixed ? 'none' : 'block'; document.getElementById('ket-qua-chia-gio').style.display = 'block'; toggleLichSu(); 
+    document.getElementById('title-ra-vao').innerHTML = `1. LỊCH RA VÀO <span style="color:#888; font-size:11px;">${labelFixed}</span>`;
+    document.getElementById('title-thong-gio').innerHTML = `2. LỊCH THÔNG GIÓ <span style="color:#888; font-size:11px;">(${label})</span>`;
+    document.getElementById('wrap-bang-ra-vao').style.display = isFixed ? 'none' : 'block'; document.getElementById('ket-qua-chia-gio').style.display = 'block'; toggleLichSu(); 
   }
 
-  // ==========================================
-  // LOGIC TAB 3: THỜI TIẾT OPEN-METEO
-  // ==========================================
+  // THỜI TIẾT
   let weatherLat = 21.52; let weatherLon = 106.31; let searchTimeout;
   function initWeatherOptions() {
     const dSel=document.getElementById('weather-date'); const hSel=document.getElementById('weather-hour'); const today=new Date();
@@ -1187,9 +1036,7 @@
   }
   document.addEventListener('click', function(event) { var sugg = document.getElementById('location-suggestions'); if (sugg && event.target.id !== 'weather-location-search') { sugg.style.display = 'none'; } });
 
-  // ==========================================
-  // LOGIC TAB 4: DANH MỤC EXCEL
-  // ==========================================
+  // EXCEL DANH MỤC
   let duLieuDanhMuc = []; let cauHinhBang = { fontSize: 14, cot: {} };
   function xuLyFileExcel(e) {
     let file = e.target.files[0]; if (!file) return; let reader = new FileReader();
@@ -1204,10 +1051,11 @@
   function toggleCaiDatDanhMuc() {
     let panel = document.getElementById('panel-cai-dat-danh-muc'); if(panel.style.display === 'block') { panel.style.display = 'none'; return; }
     if(duLieuDanhMuc.length === 0) { alert("Vui lòng tải file Excel lên trước!"); return; }
-    document.getElementById('set-fontsize').value = cauHinhBang.fontSize; let htmlCaiDatCot = "";
+    document.getElementById('set-fontsize').value = cauHinhBang.fontSize;
+    let htmlCaiDatCot = "";
     Object.keys(cauHinhBang.cot).forEach(tenCot => {
       if (tenCot.startsWith('__EMPTY')) return; let isChecked = cauHinhBang.cot[tenCot].show ? "checked" : ""; let widthVal = cauHinhBang.cot[tenCot].width;
-      htmlCaiDatCot += `<div class="set-row"><label style="margin:0; display:flex; align-items:center; flex:1; font-size:13px; color:#333; cursor:pointer; font-weight:normal;"><input type="checkbox" id="chk-${tenCot}" onchange="chuyenPhanTramTuDong('${tenCot}')" ${isChecked} style="transform:scale(1.3); margin-right:10px;"> ${tenCot}</label><div style="display:flex; align-items:center;"><input type="number" id="width-${tenCot}" value="${widthVal}" style="width:60px; padding:4px;" ${!cauHinhBang.cot[tenCot].show ? 'disabled style="background:#f0f0f0;"' : ''}> <span style="margin-left:5px; color:#666;">%</span></div></div>`;
+      htmlCaiDatCot += `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; font-size:12px; font-weight:bold; color:#333;"><label style="margin:0; display:flex; align-items:center; flex:1; cursor:pointer;"><input type="checkbox" id="chk-${tenCot}" style="transform:scale(1.3); margin-right:10px;" onchange="chuyenPhanTramTuDong('${tenCot}')" ${isChecked}> ${tenCot}</label><div style="display:flex; align-items:center;"><input type="number" id="width-${tenCot}" value="${widthVal}" style="width:60px; padding:4px;" ${!cauHinhBang.cot[tenCot].show ? 'disabled style="background:#f0f0f0;"' : ''}> <span style="margin-left:5px;">%</span></div></div>`;
     });
     document.getElementById('danh-sach-cot-cai-dat').innerHTML = htmlCaiDatCot; panel.style.display = 'block';
   }
@@ -1240,14 +1088,23 @@
   function timKiemDanhMuc() { let tuKhoa = document.getElementById('search-danh-muc').value.toLowerCase(); if (!tuKhoa) { hienThiBangDanhMuc(duLieuDanhMuc); return; } let ketQua = duLieuDanhMuc.filter(hang => { return Object.values(hang).some(giaTri => String(giaTri).toLowerCase().includes(tuKhoa)); }); hienThiBangDanhMuc(ketQua); }
 
   // ==========================================
-  // LOGIC APP CHẤM CÔNG (ĐỘC LẬP & AN TOÀN)
+  // 3. LOGIC CHẤM CÔNG (ĐÃ CÔ LẬP CSS)
   // ==========================================
+  function ccInitThangNhanh() {
+      let sel = document.getElementById('sel-thang-nhanh'); let curr = new Date();
+      for(let i=0; i<12; i++) {
+          let d = new Date(curr.getFullYear(), curr.getMonth() - i, 1);
+          let m = d.getMonth() + 1; let y = d.getFullYear();
+          sel.innerHTML += `<option value="${y}-${('0'+m).slice(-2)}">Tháng ${m}/${y}</option>`;
+      }
+      document.getElementById('cc-tk-nam').value = curr.getFullYear();
+  }
+
   function switchCCTab(subTabId) {
       document.querySelectorAll('.cc-sub-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.cc-nav-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(subTabId).classList.add('active');
       document.getElementById('cc-btn-' + subTabId.replace('cc-', '')).classList.add('active');
-      window.currentCcTab = subTabId;
 
       if(subTabId === 'cc-ngay') ccLoadDuLieuNgay();
       if(subTabId === 'cc-nghi') ccLoadDanhSachNghi();
@@ -1255,6 +1112,7 @@
       if(subTabId === 'cc-caidat') ccLoadCaiDat();
   }
 
+  // CC CÀI ĐẶT & BACKUP
   function ccLoadCaiDat() {
     let htmlUsers = '';
     dsNhanVien.forEach((u, i) => {
@@ -1300,6 +1158,7 @@
       XLSX.writeFile(wb, "BaoCao_ChamCong_" + new Date().toISOString().split('T')[0] + ".xlsx");
   }
 
+  // CC MODALS & FORM
   function ccRenderCheckboxes(containerId) {
     let html = '';
     dsNhanVien.forEach(u => {
@@ -1316,7 +1175,7 @@
     if(id === 'cc-modal-nghi') { document.getElementById('cc-sel-loai-nghi').innerHTML = dsLoaiNghi.map(l => `<option value="${l}">${l}</option>`).join(''); ccRenderCheckboxes('cc-grid-user-nghi'); document.getElementById('cc-nghi-tu').value = selectedDate; document.getElementById('cc-nghi-den').value = selectedDate; ccKiemTraHienThiBuoiNghi(); }
     if(id === 'cc-modal-tang-cuong') { document.querySelectorAll('.cc-lbl-modal-date').forEach(el => el.innerText = formatDateVN(selectedDate)); document.getElementById('cc-sel-loai-viec').innerHTML = dsViecTangCuong.map(t => `<option value="${t}">${t}</option>`).join('') + '<option value="khac">-- ✍️ Nhập việc khác --</option>'; document.getElementById('cc-wrap-viec-moi').style.display = 'none'; ccRenderCheckboxes('cc-grid-user-viec'); document.getElementById('cc-t-all').checked = true; }
     if(id === 'cc-modal-hoctap') { document.querySelectorAll('.cc-lbl-modal-date').forEach(el => el.innerText = formatDateVN(selectedDate)); document.getElementById('cc-sel-loai-hoctap').value = 'Học tập'; document.getElementById('cc-txt-hoctap-moi').style.display = 'none'; ccRenderCheckboxes('cc-grid-user-hoctap'); document.getElementById('cc-h-all').checked = true; }
-    if(id === 'cc-modal-thongke-nghi') { document.getElementById('cc-tk-nam').value = new Date().getFullYear(); ccTinhThongKeNghi(); }
+    if(id === 'cc-modal-thongke-nghi') { document.getElementById('cc-tk-nam').value = new Date().getFullYear(); ccTinhThongKeNghiNam(); }
   }
   function ccDongModal(id) { document.getElementById(id).style.display = 'none'; }
   function ccGetSelectedUsers(containerId) { let checkboxes = document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`); let users = []; checkboxes.forEach(cb => users.push(cb.value)); return users; }
@@ -1334,6 +1193,7 @@
       return Object.keys(groups).map(k => `&bull; <b>${k}</b> (${groups[k].join(', ')})`).join('<br>');
   }
 
+  // CC TAB NGÀY
   function ccLoadDuLieuNgay() {
     let targetDate = document.getElementById('cc-date-picker').value;
     let recordsDaily = dsDaily.filter(r => r.date === targetDate);
@@ -1357,15 +1217,15 @@
     let tcRecords = recordsDaily.filter(r => r.type === 'viec'); if (tcRecords.length > 0) { detailText.push(`<span style="color:#f39c12; font-weight:bold;">⚡ Tăng cường:</span><br>${ccFormatGroupedUsers(tcRecords, 'taskName', false)}`); }
     let htRecords = recordsDaily.filter(r => r.type === 'hoctap'); if (htRecords.length > 0) { detailText.push(`<span style="color:#00bcd4; font-weight:bold;">📘 Học tập/CT:</span><br>${ccFormatGroupedUsers(htRecords, 'taskName', false)}`); }
     if (recordsLeave.length > 0) { detailText.push(`<span style="color:#e74c3c; font-weight:bold;">⛱️ Nghỉ:</span><br>${ccFormatGroupedUsers(recordsLeave, 'category', true)}`); }
-    document.getElementById('cc-summary-details-text').innerHTML = detailText.length > 0 ? detailText.join('<div style="margin-top:5px;"></div>') : '<i style="color:#888;">Chưa có phân công chi tiết</i>';
+    document.getElementById('cc-summary-details-text').innerHTML = detailText.length > 0 ? detailText.join('<div style="margin-top:5px;"></div>') : '';
 
     let html = '';
     if(recordsDaily.length + recordsLeave.length === 0) { html = '<div style="text-align:center; padding:15px; color:#888; font-size:12px; background:#f9f9f9; border-radius:8px;">Chưa có báo cáo nào.</div>'; }
     recordsLeave.forEach(r => { let isMulti = r.start !== r.end; let sessionText = isMulti ? 'Xuyên suốt' : SES_LABELS_FULL[r.session]; html += `<div class="cc-list-item type-nghi-auto"><div class="cc-list-item-header"><span class="cc-list-item-title">⛱️ Nghỉ: ${r.category}</span><span class="cc-list-item-badge" style="background:#fadbd8; color:#c0392b;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; });
     recordsDaily.forEach(r => {
       let sessionText = SES_LABELS_FULL[r.session];
-      if(r.type === 'hoctap') { html += `<div class="cc-list-item type-hoctap"><button class="cc-btn-del" onclick="ccXoaRecordDaily('${r.id}')">×</button><div class="cc-list-item-header"><span class="cc-list-item-title">📘 ${r.taskName}</span><span class="cc-list-item-badge" style="background:#e0f7fa; color:#0097a7;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; } 
-      else if (r.type === 'viec') { html += `<div class="cc-list-item type-viec"><button class="cc-btn-del" onclick="ccXoaRecordDaily('${r.id}')">×</button><div class="cc-list-item-header"><span class="cc-list-item-title">⚡ T.Cường: ${r.taskName}</span><span class="cc-list-item-badge" style="background:#ffe0b2; color:#d35400;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; }
+      if(r.type === 'hoctap') { html += `<div class="cc-list-item type-hoctap"><button class="cc-btn-delete" onclick="ccXoaRecordDaily('${r.id}')">×</button><div class="cc-list-item-header"><span class="cc-list-item-title">📘 ${r.taskName}</span><span class="cc-list-item-badge" style="background:#e0f7fa; color:#0097a7;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; } 
+      else if (r.type === 'viec') { html += `<div class="cc-list-item type-viec"><button class="cc-btn-delete" onclick="ccXoaRecordDaily('${r.id}')">×</button><div class="cc-list-item-header"><span class="cc-list-item-title">⚡ T.Cường: ${r.taskName}</span><span class="cc-list-item-badge" style="background:#ffe0b2; color:#d35400;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; }
     });
     document.getElementById('cc-list-records-today').innerHTML = html;
   }
@@ -1380,12 +1240,13 @@
   }
   function ccXoaRecordDaily(id) { if(confirm('Xóa bản ghi này khỏi ngày hôm nay?')) { dsDaily = dsDaily.filter(r => r.id !== id); saveData('cc_daily', dsDaily); ccLoadDuLieuNgay(); } }
 
+  // CC TAB NGHỈ PHÉP
   function ccKiemTraHienThiBuoiNghi() { let tu = document.getElementById('cc-nghi-tu').value; let den = document.getElementById('cc-nghi-den').value; if(tu === den) { document.getElementById('cc-wrap-buoi-nghi').style.display = 'block'; } else { document.getElementById('cc-wrap-buoi-nghi').style.display = 'none'; document.getElementById('cc-n-all').checked = true; } }
   function ccLuuRecordLeave() {
     let users = ccGetSelectedUsers('cc-grid-user-nghi'); if(users.length === 0) { alert('Vui lòng chọn ít nhất 1 nhân sự!'); return; }
     let tu = document.getElementById('cc-nghi-tu').value; let den = document.getElementById('cc-nghi-den').value; if(den < tu) { alert('Ngày kết thúc không hợp lệ!'); return; }
     let cat = document.getElementById('cc-sel-loai-nghi').value; let sess = document.querySelector('input[name="cc_sess_nghi"]:checked').value;
-    dsLeaves.push({ id: Date.now().toString(), start: tu, end: den, category: cat, session: sess, users: users }); saveData('cc_leaves_data', dsLeaves); ccDongModal('cc-modal-nghi'); ccLoadDanhSachNghi(); if(document.getElementById('cc-ngay').classList.contains('active')) ccLoadDuLieuNgay();
+    dsLeaves.push({ id: Date.now().toString(), start: tu, end: den, category: cat, session: sess, users: users }); saveData('cc_leaves_data', dsLeaves); ccDongModal('cc-modal-nghi'); ccLoadDanhSachNghi(); if(document.getElementById('tab-cham-cong').classList.contains('active')) ccLoadDuLieuNgay();
   }
   function ccLoadDanhSachNghi() {
     let html = ''; let sorted = [...dsLeaves].sort((a,b) => new Date(b.start) - new Date(a.start));
@@ -1393,41 +1254,42 @@
     sorted.forEach(r => {
       let dateText = r.start === r.end ? formatDateVN(r.start) : `${formatDateVN(r.start)} - ${formatDateVN(r.end)}`;
       let sessText = r.start === r.end ? ` (${SES_LABELS_FULL[r.session]})` : '';
-      html += `<div class="cc-list-item type-nghi-auto"><button class="cc-btn-del" onclick="ccXoaLeave('${r.id}')">×</button><div class="cc-list-item-title">⛱️ ${r.category} ${sessText}</div><div style="font-size:11px; color:#c0392b; margin-bottom:4px; font-weight:bold;">📅 ${dateText}</div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`;
+      html += `<div class="cc-list-item type-nghi-auto"><button class="cc-btn-delete" onclick="ccXoaLeave('${r.id}')">×</button><div class="cc-list-item-title">⛱️ ${r.category} ${sessText}</div><div style="font-size:11px; color:#c0392b; margin-bottom:4px; font-weight:bold;">📅 ${dateText}</div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`;
     });
     document.getElementById('cc-list-nghi-dai-han').innerHTML = html;
   }
   function ccXoaLeave(id) { if(confirm('Xóa lịch nghỉ phép này?')) { dsLeaves = dsLeaves.filter(r => r.id !== id); saveData('cc_leaves_data', dsLeaves); ccLoadDanhSachNghi(); } }
-  
-  function ccTinhThongKeNghi() {
-      let yearStr = document.getElementById('cc-tk-nam').value;
-      let monthStr = document.getElementById('cc-tk-thang').value;
-      if(!yearStr) return;
+  function ccTinhThongKeNghiNam() {
+      let yearStr = document.getElementById('cc-tk-nam').value; if(!yearStr) return;
       let stats = {}; dsNhanVien.forEach(u => { stats[u.name] = { total: 0, chitiet: {} }; });
       dsLeaves.forEach(l => {
-          let cur = new Date(l.start); let end = new Date(l.end);
-          while(cur <= end) {
-              let m = ('0'+(cur.getMonth()+1)).slice(-2);
-              if(cur.getFullYear().toString() === yearStr && (monthStr === 'all' || m === monthStr)) {
-                  let val = (l.start === l.end && l.session !== 'all') ? 0.5 : 1;
-                  l.users.forEach(u => { if(stats[u]) { stats[u].total += val; stats[u].chitiet[l.category] = (stats[u].chitiet[l.category]||0) + val; } });
+          let startY = l.start.substring(0,4); let endY = l.end.substring(0,4);
+          if(startY === yearStr || endY === yearStr) {
+              let cur = new Date(l.start); let end = new Date(l.end);
+              while(cur <= end) {
+                  if(cur.getFullYear().toString() === yearStr) {
+                      let val = (l.start === l.end && l.session !== 'all') ? 0.5 : 1;
+                      l.users.forEach(u => { if(stats[u]) { stats[u].total += val; stats[u].chitiet[l.category] = (stats[u].chitiet[l.category]||0) + val; } });
+                  }
+                  cur.setDate(cur.getDate()+1);
               }
-              cur.setDate(cur.getDate()+1);
           }
       });
       let tbody = '';
       dsNhanVien.forEach(u => {
           let st = stats[u.name]; let str = Object.keys(st.chitiet).map(k=>`• ${k}: ${st.chitiet[k]}`).join('<br>');
-          tbody += `<tr><td class="cc-table td-left" style="text-align:left; font-weight:bold; font-size:12px; padding:6px; border-bottom:1px solid #eee;">${u.name}</td><td class="cc-table td-number" style="color:#e74c3c; font-weight:bold; font-size:16px; text-align:center; border-bottom:1px solid #eee;">${st.total > 0 ? st.total : '-'}</td><td class="cc-table" style="text-align:left; font-size:11px; color:#666; line-height:1.4; padding-left:6px; border-bottom:1px solid #eee;">${str}</td></tr>`;
+          tbody += `<tr><td class="cc-table td-left" style="text-align:left; font-weight:bold; font-size:12px; padding:6px;">${u.name}</td><td class="cc-table td-number" style="color:#e74c3c; font-weight:bold; font-size:14px; text-align:center;">${st.total > 0 ? st.total : '-'}</td><td class="cc-table" style="text-align:left; font-size:10px; color:#666; line-height:1.4; padding-left:4px;">${str}</td></tr>`;
       });
       document.querySelector('#cc-table-thongke-nam tbody').innerHTML = tbody;
   }
 
-  function ccClearQuickActive() { document.querySelectorAll('.cc-quick-btn').forEach(b => b.classList.remove('active')); }
-  function ccChonTuanTruoc() { ccClearQuickActive(); document.getElementById('cc-btn-tuan-truoc').classList.add('active'); let curr = new Date(); let first = curr.getDate() - curr.getDay() + 1 - 7; let start = new Date(curr.setDate(first)); let end = new Date(start); end.setDate(end.getDate() + 6); document.getElementById('cc-cycle-start').value = start.toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = end.toISOString().split('T')[0]; }
-  function ccChonTuanNay() { ccClearQuickActive(); document.getElementById('cc-btn-tuan-nay').classList.add('active'); let curr = new Date(); let first = curr.getDate() - curr.getDay() + 1; let last = first + 6; document.getElementById('cc-cycle-start').value = new Date(curr.setDate(first)).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(curr.setDate(last)).toISOString().split('T')[0]; }
-  function ccChonThangTruoc() { ccClearQuickActive(); document.getElementById('cc-btn-thang-truoc').classList.add('active'); let date = new Date(); document.getElementById('cc-cycle-start').value = new Date(date.getFullYear(), date.getMonth() - 1, 1).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(date.getFullYear(), date.getMonth(), 0).toISOString().split('T')[0]; }
-  function ccChonThangNay() { ccClearQuickActive(); document.getElementById('cc-btn-thang-nay').classList.add('active'); let date = new Date(); document.getElementById('cc-cycle-start').value = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().split('T')[0]; }
+  // CC TỔNG HỢP CHU KỲ
+  function ccClearQuickActive() { document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('active')); }
+  function ccChonTuanTruoc() { ccClearQuickActive(); document.getElementById('cc-btn-tuan-truoc').classList.add('active'); let curr = new Date(); let first = curr.getDate() - curr.getDay() + 1 - 7; let start = new Date(curr.setDate(first)); let end = new Date(start); end.setDate(end.getDate() + 6); document.getElementById('cc-cycle-start').value = start.toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = end.toISOString().split('T')[0]; document.getElementById('sel-thang-nhanh').value="";}
+  function ccChonTuanNay() { ccClearQuickActive(); document.getElementById('cc-btn-tuan-nay').classList.add('active'); let curr = new Date(); let first = curr.getDate() - curr.getDay() + 1; let last = first + 6; document.getElementById('cc-cycle-start').value = new Date(curr.setDate(first)).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(curr.setDate(last)).toISOString().split('T')[0]; document.getElementById('sel-thang-nhanh').value="";}
+  function ccChonThangTruoc() { ccClearQuickActive(); document.getElementById('cc-btn-thang-truoc').classList.add('active'); let date = new Date(); document.getElementById('cc-cycle-start').value = new Date(date.getFullYear(), date.getMonth() - 1, 1).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(date.getFullYear(), date.getMonth(), 0).toISOString().split('T')[0]; document.getElementById('sel-thang-nhanh').value="";}
+  function ccChonThangNay() { ccClearQuickActive(); document.getElementById('cc-btn-thang-nay').classList.add('active'); let date = new Date(); document.getElementById('cc-cycle-start').value = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().split('T')[0]; document.getElementById('sel-thang-nhanh').value="";}
+  function chonThang(val) { if(!val) return; ccClearQuickActive(); let parts = val.split('-'); let y = parseInt(parts[0]); let m = parseInt(parts[1]) - 1; document.getElementById('cc-cycle-start').value = new Date(y, m, 1).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(y, m + 1, 0).toISOString().split('T')[0]; }
   function ccInitChuKy() { let savedEnd = localStorage.getItem('cc_last_end_date'); if(savedEnd) { let nextStart = new Date(savedEnd); nextStart.setDate(nextStart.getDate() + 1); document.getElementById('cc-cycle-start').value = nextStart.toISOString().split('T')[0]; ccAutoCalcEndDate(); } }
   function ccAutoCalcEndDate() { let startVal = document.getElementById('cc-cycle-start').value; if(startVal) { let end = new Date(startVal); end.setMonth(end.getMonth() + 1); end.setDate(end.getDate() - 1); document.getElementById('cc-cycle-end').value = end.toISOString().split('T')[0]; } }
   
@@ -1472,7 +1334,7 @@
     if(Object.keys(globalNghiStats).length > 0) { textSummary.push(`<span style="color:#e74c3c; font-weight:900;">⛱️ NGHỈ:</span><br>${ccFormatGlobalStat(globalNghiStats)}`); }
     if(Object.keys(globalHocStats).length > 0) { textSummary.push(`<span style="color:#00bcd4; font-weight:900;">📘 HỌC TẬP/CT:</span><br>${ccFormatGlobalStat(globalHocStats)}`); }
     if(Object.keys(globalTaskStats).length > 0) { textSummary.push(`<span style="color:#f39c12; font-weight:900;">⚡ TĂNG CƯỜNG:</span><br>${ccFormatGlobalStat(globalTaskStats)}`); }
-    document.getElementById('cc-cycle-summary-text').innerHTML = textSummary.length > 0 ? textSummary.join('<br><div style="margin-top:4px;"></div>') : '<i style="color:#888;">Không có dữ liệu trong chu kỳ này</i>';
+    document.getElementById('cc-cycle-summary-text').innerHTML = textSummary.length > 0 ? textSummary.join('<br><div style="margin-top:4px;"></div>') : '<i style="color:#888;">Không có dữ liệu trong chu kỳ</i>';
     document.getElementById('cc-cycle-summary-box').style.display = 'block';
 
     let tbody = '';
