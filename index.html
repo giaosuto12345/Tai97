@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-title" content="Quản Lý Nhà" />
   <meta name="mobile-web-app-capable" content="yes" />
 
-  <title>Quản lý Nhà - Vân Nham</title>
+  <title>Quản lý Nhà</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -168,77 +168,6 @@
     .sort-btn:active { background: #1976d2; color: #fff; }
     
     .loc-suggestions { position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #1976d2; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 20; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-
-    /* ========================================== */
-    /* ====== CSS CÔ LẬP CHO TAB CHẤM CÔNG ====== */
-    /* ========================================== */
-    #tab-cham-cong { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 10px; }
-    .cc-nav { display: flex; background: #eaf6ff; padding: 4px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #b3d4fc;}
-    .cc-nav-btn { flex: 1; border: none; background: transparent; padding: 8px 2px; font-size: 11px; font-weight: 900; color: #1976d2; border-radius: 8px; cursor: pointer; text-align: center; transition: 0.2s; white-space: nowrap;}
-    .cc-nav-btn.active { background: #1976d2; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
-    .cc-sub-content { display: none; animation: fadeIn 0.2s; }
-    .cc-sub-content.active { display: block; }
-    .cc-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.04); border: 1px solid #eee;}
-    .cc-card-title { font-size: 13px; font-weight: 800; color: #1976d2; border-bottom: 2px solid #eaf6ff; padding-bottom: 8px; margin-bottom: 12px; margin-top: 0; text-transform: uppercase; }
-
-    .cc-btn { display: block; width: 100%; padding: 10px; font-size: 13px; font-weight: 800; text-align: center; border: none; border-radius: 8px; cursor: pointer; color: white; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-transform: uppercase;}
-    .cc-btn:active { transform: scale(0.97); }
-    .cc-btn-primary { background: #1976d2; } .cc-btn-warning { background: #f39c12; } .cc-btn-info { background: #00bcd4; } .cc-btn-danger { background: #e74c3c; } .cc-btn-success { background: #27ae60; }
-    .cc-btn-small { padding: 4px 8px; font-size: 11px; border-radius: 6px; font-weight: bold; border: 1px solid #1976d2; background: #eaf6ff; color: #1976d2; cursor: pointer; }
-
-    .cc-quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;}
-    .cc-quick-btn { background: #f8f9fa; border: 1px solid #ddd; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; text-align: center; transition: 0.2s;}
-    .cc-quick-btn.active { background: #1976d2; color: #fff; border-color: #1976d2; box-shadow: 0 2px 8px rgba(25,118,210,0.3); }
-
-    .cc-toggle-group { display: flex; background: #eee; border-radius: 8px; overflow: hidden; margin-top: 5px; border: 1px solid #ddd;}
-    .cc-toggle-group input[type="radio"] { display: none; }
-    .cc-toggle-group label { flex: 1; text-align: center; padding: 8px 4px; margin: 0; font-size: 12px; font-weight: bold; color: #666; cursor: pointer; transition: 0.2s; }
-    .cc-toggle-group input[type="radio"]:checked + label { background: #1976d2; color: white; }
-
-    /* ====== CSS CẬP NHẬT GRID CHỌN NHÂN SỰ ĐỂ CUỘN MƯỢT iOS ====== */
-    .cc-checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 250px; overflow-y: auto; padding: 10px; margin: 10px 0; border: 1px solid #eee; border-radius: 10px; background: #fafafa; -webkit-overflow-scrolling: touch; }
-    .cc-check-item { display: flex; align-items: center; background: #fff; padding: 8px; border-radius: 8px; border: 1px solid #eee; cursor: pointer; transition: 0.2s; margin: 0; min-height: 45px; justify-content: flex-start; }
-    .cc-check-item.active { background: #eaf6ff; border-color: #1976d2; color: #1976d2; font-weight: bold; }
-    .cc-check-item input { display: none; }
-    .cc-check-icon { min-width: 16px; height: 16px; border-radius: 3px; border: 2px solid #ccc; margin-right: 6px; display: flex; align-items: center; justify-content: center; }
-    .cc-check-item.active .cc-check-icon { background: #1976d2; border-color: #1976d2; }
-    .cc-check-item.active .cc-check-icon::after { content: "✔"; color: white; font-size: 11px; font-weight: bold; }
-    .cc-check-item div.user-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; font-size: 12px; width: 100%; }
-
-    .cc-list-item { background: #fff; border-left: 4px solid #1976d2; padding: 10px; border-radius: 8px; margin-bottom: 8px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #eee;}
-    .cc-list-item.type-hoctap { border-left-color: #00bcd4; } .cc-list-item.type-viec { border-left-color: #f39c12; } .cc-list-item.type-nghi-auto { border-left-color: #e74c3c; background: #fffcfc; }
-    .cc-list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-right: 25px;}
-    .cc-list-item-title { font-weight: 900; font-size: 13px; color: #333; }
-    .cc-list-item-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #eee; font-weight: bold; color: #555; }
-    .cc-list-item-users { font-size: 12px; color: #2c3e50; line-height: 1.4; font-weight: bold;}
-    .cc-btn-del { position: absolute; top: 8px; right: 8px; color: #e74c3c; background: #ffeeee; border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;}
-
-    /* Bảng Tổng Hợp Chấm Công */
-    .cc-table-wrapper { width: 100%; border-radius: 8px; border: 1px solid #eee; overflow: hidden; }
-    .cc-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; table-layout: fixed; background: white; }
-    .cc-table th, .cc-table td { padding: 6px 4px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; vertical-align: top; word-break: break-word;}
-    .cc-table th { background: #eaf6ff; color: #1976d2; font-weight: 800; font-size: 9px; text-transform: uppercase; }
-    .cc-table td.td-left { text-align: left; font-weight: 800; color: #333; font-size: 11px; width: 22%; padding-left: 4px;}
-    .cc-table td.td-number { color: #e74c3c; width: 26%; }
-    .cc-table td.td-hoctap { color: #00bcd4; width: 26%; }
-    .cc-table td.td-task { color: #f39c12; width: 26%; }
-    .cc-table tr.total-row td { background: #fdf2e9; font-weight: 900; color: #d35400; font-size: 13px; }
-    .cc-main-val { font-weight: 900; font-size: 14px; margin-bottom: 2px;}
-    .cc-detail-text { font-size: 10px; color: #666; font-weight: normal; display: block; line-height: 1.3; text-align: left; padding-left:2px;}
-
-    .cc-summary-box { background: #eaf6ff; border: 1px solid #b3d4fc; padding: 10px; border-radius: 10px; margin-bottom: 12px; }
-    .cc-summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; font-size: 11px; color: #333; margin-top: 6px;}
-    .cc-summary-grid div { background: #fff; padding: 8px 2px; border-radius: 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .cc-val-b { font-weight: 900; font-size: 15px; display: block; margin-top: 4px; }
-    .cc-summary-details { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #b3d4fc; font-size: 11px; color: #444; line-height: 1.5; text-align: left; }
-
-    .cc-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); display: none; justify-content: center; align-items: flex-end; z-index: 200; }
-    .cc-modal-content { background: white; width: 100%; max-width: 600px; border-radius: 16px 16px 0 0; padding: 15px; max-height: 90vh; overflow-y: auto; position: relative; animation: slideUp 0.3s ease; }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .cc-close-modal { position: absolute; top: 10px; right: 10px; font-size: 24px; color: #888; cursor: pointer; line-height: 1; background: #f0f0f0; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;}
-
-    .cc-tag-chip { display: inline-block; background: #eaf6ff; color: #1976d2; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; margin: 0 4px 6px 0; border: 1px solid #b3d4fc; }
-    .cc-tag-chip.task { background: #fff8e1; color: #f39c12; border-color: #ffe0b2; }
 
     /* ====== CSS CẬP NHẬT CÀI ĐẶT APP MENU ====== */
     .sort-item { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px 15px; border-radius: 12px; border: 1px solid #e0e0e0; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
@@ -518,135 +447,10 @@
       </div>
     </div>
 
-    <div id="tab-cham-cong" class="tab-content container">
-      
-      <div class="cc-nav">
-        <button class="cc-nav-btn active" id="cc-btn-ngay" onclick="switchCCTab('cc-ngay')">📅 NGÀY</button>
-        <button class="cc-nav-btn" id="cc-btn-nghi" onclick="switchCCTab('cc-nghi')">⛱️ NGHỈ</button>
-        <button class="cc-nav-btn" id="cc-btn-tonghop" onclick="switchCCTab('cc-tonghop')">📊 TỔNG HỢP</button>
-        <button class="cc-nav-btn" id="cc-btn-caidat" onclick="switchCCTab('cc-caidat')">⚙️ DATA</button>
-      </div>
-
-      <div id="cc-ngay" class="cc-sub-content active">
-        
-        <div class="cc-summary-box">
-          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #b3d4fc; padding-bottom:8px; margin-bottom:8px;">
-             <div style="font-weight:900; color:#1976d2; font-size:12px;">TỔNG KẾT QUÂN SỐ</div>
-             <input type="date" id="cc-date-picker" style="width:130px; padding:4px; font-size:13px; border:1px solid #1976d2; color:#1976d2; font-weight:bold; background:#fff; border-radius:4px;" onchange="ccLoadDuLieuNgay()">
-          </div>
-
-          <div class="cc-summary-grid">
-            <div>⛱️ Nghỉ: <span id="cc-sum-nghi" class="cc-val-b" style="color:#e74c3c;">0</span></div>
-            <div>⚡ T.Cường: <span id="cc-sum-tc" class="cc-val-b" style="color:#f39c12;">0</span></div>
-            <div>📘 Học/CT: <span id="cc-sum-ht" class="cc-val-b" style="color:#00bcd4;">0</span></div>
-            <div>✅ C.Lại: <span id="cc-sum-bqtx" class="cc-val-b" style="color:#27ae60;">0</span></div>
-          </div>
-          
-          <div class="cc-summary-details" id="cc-summary-details-text"></div>
-        </div>
-
-        <div style="display:flex; gap:8px; margin-bottom: 12px;">
-          <button class="cc-btn cc-btn-info" style="margin: 0; box-shadow:none; padding:10px;" onclick="ccMoModal('cc-modal-hoctap')">📘 HỌC TẬP/C.TÁC</button>
-          <button class="cc-btn cc-btn-warning" style="margin: 0; box-shadow:none; padding:10px;" onclick="ccMoModal('cc-modal-tang-cuong')">⚡ TĂNG CƯỜNG</button>
-        </div>
-
-        <div class="cc-card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-            <h3 class="cc-card-title" style="margin:0; border:none; padding:0;">CHI TIẾT BÁO CÁO</h3>
-            <span id="cc-count-records" style="font-size:10px; font-weight:bold; color:#888; background:#eee; padding:2px 6px; border-radius:6px;">0 bản ghi</span>
-          </div>
-          <div id="cc-list-records-today"></div>
-        </div>
-      </div>
-
-      <div id="cc-nghi" class="cc-sub-content">
-        <div style="display:flex; gap:8px; margin-bottom: 12px;">
-          <button class="cc-btn cc-btn-danger" style="margin:0; padding:10px;" onclick="ccMoModal('cc-modal-nghi')">⛱️ TẠO LỊCH NGHỈ</button>
-          <button class="cc-btn cc-btn-primary" style="margin:0; background:#9b59b6; padding:10px;" onclick="ccMoModal('cc-modal-thongke-nghi')">📊 THỐNG KÊ NĂM</button>
-        </div>
-        <div class="cc-card">
-          <h3 class="cc-card-title">LỊCH SỬ ĐĂNG KÝ NGHỈ</h3>
-          <div id="cc-list-nghi-dai-han"></div>
-        </div>
-      </div>
-
-      <div id="cc-tonghop" class="cc-sub-content">
-        <div class="cc-card">
-          <div class="cc-quick-actions">
-            <button class="cc-quick-btn" id="cc-btn-tuan-truoc" onclick="ccChonTuanTruoc()">Tuần trước</button>
-            <button class="cc-quick-btn" id="cc-btn-tuan-nay" onclick="ccChonTuanNay()">Tuần này</button>
-            <button class="cc-quick-btn" id="cc-btn-thang-truoc" onclick="ccChonThangTruoc()">Tháng trước</button>
-            <button class="cc-quick-btn" id="cc-btn-thang-nay" onclick="ccChonThangNay()">Tháng này</button>
-          </div>
-          <div class="date-group-cc">
-            <div class="date-row-cc"><label class="cc-label" style="width:60px; margin:0;">Từ ngày:</label><input type="date" class="cc-input" id="cc-cycle-start" onchange="ccClearQuickActive(); ccAutoCalcEndDate();"></div>
-            <div class="date-row-cc"><label class="cc-label" style="width:60px; margin:0;">Đến ngày:</label><input type="date" class="cc-input" id="cc-cycle-end" onchange="ccClearQuickActive();"></div>
-          </div>
-          <button class="cc-btn cc-btn-primary" onclick="ccXemTongHop()" style="margin-top: 10px; padding:10px;">📊 TẠO BẢNG TỔNG HỢP</button>
-        </div>
-
-        <div id="cc-cycle-summary-box" class="cc-summary-box" style="display:none; margin-bottom: 12px;">
-            <div style="font-weight: 900; color: #1976d2; font-size: 12px; text-align: center; border-bottom: 1px solid #b3d4fc; padding-bottom: 6px; margin-bottom: 8px;">📊 TỔNG KẾT TOÀN ĐỘI KỲ NÀY</div>
-            <div id="cc-cycle-summary-text" style="font-size: 11px; color: #333; line-height: 1.5; text-align:left;"></div>
-        </div>
-
-        <div class="cc-card" style="padding: 0; border: 1px solid #eee;">
-          <div class="cc-table-wrapper">
-            <table id="cc-table-tong-hop" class="cc-table">
-              <thead><tr><th>NHÂN SỰ</th><th>N.PHÉP/BÙ</th><th>H.TẬP/CT</th><th>T.CƯỜNG</th></tr></thead>
-              <tbody><tr><td colspan="4" style="padding: 20px; color:#888; text-align:center;">Bấm "Tạo Bảng Tổng Hợp"</td></tr></tbody>
-              <tfoot id="cc-table-footer"></tfoot>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <div id="cc-caidat" class="cc-sub-content">
-        <div class="cc-card" style="background:#f4fbff; border-color:#b3d4fc; text-align:center;">
-          <h3 class="cc-card-title" style="color:#27ae60; margin-bottom:5px;">💾 SAO LƯU & PHỤC HỒI</h3>
-          <p style="font-size:10px; color:#555; margin-bottom:10px;">Lưu file (.json) để cất giữ dữ liệu chấm công. Dùng file đó để phục hồi nếu chuyển máy.</p>
-          <div style="display:flex; gap:8px;">
-            <button class="cc-btn cc-btn-success" style="padding: 8px; font-size: 11px;" onclick="ccExportBackupJSON()">📥 TẢI BACKUP</button>
-            <button class="cc-btn cc-btn-warning" style="padding: 8px; font-size: 11px;" onclick="document.getElementById('cc-import-file').click()">📤 PHỤC HỒI</button>
-          </div>
-          <input type="file" id="cc-import-file" style="display:none;" accept=".json" onchange="ccImportBackupJSON(event)">
-          <button class="cc-btn" style="background:#fff; color:#1976d2; border:1px solid #1976d2; margin-top: 10px; padding:8px; font-size:11px;" onclick="ccXuatDuLieuRaExcel()">Xuất Excel để xem / nộp báo cáo</button>
-        </div>
-
-        <div class="cc-card">
-          <h3 class="cc-card-title">👥 DANH SÁCH NHÂN SỰ</h3>
-          <div style="display:flex; gap:6px;">
-            <input type="text" class="cc-input" id="cc-input-new-user" placeholder="Tên..." style="padding:8px;">
-            <input type="text" class="cc-input" id="cc-input-new-role" placeholder="Chức vụ" style="width: 80px; padding:8px;">
-            <button class="cc-btn cc-btn-primary" style="margin:0; width: 60px; padding: 8px; font-size: 11px;" onclick="ccThemNhanVien()">Thêm</button>
-          </div>
-          <div id="cc-list-users" style="margin-top: 12px; max-height: 250px; overflow-y: auto;"></div>
-        </div>
-
-        <div class="cc-card">
-          <h3 class="cc-card-title">⚡ MẪU VIỆC TĂNG CƯỜNG</h3>
-          <div style="display:flex; gap:6px;">
-            <input type="text" class="cc-input" id="cc-input-new-task" placeholder="Việc tăng cường..." style="padding:8px;">
-            <button class="cc-btn cc-btn-primary" style="margin:0; width: 60px; padding: 8px; font-size: 11px;" onclick="ccThemViec()">Thêm</button>
-          </div>
-          <div id="cc-list-tasks" style="margin-top: 12px;"></div>
-        </div>
-
-        <div class="cc-card">
-          <h3 class="cc-card-title">⛱️ MẪU LÝ DO NGHỈ</h3>
-          <div style="display:flex; gap:6px;">
-            <input type="text" class="cc-input" id="cc-input-new-leave" placeholder="Loại nghỉ..." style="padding:8px;">
-            <button class="cc-btn cc-btn-primary" style="margin:0; width: 60px; padding: 8px; font-size: 11px;" onclick="ccThemLoaiNghi()">Thêm</button>
-          </div>
-          <div id="cc-list-leaves" style="margin-top: 12px;"></div>
-        </div>
-      </div>
-    </div> 
-    
     <div id="tab-cai-dat" class="tab-content container">
       <div class="card">
           <h3 class="card-title" style="color:#4caf50;">HỆ THỐNG & CẬP NHẬT</h3>
-          <p style="font-size: 12px; color: #666; text-align: center; margin-bottom: 15px;">Phiên bản: 2.1.0 - Vân Nham</p>
+          <p style="font-size: 12px; color: #666; text-align: center; margin-bottom: 15px;">Phiên bản: 1.0</p>
           <button onclick="capNhatApp()" class="btn btn-update">♻️ CẬP NHẬT PHIÊN BẢN MỚI</button>
           <p style="font-size: 11px; color: #888; font-style: italic; text-align: center; margin-top: 5px;">* Bấm để ép ứng dụng tải lại code mới nhất (Xóa Cache).</p>
       </div>
@@ -686,107 +490,6 @@
       </div>
   </div>
 
-  <div class="cc-modal-overlay" id="cc-modal-thongke-nghi">
-    <div class="cc-modal-content">
-      <div class="cc-close-modal" onclick="ccDongModal('cc-modal-thongke-nghi')">&times;</div>
-      <h3 style="margin-top:0; font-size:13px; color:#9b59b6; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">📊 THỐNG KÊ NGHỈ NĂM</h3>
-      <div style="display:flex; gap:8px; align-items:center; margin-bottom: 12px;">
-        <label class="cc-label" style="margin:0; width:70px;">Chọn Năm:</label>
-        <input type="number" class="cc-input" id="cc-tk-nam" value="2026" style="padding: 8px; font-size:14px;">
-        <button class="cc-btn cc-btn-primary" style="margin:0; padding:8px 15px;" onclick="ccTinhThongKeNghiNam()">XEM</button>
-      </div>
-      <div class="cc-table-wrapper" style="max-height: 400px; overflow-y: auto;">
-        <table id="cc-table-thongke-nam" class="cc-table">
-          <thead><tr><th>NHÂN SỰ</th><th style="width:25%;">TỔNG NGHỈ</th><th>CHI TIẾT</th></tr></thead>
-          <tbody><tr><td colspan="3" style="color:#888; padding:20px;">Bấm XEM để hiển thị</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="cc-modal-overlay" id="cc-modal-hoctap">
-    <div class="cc-modal-content">
-      <div class="cc-close-modal" onclick="ccDongModal('cc-modal-hoctap')">&times;</div>
-      <h3 style="margin-top:0; font-size:13px; color:#00bcd4; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">📘 Học tập / Công tác</h3>
-      <label class="cc-label">1. Phân loại:</label>
-      <select id="cc-sel-loai-hoctap" class="cc-select" style="font-weight:bold; color:#1976d2;"><option value="Học tập">Học tập</option><option value="Công tác">Công tác</option><option value="Đi tuyến">Đi tuyến</option><option value="khac">-- ✍️ Nhập lý do khác --</option></select>
-      <input type="text" class="cc-input" id="cc-txt-hoctap-moi" placeholder="Nhập lý do cụ thể..." style="display:none; margin-top:8px;">
-      <label class="cc-label">2. Thời lượng (Ngày <span class="cc-lbl-modal-date" style="color:#1976d2;"></span>):</label>
-      <div class="cc-toggle-group">
-        <input type="radio" id="cc-h-all" name="cc_sess_hoctap" value="all" checked><label for="cc-h-all">Cả ngày</label>
-        <input type="radio" id="cc-h-mor" name="cc_sess_hoctap" value="morning"><label for="cc-h-mor">Sáng</label>
-        <input type="radio" id="cc-h-aft" name="cc_sess_hoctap" value="afternoon"><label for="cc-h-aft">Chiều</label>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 12px;">
-        <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
-        <button class="cc-btn-small" onclick="ccSelectAll('cc-grid-user-hoctap')">☑ Chọn hết</button>
-      </div>
-      <div class="cc-checkbox-grid" id="cc-grid-user-hoctap"></div>
-      <div style="display:flex; gap:8px; margin-top:15px;">
-        <button class="cc-btn" style="background:#bdc3c7; color:#333;" onclick="ccDongModal('cc-modal-hoctap')">HỦY</button>
-        <button class="cc-btn cc-btn-info" onclick="ccLuuRecordDaily('hoctap')">LƯU BÁO CÁO</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="cc-modal-overlay" id="cc-modal-tang-cuong">
-    <div class="cc-modal-content">
-      <div class="cc-close-modal" onclick="ccDongModal('cc-modal-tang-cuong')">&times;</div>
-      <h3 style="margin-top:0; font-size:13px; color:#f39c12; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">⚡ Ghi nhận Tăng Cường</h3>
-      <label class="cc-label">1. Chọn công việc:</label>
-      <select id="cc-sel-loai-viec" class="cc-select" style="font-weight:bold; color:#1976d2;"></select>
-      <div id="cc-wrap-viec-moi" style="display:none; margin-top:8px;">
-        <input type="text" class="cc-input" id="cc-txt-viec-moi" placeholder="Nhập việc cụ thể...">
-      </div>
-      <label class="cc-label">2. Thời lượng (Ngày <span class="cc-lbl-modal-date" style="color:#1976d2;"></span>):</label>
-      <div class="cc-toggle-group">
-        <input type="radio" id="cc-t-all" name="cc_sess_viec" value="all" checked><label for="cc-t-all">Cả ngày</label>
-        <input type="radio" id="cc-t-mor" name="cc_sess_viec" value="morning"><label for="cc-t-mor">Sáng</label>
-        <input type="radio" id="cc-t-aft" name="cc_sess_viec" value="afternoon"><label for="cc-t-aft">Chiều</label>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 12px;">
-        <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
-        <button class="cc-btn-small" onclick="ccSelectAll('cc-grid-user-viec')">☑ Chọn hết</button>
-      </div>
-      <div class="cc-checkbox-grid" id="cc-grid-user-viec"></div>
-      <div style="display:flex; gap:8px; margin-top:15px;">
-        <button class="cc-btn" style="background:#bdc3c7; color:#333;" onclick="ccDongModal('cc-modal-tang-cuong')">HỦY</button>
-        <button class="cc-btn cc-btn-warning" onclick="ccLuuRecordDaily('viec')">LƯU BÁO CÁO</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="cc-modal-overlay" id="cc-modal-nghi">
-    <div class="cc-modal-content">
-      <div class="cc-close-modal" onclick="ccDongModal('cc-modal-nghi')">&times;</div>
-      <h3 style="margin-top:0; font-size:13px; color:#e74c3c; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">⛱️ Đăng ký Nghỉ</h3>
-      <label class="cc-label">1. Phân loại nghỉ:</label>
-      <select id="cc-sel-loai-nghi" class="cc-select" style="font-weight:bold; color:#1976d2;"></select>
-      <label class="cc-label">2. Thời gian nghỉ:</label>
-      <div class="date-group-cc">
-        <div class="date-row-cc"><label class="cc-label" style="margin:0; width:60px; color:#888;">Từ ngày:</label><input type="date" class="cc-input" id="cc-nghi-tu" onchange="ccKiemTraHienThiBuoiNghi()"></div>
-        <div class="date-row-cc"><label class="cc-label" style="margin:0; width:60px; color:#888;">Đến ngày:</label><input type="date" class="cc-input" id="cc-nghi-den" onchange="ccKiemTraHienThiBuoiNghi()"></div>
-      </div>
-      <div id="cc-wrap-buoi-nghi" style="margin-top: 10px;">
-        <span style="font-size:11px; color:#888; font-weight:bold;">Nghỉ theo buổi (Chỉ áp dụng khi chọn 1 ngày):</span>
-        <div class="cc-toggle-group">
-          <input type="radio" id="cc-n-all" name="cc_sess_nghi" value="all" checked><label for="cc-n-all">Cả ngày</label>
-          <input type="radio" id="cc-n-mor" name="cc_sess_nghi" value="morning"><label for="cc-n-mor">Sáng</label>
-          <input type="radio" id="cc-n-aft" name="cc_sess_nghi" value="afternoon"><label for="cc-n-aft">Chiều</label>
-        </div>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 12px;">
-        <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
-        <button class="cc-btn-small" onclick="ccSelectAll('cc-grid-user-nghi')">☑ Chọn hết</button>
-      </div>
-      <div class="cc-checkbox-grid" id="cc-grid-user-nghi"></div>
-      <div style="display:flex; gap:8px; margin-top:15px;">
-        <button class="cc-btn" style="background:#bdc3c7; color:#333;" onclick="ccDongModal('cc-modal-nghi')">HỦY</button>
-        <button class="cc-btn cc-btn-danger" onclick="ccLuuRecordLeave()">LƯU BÁO CÁO</button>
-      </div>
-    </div>
-  </div>
-
 <script>
   // ==========================================
   // HÀM TIỆN ÍCH DÙNG CHUNG & CACHE BUSTING
@@ -805,45 +508,6 @@
       return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
   }
 
-  // ==========================================
-  // KHỞI TẠO MẶC ĐỊNH CHẤM CÔNG (ÉP BUỘC NẠP DỮ LIỆU NẾU TRỐNG)
-  // ==========================================
-  const DEFAULT_USERS = [
-    {name: "Sơn", role: "Đội trưởng"}, {name: "Tài", role: "Phó đội trưởng"},
-    {name: "Viết Tuấn", role: ""}, {name: "Dương", role: ""}, {name: "Công", role: ""},
-    {name: "Nguyện", role: ""}, {name: "Đông", role: ""}, {name: "Dũng", role: ""},
-    {name: "Anh Tuấn", role: ""}, {name: "Hùng", role: ""}
-  ];
-  const DEFAULT_TASKS = ["Trạm KA", "Cần vụ", "Tu bổ", "Bảo quản 1", "Bảo quản 3"];
-  const DEFAULT_LEAVES = ["Nghỉ phép", "Nghỉ bù"];
-
-  let dsNhanVien = JSON.parse(localStorage.getItem('cc_users'));
-  if (!dsNhanVien || !Array.isArray(dsNhanVien) || dsNhanVien.length === 0 || typeof dsNhanVien[0] === 'string') {
-      dsNhanVien = [...DEFAULT_USERS];
-      localStorage.setItem('cc_users', JSON.stringify(dsNhanVien));
-  }
-
-  let dsLoaiNghi = JSON.parse(localStorage.getItem('cc_leaves'));
-  if (!dsLoaiNghi || !Array.isArray(dsLoaiNghi) || dsLoaiNghi.length === 0) {
-      dsLoaiNghi = [...DEFAULT_LEAVES];
-      localStorage.setItem('cc_leaves', JSON.stringify(dsLoaiNghi));
-  }
-
-  let dsViecTangCuong = JSON.parse(localStorage.getItem('cc_tasks'));
-  if (!dsViecTangCuong || !Array.isArray(dsViecTangCuong) || dsViecTangCuong.length === 0) {
-      dsViecTangCuong = [...DEFAULT_TASKS];
-      localStorage.setItem('cc_tasks', JSON.stringify(dsViecTangCuong));
-  }
-
-  let dsDaily = JSON.parse(localStorage.getItem('cc_daily')) || [];
-  let dsLeaves = JSON.parse(localStorage.getItem('cc_leaves_data')) || [];
-  
-  document.getElementById('cc-date-picker').value = new Date().toISOString().split('T')[0];
-  document.getElementById('cc-tk-nam').value = new Date().getFullYear();
-
-  const SES_LABELS = { 'all': '', 'morning': '(Sáng)', 'afternoon': '(Chiều)' };
-  const SES_LABELS_FULL = { 'all': 'Cả ngày', 'morning': 'Sáng', 'afternoon': 'Chiều' };
-
   function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 
   // ==========================================
@@ -854,13 +518,20 @@
     'tab-chia-gio': { icon: '⏰', title: 'Chia giờ', fullTitle: 'CHIA GIỜ LỊCH TRÌNH' },
     'tab-thoi-tiet': { icon: '🌤️', title: 'Thời tiết', fullTitle: 'TRA CỨU THỜI TIẾT' },
     'tab-danh-muc': { icon: '📋', title: 'Danh mục', fullTitle: 'QUẢN LÝ DANH MỤC' },
-    'tab-cham-cong': { icon: '📝', title: 'Chấm Công', fullTitle: 'CHẤM CÔNG NHÂN SỰ' },
     'tab-cai-dat': { icon: '⚙️', title: 'Cài đặt', fullTitle: 'CÀI ĐẶT HỆ THỐNG' }
   };
 
-  const defaultMainTabs = ['tab-thong-gio', 'tab-chia-gio', 'tab-thoi-tiet', 'tab-danh-muc', 'tab-cham-cong', 'tab-cai-dat'];
+  const defaultMainTabs = ['tab-thong-gio', 'tab-chia-gio', 'tab-thoi-tiet', 'tab-danh-muc', 'tab-cai-dat'];
 
-  function getMainTabOrder() { let saved = localStorage.getItem('mainTabOrder'); if(saved) return JSON.parse(saved); return defaultMainTabs; }
+  function getMainTabOrder() { 
+    let saved = localStorage.getItem('mainTabOrder'); 
+    if(saved) {
+      let parsed = JSON.parse(saved);
+      // Clean Code: Lọc bỏ các tab đã bị xóa khỏi mã nguồn để chống sập App
+      return parsed.filter(id => dashData[id]);
+    }
+    return defaultMainTabs; 
+  }
 
   function switchMainTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -880,7 +551,6 @@
     
     window.scrollTo(0,0);
     if(tabId === 'tab-cai-dat') renderCaiDatApp();
-    if(tabId === 'tab-cham-cong') switchCCTab('cc-ngay');
   }
 
   function renderCaiDatApp() {
@@ -904,7 +574,7 @@
   function moveMainTabUp(id) { let arr = getMainTabOrder(); let idx = arr.indexOf(id); if(idx > 0) { let temp = arr[idx]; arr[idx] = arr[idx-1]; arr[idx-1] = temp; localStorage.setItem('mainTabOrder', JSON.stringify(arr)); location.reload(); } }
   function moveMainTabDown(id) { let arr = getMainTabOrder(); let idx = arr.indexOf(id); if(idx < arr.length - 2) { let temp = arr[idx]; arr[idx] = arr[idx+1]; arr[idx+1] = temp; localStorage.setItem('mainTabOrder', JSON.stringify(arr)); location.reload(); } }
   function luuCaiDatApp() { localStorage.setItem('isAppLocked', document.getElementById('chk-app-lock').checked); let pass = document.getElementById('set-app-password').value; if(pass && pass.length >= 4) { localStorage.setItem('appPin', pass); } alert("Lưu Cài đặt Hệ thống thành công!"); }
-  function xoaToanBoDuLieuApp() { if(confirm("CẢNH BÁO: Thao tác này sẽ xóa vĩnh viễn mọi dữ liệu (Excel, Chấm Công, Cài đặt). Khôi phục App về trạng thái xuất xưởng?")) { localStorage.clear(); location.reload(); } }
+  function xoaToanBoDuLieuApp() { if(confirm("CẢNH BÁO: Thao tác này sẽ xóa vĩnh viễn mọi dữ liệu (Excel, Cài đặt). Khôi phục App về trạng thái xuất xưởng?")) { localStorage.clear(); location.reload(); } }
   function xoaLichSuChiaGio() { if(confirm("Bạn có muốn xóa toàn bộ lịch sử Chia giờ không?")) { localStorage.removeItem('lichSuChiaGio'); alert("Đã xóa Lịch sử chia giờ!"); } }
   function xoaDuLieuExcel() { if(confirm("Bạn có muốn xóa dữ liệu Excel đã tải lên không?")) { localStorage.removeItem('duLieuExcelOffline'); localStorage.removeItem('cauHinhBangExcel'); alert("Đã xóa dữ liệu Danh mục!"); location.reload();} }
 
@@ -954,10 +624,6 @@
     if (todayData) { document.querySelector('#bang-ra-vao tbody').innerHTML = todayData.bangRaVao; document.querySelector('#bang-thong-gio tbody').innerHTML = todayData.bangThongGio; document.getElementById('wrap-bang-ra-vao').style.display = todayData.isFixed ? 'none' : 'block'; document.getElementById('ket-qua-chia-gio').style.display = 'block'; } else { taoDuLieu(); }
     
     let savedDanhMuc = localStorage.getItem('duLieuExcelOffline'); if (savedDanhMuc) { duLieuDanhMuc = JSON.parse(savedDanhMuc); let savedConfig = localStorage.getItem('cauHinhBangExcel'); if (savedConfig) { cauHinhBang = JSON.parse(savedConfig); } else { taoCauHinhMacDinh(); } hienThiBangDanhMuc(duLieuDanhMuc); }
-    
-    // Khởi chạy App Chấm công
-    ccLoadCaiDat();
-    ccLoadDuLieuNgay();
   }
 
   // ==========================================
@@ -1132,295 +798,6 @@
   }
   function timKiemDanhMuc() { let tuKhoa = document.getElementById('search-danh-muc').value.toLowerCase(); if (!tuKhoa) { hienThiBangDanhMuc(duLieuDanhMuc); return; } let ketQua = duLieuDanhMuc.filter(hang => { return Object.values(hang).some(giaTri => String(giaTri).toLowerCase().includes(tuKhoa)); }); hienThiBangDanhMuc(ketQua); }
 
-  // ==========================================
-  // 3. LOGIC CHẤM CÔNG (ĐÃ CÔ LẬP CSS)
-  // ==========================================
-  function ccInitThangNhanh() {
-      let sel = document.getElementById('sel-thang-nhanh'); let curr = new Date();
-      for(let i=0; i<12; i++) {
-          let d = new Date(curr.getFullYear(), curr.getMonth() - i, 1);
-          let m = d.getMonth() + 1; let y = d.getFullYear();
-          sel.innerHTML += `<option value="${y}-${('0'+m).slice(-2)}">Tháng ${m}/${y}</option>`;
-      }
-      document.getElementById('cc-tk-nam').value = curr.getFullYear();
-  }
-
-  function switchCCTab(subTabId) {
-      document.querySelectorAll('.cc-sub-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.cc-nav-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById(subTabId).classList.add('active');
-      document.getElementById('cc-btn-' + subTabId.replace('cc-', '')).classList.add('active');
-
-      if(subTabId === 'cc-ngay') ccLoadDuLieuNgay();
-      if(subTabId === 'cc-nghi') ccLoadDanhSachNghi();
-      if(subTabId === 'cc-tonghop') ccInitChuKy();
-      if(subTabId === 'cc-caidat') ccLoadCaiDat();
-  }
-
-  // CC CÀI ĐẶT & BACKUP
-  function ccLoadCaiDat() {
-    let htmlUsers = '';
-    dsNhanVien.forEach((u, i) => {
-      let roleDisplay = u.role ? `<span style="font-size:9px; background:#e0f7fa; color:#0097a7; padding:2px 4px; border-radius:4px; margin-left:5px;">${u.role}</span>` : '';
-      htmlUsers += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 8px; border-bottom:1px dashed #eee; font-weight:bold; color:#2c3e50; font-size:12px;"><span style="display:flex; align-items:center; gap:6px;"><span style="color:#1976d2;">👤</span> ${u.name} ${roleDisplay}</span> <button style="background:#ffeeee; border:none; color:#e74c3c; width:22px; height:22px; border-radius:50%; font-weight:bold; cursor:pointer; font-size:11px;" onclick="ccXoaNhanVien(${i})">✖</button></div>`;
-    });
-    document.getElementById('cc-list-users').innerHTML = htmlUsers;
-    let htmlLeaves = ''; dsLoaiNghi.forEach((l, i) => { htmlLeaves += `<div class="cc-tag-chip">${l} <span style="cursor:pointer; margin-left:5px; color:#e74c3c;" onclick="ccXoaLoaiNghi(${i})">×</span></div>`; }); document.getElementById('cc-list-leaves').innerHTML = htmlLeaves;
-    let htmlTasks = ''; dsViecTangCuong.forEach((t, i) => { htmlTasks += `<div class="cc-tag-chip task">${t} <span style="cursor:pointer; margin-left:5px; color:#e74c3c;" onclick="ccXoaViec(${i})">×</span></div>`; }); document.getElementById('cc-list-tasks').innerHTML = htmlTasks;
-  }
-  function ccThemNhanVien() { let n = document.getElementById('cc-input-new-user').value.trim(); let r = document.getElementById('cc-input-new-role').value.trim(); if(n && !dsNhanVien.some(u => u.name === n)) { dsNhanVien.push({name: n, role: r}); saveData('cc_users', dsNhanVien); document.getElementById('cc-input-new-user').value = ''; document.getElementById('cc-input-new-role').value = ''; ccLoadCaiDat(); } }
-  function ccXoaNhanVien(i) { dsNhanVien.splice(i, 1); saveData('cc_users', dsNhanVien); ccLoadCaiDat(); }
-  function ccThemLoaiNghi() { let v = document.getElementById('cc-input-new-leave').value.trim(); if(v && !dsLoaiNghi.includes(v)) { dsLoaiNghi.push(v); saveData('cc_leaves', dsLoaiNghi); document.getElementById('cc-input-new-leave').value = ''; ccLoadCaiDat(); } }
-  function ccXoaLoaiNghi(i) { dsLoaiNghi.splice(i, 1); saveData('cc_leaves', dsLoaiNghi); ccLoadCaiDat(); }
-  function ccThemViec() { let v = document.getElementById('cc-input-new-task').value.trim(); if(v && !dsViecTangCuong.includes(v)) { dsViecTangCuong.push(v); saveData('cc_tasks', dsViecTangCuong); document.getElementById('cc-input-new-task').value = ''; ccLoadCaiDat(); } }
-  function ccXoaViec(i) { dsViecTangCuong.splice(i, 1); saveData('cc_tasks', dsViecTangCuong); ccLoadCaiDat(); }
-
-  function ccExportBackupJSON() {
-      let data = { cc_users: dsNhanVien, cc_tasks: dsViecTangCuong, cc_leaves: dsLoaiNghi, cc_daily: dsDaily, cc_leaves_data: dsLeaves };
-      let dataStr = JSON.stringify(data); let blob = new Blob([dataStr], {type: "application/json"}); let url = URL.createObjectURL(blob);
-      let a = document.createElement('a'); a.href = url; a.download = "Backup_ChamCong_" + new Date().toISOString().split('T')[0] + ".json"; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  }
-  function ccImportBackupJSON(event) {
-      let file = event.target.files[0]; if(!file) return; let reader = new FileReader();
-      reader.onload = function(e) {
-          try {
-              let data = JSON.parse(e.target.result);
-              if(data.cc_users) localStorage.setItem('cc_users', JSON.stringify(data.cc_users));
-              if(data.cc_tasks) localStorage.setItem('cc_tasks', JSON.stringify(data.cc_tasks));
-              if(data.cc_leaves) localStorage.setItem('cc_leaves', JSON.stringify(data.cc_leaves));
-              if(data.cc_daily) localStorage.setItem('cc_daily', JSON.stringify(data.cc_daily));
-              if(data.cc_leaves_data) localStorage.setItem('cc_leaves_data', JSON.stringify(data.cc_leaves_data));
-              alert("Phục hồi dữ liệu thành công! Ứng dụng sẽ tải lại."); location.reload();
-          } catch(err) { alert("File không hợp lệ hoặc bị lỗi!"); }
-      }; reader.readAsText(file);
-  }
-  function ccXuatDuLieuRaExcel() {
-      var wb = XLSX.utils.book_new();
-      var dataDaily = dsDaily.map(r => ({ "Ngày": r.date, "Phân loại": r.type === 'viec' ? 'Tăng cường' : 'Học tập/Công tác', "Nội dung": r.taskName, "Buổi": SES_LABELS_FULL[r.session], "Nhân sự": r.users.join(', ') }));
-      var ws_daily = XLSX.utils.json_to_sheet(dataDaily); XLSX.utils.book_append_sheet(wb, ws_daily, "ChamCongNgay");
-      var dataLeave = dsLeaves.map(r => ({ "Từ ngày": r.start, "Đến ngày": r.end, "Loại nghỉ": r.category, "Buổi": r.start === r.end ? SES_LABELS_FULL[r.session] : "Xuyên suốt", "Nhân sự": r.users.join(', ') }));
-      var ws_leaves = XLSX.utils.json_to_sheet(dataLeave); XLSX.utils.book_append_sheet(wb, ws_leaves, "LichNghiPhep");
-      XLSX.writeFile(wb, "BaoCao_ChamCong_" + new Date().toISOString().split('T')[0] + ".xlsx");
-  }
-
-  // CC MODALS & FORM
-  function ccRenderCheckboxes(containerId) {
-    let html = '';
-    dsNhanVien.forEach(u => {
-      let roleSub = u.role ? `<br><span style="font-size:9px; color:#888; font-weight:normal;">${u.role}</span>` : '';
-      html += `<label class="cc-check-item" onclick="ccToggleCheck(this)"><input type="checkbox" value="${u.name}"><div class="cc-check-icon"></div> <div class="user-name">${u.name}${roleSub}</div></label>`;
-    });
-    document.getElementById(containerId).innerHTML = html || '<p style="font-size:12px; color:red;">Cần thêm Nhân sự!</p>';
-  }
-  function ccToggleCheck(lbl) { setTimeout(() => { let cb = lbl.querySelector('input'); if(cb.checked) lbl.classList.add('active'); else lbl.classList.remove('active'); }, 10); }
-  function ccSelectAll(containerId) { let labels = document.querySelectorAll(`#${containerId} .cc-check-item`); let isAllChecked = true; labels.forEach(lbl => { if(!lbl.querySelector('input').checked) isAllChecked = false; }); labels.forEach(lbl => { let cb = lbl.querySelector('input'); cb.checked = !isAllChecked; if(cb.checked) lbl.classList.add('active'); else lbl.classList.remove('active'); }); }
-  
-  function ccMoModal(id) {
-    document.getElementById(id).style.display = 'flex'; let selectedDate = document.getElementById('cc-date-picker').value;
-    
-    // GỌI HÀM VẼ DANH SÁCH CHECKBOX VÀO TRONG TỪNG MODAL (GIÚP HIỂN THỊ DANH SÁCH NHÂN VIÊN)
-    if(id === 'cc-modal-nghi') { 
-        document.getElementById('cc-sel-loai-nghi').innerHTML = dsLoaiNghi.map(l => `<option value="${l}">${l}</option>`).join(''); 
-        ccRenderCheckboxes('cc-grid-user-nghi'); 
-        document.getElementById('cc-nghi-tu').value = selectedDate; 
-        document.getElementById('cc-nghi-den').value = selectedDate; 
-        ccKiemTraHienThiBuoiNghi(); 
-    }
-    if(id === 'cc-modal-tang-cuong') { 
-        document.querySelectorAll('.cc-lbl-modal-date').forEach(el => el.innerText = formatDateVN(selectedDate)); 
-        document.getElementById('cc-sel-loai-viec').innerHTML = dsViecTangCuong.map(t => `<option value="${t}">${t}</option>`).join('') + '<option value="khac">-- ✍️ Nhập việc khác --</option>'; 
-        document.getElementById('cc-wrap-viec-moi').style.display = 'none'; 
-        ccRenderCheckboxes('cc-grid-user-viec'); 
-        document.getElementById('cc-t-all').checked = true; 
-    }
-    if(id === 'cc-modal-hoctap') { 
-        document.querySelectorAll('.cc-lbl-modal-date').forEach(el => el.innerText = formatDateVN(selectedDate)); 
-        document.getElementById('cc-sel-loai-hoctap').value = 'Học tập'; 
-        document.getElementById('cc-txt-hoctap-moi').style.display = 'none'; 
-        ccRenderCheckboxes('cc-grid-user-hoctap'); 
-        document.getElementById('cc-h-all').checked = true; 
-    }
-    if(id === 'cc-modal-thongke-nghi') { 
-        document.getElementById('cc-tk-nam').value = new Date().getFullYear(); 
-        ccTinhThongKeNghiNam(); 
-    }
-  }
-  function ccDongModal(id) { document.getElementById(id).style.display = 'none'; }
-  function ccGetSelectedUsers(containerId) { let checkboxes = document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`); let users = []; checkboxes.forEach(cb => users.push(cb.value)); return users; }
-  
-  document.getElementById('cc-sel-loai-hoctap').addEventListener('change', function() { document.getElementById('cc-txt-hoctap-moi').style.display = this.value === 'khac' ? 'block' : 'none'; });
-  document.getElementById('cc-sel-loai-viec').addEventListener('change', function() { document.getElementById('cc-wrap-viec-moi').style.display = this.value === 'khac' ? 'block' : 'none'; });
-
-  function ccFormatGroupedUsers(records, categoryField, isLeave = false) {
-      let groups = {};
-      records.forEach(r => {
-          let cat = r[categoryField]; if(!groups[cat]) groups[cat] = [];
-          let sessTag = (r.session === 'all' || (isLeave && r.start !== r.end)) ? '' : ` ${SES_LABELS[r.session]}`;
-          r.users.forEach(u => { groups[cat].push(`${u}${sessTag}`); });
-      });
-      return Object.keys(groups).map(k => `&bull; <b>${k}</b> (${groups[k].join(', ')})`).join('<br>');
-  }
-
-  // CC TAB NGÀY
-  function ccLoadDuLieuNgay() {
-    let targetDate = document.getElementById('cc-date-picker').value;
-    let recordsDaily = dsDaily.filter(r => r.date === targetDate);
-    let recordsLeave = dsLeaves.filter(l => targetDate >= l.start && targetDate <= l.end);
-    document.getElementById('cc-count-records').innerText = `${recordsDaily.length + recordsLeave.length} bản ghi`;
-
-    let sumNghi = 0, sumTC = 0, sumHT = 0, sumBQTX = 0;
-    dsNhanVien.forEach(nv => {
-      let uName = nv.name; let uRole = nv.role; let uNghi = 0, uTC = 0, uHT = 0;
-      recordsLeave.forEach(r => { if(r.users.includes(uName)) { uNghi += (r.start === r.end && r.session !== 'all') ? 0.5 : 1; } });
-      recordsDaily.forEach(r => { if(r.users.includes(uName)) { let val = (r.session === 'all') ? 1 : 0.5; if(r.type === 'viec') uTC += val; if(r.type === 'hoctap') uHT += val; } });
-      sumNghi += uNghi; sumTC += uTC; sumHT += uHT;
-      let base = 1.0; if(uRole === 'Đội trưởng') base = 0; else if(uRole === 'Phó đội trưởng') base = 0.5;
-      let absence = uNghi + uTC + uHT; let bqtx = Math.max(0, base - absence); sumBQTX += bqtx;
-    });
-
-    document.getElementById('cc-sum-nghi').innerText = sumNghi; document.getElementById('cc-sum-tc').innerText = sumTC;
-    document.getElementById('cc-sum-ht').innerText = sumHT; document.getElementById('cc-sum-bqtx').innerText = sumBQTX;
-
-    let detailText = [];
-    let tcRecords = recordsDaily.filter(r => r.type === 'viec'); if (tcRecords.length > 0) { detailText.push(`<span style="color:#f39c12; font-weight:bold;">⚡ Tăng cường:</span><br>${ccFormatGroupedUsers(tcRecords, 'taskName', false)}`); }
-    let htRecords = recordsDaily.filter(r => r.type === 'hoctap'); if (htRecords.length > 0) { detailText.push(`<span style="color:#00bcd4; font-weight:bold;">📘 Học tập/CT:</span><br>${ccFormatGroupedUsers(htRecords, 'taskName', false)}`); }
-    if (recordsLeave.length > 0) { detailText.push(`<span style="color:#e74c3c; font-weight:bold;">⛱️ Nghỉ:</span><br>${ccFormatGroupedUsers(recordsLeave, 'category', true)}`); }
-    document.getElementById('cc-summary-details-text').innerHTML = detailText.length > 0 ? detailText.join('<div style="margin-top:5px;"></div>') : '';
-
-    let html = '';
-    if(recordsDaily.length + recordsLeave.length === 0) { html = '<div style="text-align:center; padding:15px; color:#888; font-size:12px; background:#f9f9f9; border-radius:8px;">Chưa có báo cáo nào.</div>'; }
-    recordsLeave.forEach(r => { let isMulti = r.start !== r.end; let sessionText = isMulti ? 'Xuyên suốt' : SES_LABELS_FULL[r.session]; html += `<div class="cc-list-item type-nghi-auto"><div class="cc-list-item-header"><span class="cc-list-item-title">⛱️ Nghỉ: ${r.category}</span><span class="cc-list-item-badge" style="background:#fadbd8; color:#c0392b;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; });
-    recordsDaily.forEach(r => {
-      let sessionText = SES_LABELS_FULL[r.session];
-      if(r.type === 'hoctap') { html += `<div class="cc-list-item type-hoctap"><button class="cc-btn-del" onclick="ccXoaRecordDaily('${r.id}')">×</button><div class="cc-list-item-header"><span class="cc-list-item-title">📘 ${r.taskName}</span><span class="cc-list-item-badge" style="background:#e0f7fa; color:#0097a7;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; } 
-      else if (r.type === 'viec') { html += `<div class="cc-list-item type-viec"><button class="cc-btn-del" onclick="ccXoaRecordDaily('${r.id}')">×</button><div class="cc-list-item-header"><span class="cc-list-item-title">⚡ T.Cường: ${r.taskName}</span><span class="cc-list-item-badge" style="background:#ffe0b2; color:#d35400;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; }
-    });
-    document.getElementById('cc-list-records-today').innerHTML = html;
-  }
-  function ccLuuRecordDaily(type) {
-    let users = ccGetSelectedUsers(`cc-grid-user-${type}`); if(users.length === 0) { alert('Vui lòng chọn ít nhất 1 nhân sự!'); return; }
-    let taskName = "";
-    if(type === 'viec') { let sel = document.getElementById('cc-sel-loai-viec').value; taskName = sel === 'khac' ? document.getElementById('cc-txt-viec-moi').value.trim() : sel; if(sel === 'khac' && taskName && !dsViecTangCuong.includes(taskName)) { dsViecTangCuong.push(taskName); saveData('cc_tasks', dsViecTangCuong); } } 
-    else { let sel = document.getElementById('cc-sel-loai-hoctap').value; taskName = sel === 'khac' ? document.getElementById('cc-txt-hoctap-moi').value.trim() : sel; }
-    if(!taskName) { alert('Vui lòng nhập lý do/công việc!'); return; }
-    let sess = document.querySelector(`input[name="cc_sess_${type}"]:checked`).value;
-    dsDaily.push({ id: Date.now().toString(), date: document.getElementById('cc-date-picker').value, type: type, taskName: taskName, session: sess, users: users }); saveData('cc_daily', dsDaily); ccDongModal(type === 'viec' ? 'cc-modal-tang-cuong' : 'cc-modal-hoctap'); ccLoadDuLieuNgay();
-  }
-  function ccXoaRecordDaily(id) { if(confirm('Xóa bản ghi này khỏi ngày hôm nay?')) { dsDaily = dsDaily.filter(r => r.id !== id); saveData('cc_daily', dsDaily); ccLoadDuLieuNgay(); } }
-
-  // CC TAB NGHỈ PHÉP
-  function ccKiemTraHienThiBuoiNghi() { let tu = document.getElementById('cc-nghi-tu').value; let den = document.getElementById('cc-nghi-den').value; if(tu === den) { document.getElementById('cc-wrap-buoi-nghi').style.display = 'block'; } else { document.getElementById('cc-wrap-buoi-nghi').style.display = 'none'; document.getElementById('cc-n-all').checked = true; } }
-  function ccLuuRecordLeave() {
-    let users = ccGetSelectedUsers('cc-grid-user-nghi'); if(users.length === 0) { alert('Vui lòng chọn ít nhất 1 nhân sự!'); return; }
-    let tu = document.getElementById('cc-nghi-tu').value; let den = document.getElementById('cc-nghi-den').value; if(den < tu) { alert('Ngày kết thúc không hợp lệ!'); return; }
-    let cat = document.getElementById('cc-sel-loai-nghi').value; let sess = document.querySelector('input[name="cc_sess_nghi"]:checked').value;
-    dsLeaves.push({ id: Date.now().toString(), start: tu, end: den, category: cat, session: sess, users: users }); saveData('cc_leaves_data', dsLeaves); ccDongModal('cc-modal-nghi'); ccLoadDanhSachNghi(); if(document.getElementById('tab-cham-cong').classList.contains('active')) ccLoadDuLieuNgay();
-  }
-  function ccLoadDanhSachNghi() {
-    let html = ''; let sorted = [...dsLeaves].sort((a,b) => new Date(b.start) - new Date(a.start));
-    if(sorted.length === 0) html = '<div style="text-align:center; padding:20px; color:#888; font-size:13px;">Chưa có lịch nghỉ nào.</div>';
-    sorted.forEach(r => {
-      let dateText = r.start === r.end ? formatDateVN(r.start) : `${formatDateVN(r.start)} - ${formatDateVN(r.end)}`;
-      let sessText = r.start === r.end ? ` (${SES_LABELS_FULL[r.session]})` : '';
-      html += `<div class="cc-list-item type-nghi-auto"><button class="cc-btn-del" onclick="ccXoaLeave('${r.id}')">×</button><div class="cc-list-item-title">⛱️ ${r.category} ${sessText}</div><div style="font-size:11px; color:#c0392b; margin-bottom:4px; font-weight:bold;">📅 ${dateText}</div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`;
-    });
-    document.getElementById('cc-list-nghi-dai-han').innerHTML = html;
-  }
-  function ccXoaLeave(id) { if(confirm('Xóa lịch nghỉ phép này?')) { dsLeaves = dsLeaves.filter(r => r.id !== id); saveData('cc_leaves_data', dsLeaves); ccLoadDanhSachNghi(); } }
-  function ccTinhThongKeNghiNam() {
-      let yearStr = document.getElementById('cc-tk-nam').value; if(!yearStr) return;
-      let stats = {}; dsNhanVien.forEach(u => { stats[u.name] = { total: 0, chitiet: {} }; });
-      dsLeaves.forEach(l => {
-          let startY = l.start.substring(0,4); let endY = l.end.substring(0,4);
-          if(startY === yearStr || endY === yearStr) {
-              let cur = new Date(l.start); let end = new Date(l.end);
-              while(cur <= end) {
-                  if(cur.getFullYear().toString() === yearStr) {
-                      let val = (l.start === l.end && l.session !== 'all') ? 0.5 : 1;
-                      l.users.forEach(u => { if(stats[u]) { stats[u].total += val; stats[u].chitiet[l.category] = (stats[u].chitiet[l.category]||0) + val; } });
-                  }
-                  cur.setDate(cur.getDate()+1);
-              }
-          }
-      });
-      let tbody = '';
-      dsNhanVien.forEach(u => {
-          let st = stats[u.name]; let str = Object.keys(st.chitiet).map(k=>`• ${k}: ${st.chitiet[k]}`).join('<br>');
-          tbody += `<tr><td class="cc-table td-left" style="text-align:left; font-weight:bold; font-size:12px; padding:6px;">${u.name}</td><td class="cc-table td-number" style="color:#e74c3c; font-weight:bold; font-size:14px; text-align:center;">${st.total > 0 ? st.total : '-'}</td><td class="cc-table" style="text-align:left; font-size:10px; color:#666; line-height:1.4; padding-left:4px;">${str}</td></tr>`;
-      });
-      document.querySelector('#cc-table-thongke-nam tbody').innerHTML = tbody;
-  }
-
-  // CC TỔNG HỢP CHU KỲ
-  function ccClearQuickActive() { document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('active')); }
-  function ccChonTuanTruoc() { ccClearQuickActive(); document.getElementById('cc-btn-tuan-truoc').classList.add('active'); let curr = new Date(); let first = curr.getDate() - curr.getDay() + 1 - 7; let start = new Date(curr.setDate(first)); let end = new Date(start); end.setDate(end.getDate() + 6); document.getElementById('cc-cycle-start').value = start.toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = end.toISOString().split('T')[0]; document.getElementById('sel-thang-nhanh') && (document.getElementById('sel-thang-nhanh').value="");}
-  function ccChonTuanNay() { ccClearQuickActive(); document.getElementById('cc-btn-tuan-nay').classList.add('active'); let curr = new Date(); let first = curr.getDate() - curr.getDay() + 1; let last = first + 6; document.getElementById('cc-cycle-start').value = new Date(curr.setDate(first)).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(curr.setDate(last)).toISOString().split('T')[0]; document.getElementById('sel-thang-nhanh') && (document.getElementById('sel-thang-nhanh').value="");}
-  function ccChonThangTruoc() { ccClearQuickActive(); document.getElementById('cc-btn-thang-truoc').classList.add('active'); let date = new Date(); document.getElementById('cc-cycle-start').value = new Date(date.getFullYear(), date.getMonth() - 1, 1).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(date.getFullYear(), date.getMonth(), 0).toISOString().split('T')[0]; document.getElementById('sel-thang-nhanh') && (document.getElementById('sel-thang-nhanh').value="");}
-  function ccChonThangNay() { ccClearQuickActive(); document.getElementById('cc-btn-thang-nay').classList.add('active'); let date = new Date(); document.getElementById('cc-cycle-start').value = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().split('T')[0]; document.getElementById('sel-thang-nhanh') && (document.getElementById('sel-thang-nhanh').value="");}
-  function chonThang(val) { if(!val) return; ccClearQuickActive(); let parts = val.split('-'); let y = parseInt(parts[0]); let m = parseInt(parts[1]) - 1; document.getElementById('cc-cycle-start').value = new Date(y, m, 1).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(y, m + 1, 0).toISOString().split('T')[0]; }
-  function ccInitChuKy() { let savedEnd = localStorage.getItem('cc_last_end_date'); if(savedEnd) { let nextStart = new Date(savedEnd); nextStart.setDate(nextStart.getDate() + 1); document.getElementById('cc-cycle-start').value = nextStart.toISOString().split('T')[0]; ccAutoCalcEndDate(); } }
-  function ccAutoCalcEndDate() { let startVal = document.getElementById('cc-cycle-start').value; if(startVal) { let end = new Date(startVal); end.setMonth(end.getMonth() + 1); end.setDate(end.getDate() - 1); document.getElementById('cc-cycle-end').value = end.toISOString().split('T')[0]; } }
-  
-  function ccFormatGlobalStat(statsObj) {
-      return Object.keys(statsObj).map(key => {
-          let item = statsObj[key]; let userArr = Object.keys(item.users).map(u => `${u}: ${item.users[u]}`);
-          return `&bull; <b style="color:#2c3e50;">${key}: ${item.total}</b> <span style="font-size:10px; color:#666; font-weight:normal;">[${userArr.join('; ')}]</span>`;
-      }).join('<br>');
-  }
-
-  function ccXemTongHop() {
-    let start = document.getElementById('cc-cycle-start').value; let end = document.getElementById('cc-cycle-end').value;
-    if(!start || !end) { alert('Chọn khoảng thời gian!'); return; }
-    localStorage.setItem('cc_last_end_date', end);
-
-    let stats = {}; dsNhanVien.forEach(u => { stats[u.name] = { nghiTotal: 0, hocTotal: 0, viecTotal: 0, chiTietNghi: {}, chiTietViec: {}, chiTietHoc: {} }; });
-    let curDate = new Date(start); let endDate = new Date(end);
-    let sumNghi = 0, sumHoc = 0, sumViec = 0;
-    let globalTaskStats = {}; let globalHocStats = {}; let globalNghiStats = {};
-
-    while(curDate <= endDate) {
-        let dStr = curDate.toISOString().split('T')[0];
-        dsDaily.filter(r => r.date === dStr).forEach(r => {
-            let val = r.session === 'all' ? 1 : 0.5;
-            r.users.forEach(u => { 
-                if(stats[u]) { 
-                    if(r.type === 'hoctap') { stats[u].hocTotal += val; sumHoc += val; stats[u].chiTietHoc[r.taskName] = (stats[u].chiTietHoc[r.taskName]||0) + val; if(!globalHocStats[r.taskName]) globalHocStats[r.taskName] = {total:0, users:{}}; globalHocStats[r.taskName].total += val; globalHocStats[r.taskName].users[u] = (globalHocStats[r.taskName].users[u]||0) + val; } 
-                    if(r.type === 'viec') { stats[u].viecTotal += val; sumViec += val; stats[u].chiTietViec[r.taskName] = (stats[u].chiTietViec[r.taskName]||0) + val; if(!globalTaskStats[r.taskName]) globalTaskStats[r.taskName] = {total:0, users:{}}; globalTaskStats[r.taskName].total += val; globalTaskStats[r.taskName].users[u] = (globalTaskStats[r.taskName].users[u]||0) + val; } 
-                } 
-            });
-        });
-        dsLeaves.filter(l => dStr >= l.start && dStr <= l.end).forEach(l => {
-            let val = (l.start === l.end && l.session !== 'all') ? 0.5 : 1; 
-            l.users.forEach(u => { 
-                if(stats[u]) { stats[u].nghiTotal += val; sumNghi += val; stats[u].chiTietNghi[l.category] = (stats[u].chiTietNghi[l.category]||0) + val; if(!globalNghiStats[l.category]) globalNghiStats[l.category] = {total:0, users:{}}; globalNghiStats[l.category].total += val; globalNghiStats[l.category].users[u] = (globalNghiStats[l.category].users[u]||0) + val; } 
-            });
-        });
-        curDate.setDate(curDate.getDate() + 1);
-    }
-
-    let textSummary = [];
-    if(Object.keys(globalNghiStats).length > 0) { textSummary.push(`<span style="color:#e74c3c; font-weight:900;">⛱️ NGHỈ:</span><br>${ccFormatGlobalStat(globalNghiStats)}`); }
-    if(Object.keys(globalHocStats).length > 0) { textSummary.push(`<span style="color:#00bcd4; font-weight:900;">📘 HỌC TẬP/CT:</span><br>${ccFormatGlobalStat(globalHocStats)}`); }
-    if(Object.keys(globalTaskStats).length > 0) { textSummary.push(`<span style="color:#f39c12; font-weight:900;">⚡ TĂNG CƯỜNG:</span><br>${ccFormatGlobalStat(globalTaskStats)}`); }
-    document.getElementById('cc-cycle-summary-text').innerHTML = textSummary.length > 0 ? textSummary.join('<br><div style="margin-top:4px;"></div>') : '<i style="color:#888;">Không có dữ liệu trong chu kỳ</i>';
-    document.getElementById('cc-cycle-summary-box').style.display = 'block';
-
-    let tbody = '';
-    dsNhanVien.forEach(u => {
-      let st = stats[u.name];
-      let strNghi = Object.keys(st.chiTietNghi).map(k=>`&bull; ${k}: ${st.chiTietNghi[k]}`).join('<br>');
-      let strHoc = Object.keys(st.chiTietHoc).map(k=>`&bull; ${k}: ${st.chiTietHoc[k]}`).join('<br>');
-      let strViec = Object.keys(st.chiTietViec).map(k=>`&bull; ${k}: ${st.chiTietViec[k]}`).join('<br>');
-      
-      let cellNghi = st.nghiTotal > 0 ? `<div class="cc-main-val">${st.nghiTotal}</div><div class="cc-detail-text">${strNghi}</div>` : `<div style="color:#ccc">-</div>`;
-      let cellHoc = st.hocTotal > 0 ? `<div class="cc-main-val">${st.hocTotal}</div><div class="cc-detail-text">${strHoc}</div>` : `<div style="color:#ccc">-</div>`;
-      let cellViec = st.viecTotal > 0 ? `<div class="cc-main-val">${st.viecTotal}</div><div class="cc-detail-text">${strViec}</div>` : `<div style="color:#ccc">-</div>`;
-
-      tbody += `<tr><td class="cc-table td-left">${u.name}</td><td class="cc-table td-number">${cellNghi}</td><td class="cc-table td-hoctap">${cellHoc}</td><td class="cc-table td-task">${cellViec}</td></tr>`;
-    });
-    document.querySelector('#cc-table-tong-hop tbody').innerHTML = tbody || '<tr><td colspan="4">Chưa có nhân sự</td></tr>';
-    document.getElementById('cc-table-footer').innerHTML = `<tr class="total-row"><td>TỔNG ĐỘI</td><td>${sumNghi}</td><td>${sumHoc}</td><td>${sumViec}</td></tr>`;
-  }
 </script>
 </body>
 </html>
