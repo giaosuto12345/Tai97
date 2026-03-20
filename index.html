@@ -14,35 +14,23 @@
 
   <style>
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-    body { 
-      margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-      background: #eaf6ff; padding-bottom: 110px; overflow-x: hidden;
-    }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #eaf6ff; padding-bottom: 90px; overflow-x: hidden; }
 
-    /* ====== MÀN HÌNH KHÓA ====== */
-    #lock-screen {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(135deg, #1976d2, #4caf50);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 99999; color: white; transition: opacity 0.3s;
-    }
-    .lock-box {
-      background: rgba(255, 255, 255, 0.98); padding: 30px 20px; border-radius: 20px;
-      text-align: center; width: 85%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); color: #333;
-    }
+    /* ========================================== */
+    /* ====== CSS NGUYÊN BẢN CỦA QUẢN LÝ NHÀ ====== */
+    /* ========================================== */
+    
+    #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1976d2, #4caf50); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; color: white; transition: opacity 0.3s; }
+    .lock-box { background: rgba(255, 255, 255, 0.98); padding: 30px 20px; border-radius: 20px; text-align: center; width: 85%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); color: #333; }
     .lock-icon { font-size: 50px; margin-bottom: 5px; color: #1976d2; }
-    .pin-input {
-      width: 100%; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 5px;
-      border: 2px solid #ddd; border-radius: 12px; margin-bottom: 15px; background: #f9f9f9;
-    }
+    .pin-input { width: 100%; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 5px; border: 2px solid #ddd; border-radius: 12px; margin-bottom: 15px; background: #f9f9f9; }
     .pin-input:focus { outline: none; border-color: #1976d2; }
     .btn-unlock { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: #1976d2; border: none; border-radius: 12px; cursor: pointer; }
     .btn-faceid { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: #4caf50; border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 15px 0; box-shadow: 0 4px 10px rgba(76,175,80,0.4); }
     .btn-faceid:active, .btn-unlock:active { transform: scale(0.98); }
-
     #app-content { display: none; }
 
-    /* ====== FONT SCALE NGUYÊN BẢN CỦA BẠN ====== */
+    /* FONT SCALE GỐC */
     :root {
       --fs-header: clamp(22px, 6vw, 32px);
       --fs-card-title: clamp(15px, 4vw, 20px);
@@ -54,86 +42,47 @@
       --fs-final: clamp(20px, 4vw, 18px);
     }
 
-    /* ====== THANH ĐIỀU HƯỚNG DƯỚI ĐÁY ====== */
-    .bottom-nav-container {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: #fff; display: flex; align-items: center;
-      box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
-      padding-bottom: calc(env(safe-area-inset-bottom) + 15px);
-      padding-top: 10px; z-index: 1000;
-    }
-    .home-btn-fixed {
-      padding: 5px 15px; border-right: 1px solid #eee; display: flex; flex-direction: column; 
-      align-items: center; justify-content: center; background: none; border-top: none; 
-      border-bottom: none; border-left: none; min-width: 80px;
-    }
-    .scrollable-tabs {
-      display: flex; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; 
-      flex: 1; scroll-behavior: smooth;
-    }
-    .scrollable-tabs::-webkit-scrollbar { display: none; }
-    .nav-btn {
-      flex: 0 0 auto; min-width: 85px; padding: 5px 5px; text-align: center; border: none; background: none;
-      font-size: 13px; font-weight: 800; color: #888; cursor: pointer;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s;
-    }
-    .nav-btn.active { color: #1976d2; }
-    .nav-icon { font-size: 28px; margin-bottom: 5px; }
-
-    /* ====== GIAO DIỆN TRANG CHỦ LƯỚI ====== */
+    /* GIAO DIỆN TRANG CHỦ LƯỚI */
     .dash-header { padding: 30px 15px 10px 15px; text-align: center; }
     .dash-header h2 { color: #1976d2; margin: 0; font-size: var(--fs-header); font-weight: 800; letter-spacing: 1px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; max-width: 600px; margin: 0 auto; }
-    .dash-card {
-      background: #fff; border-radius: 16px; padding: 20px 5px; text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: pointer; transition: 0.2s;
-    }
-    .dash-card:active { transform: scale(0.95); background: #eaf6ff; border: 1px solid #1976d2; }
-    .dash-card-icon { font-size: 35px; margin-bottom: 10px; }
-    .dash-card-title { font-size: 13px; font-weight: 800; color: #1976d2; text-transform: uppercase; line-height: 1.2;}
-
-    /* ====== CÁC TAB NỘI DUNG ====== */
-    .tab-content { display: none; padding: 15px 10px; }
-    .tab-content.active { display: block; animation: fadeIn 0.2s; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .grid-dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; max-width: 600px; margin: 0 auto; }
+    .dash-card { background: #fff; border-radius: 20px; padding: 25px 10px; text-align: center; box-shadow: 0 6px 16px rgba(0,0,0,0.08); cursor: pointer; transition: 0.2s; border: 2px solid transparent;}
+    .dash-card:active { transform: scale(0.95); background: #f0f7ff; border-color: #1976d2; }
+    .dash-card-icon { font-size: 45px; margin-bottom: 12px; }
+    .dash-card-title { font-size: 13px; font-weight: 800; color: #1976d2; text-transform: uppercase; line-height: 1.3;}
 
     .container { max-width: 900px; margin: 0 auto; }
+    .tab-content { display: none; padding: 15px 10px; animation: fadeIn 0.2s ease-in-out;}
+    .tab-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .card { background: #fff; border-radius: 18px; padding: 14px; box-shadow: 0 6px 16px rgba(0,0,0,0.08); margin-bottom: 15px; position: relative; }
     .card-title { text-align: center; font-weight: 800; font-size: var(--fs-card-title); color: #1976d2; margin-bottom: 10px; text-transform: uppercase; }
-
-    /* ====== STYLE NHẬP LIỆU GỐC ====== */
-    label { display: block; font-size: var(--fs-label); color: #555; margin-top: 8px; margin-bottom: 4px; font-weight: bold; text-align: left; }
     
-    input:not([type="checkbox"]):not([type="file"]), select {
-      width: 100%; padding: 12px; font-size: var(--fs-input); text-align: center; border-radius: 12px; border: 1px solid #ddd; background: #fdfdfd; box-sizing: border-box; appearance: none; -webkit-appearance: none; color: #333;
-    }
-    input:focus, select:focus { outline: none; border: 2px solid #ff9800; }
+    .base-label { display: block; font-size: var(--fs-label); color: #555; margin-top: 8px; margin-bottom: 4px; font-weight: bold; text-align:left;}
+    .base-input, .base-select { width: 100%; padding: 12px; font-size: var(--fs-input); text-align: center; border-radius: 12px; border: 1px solid #ddd; background: #fdfdfd; appearance: none; -webkit-appearance: none; color: #333; }
+    .base-input:focus, .base-select:focus { outline: none; border: 2px solid #ff9800; }
 
-    .time-flex { display: flex; align-items: center; gap: 10px; margin-bottom: 10px;}
+    .time-flex { display: flex; align-items: center; gap: 10px; }
     .time-flex span { font-weight: bold; color: #555; }
-    .btn { margin: 5px 0 15px 0; width: 100%; padding: 14px; font-size: var(--fs-button); font-weight: bold; border: none; border-radius: 999px; background: #4caf50; color: #fff; cursor: pointer; box-shadow: 0 6px 14px rgba(76,175,80,0.4); touch-action: manipulation; }
-    .btn:active { transform: scale(0.98); }
+    .btn-main { margin: 5px 0 15px 0; width: 100%; padding: 14px; font-size: var(--fs-button); font-weight: bold; border: none; border-radius: 999px; background: #4caf50; color: #fff; cursor: pointer; box-shadow: 0 6px 14px rgba(76,175,80,0.4); touch-action: manipulation; text-transform:uppercase;}
+    .btn-main:active { transform: scale(0.98); }
 
-    .mo-ta-box { background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px; border-radius: 8px; font-size: var(--fs-label); color: #333; line-height: 1.5; margin-top: 15px; }
-    .mo-ta-box ul { margin: 5px 0 0 0; padding-left: 20px; }
-    .mo-ta-box li { margin-bottom: 6px; }
-
-    .summary-box { background: #fdfdfd; border: 2px dashed #b3d4fc; border-radius: 12px; padding: 14px; cursor: pointer; position: relative; }
+    .mo-ta-box { background: #fff9e6; border-left: 4px solid #ff9800; padding: 12px; border-radius: 8px; font-size: var(--fs-label); color: #333; line-height: 1.5; margin-top: 10px; }
+    .summary-box { background: #fdfdfd; border: 2px dashed #b3d4fc; border-radius: 12px; padding: 14px; cursor: pointer; position: relative; margin-top: 10px;}
     .summary-box:active { background: #f0f7ff; }
     .summary-line { font-size: clamp(14px, 4vw, 16px); margin-bottom: 8px; color: #333; }
     .summary-line strong { display: inline-block; width: 75px; color: #555; }
     .sum-val { color: #ff9800; font-weight: bold; }
 
-    .result-title { text-align: center; font-weight: 800; font-size: var(--fs-result-title); margin-bottom: 10px; }
+    .result-title { text-align:center; font-weight: 800; font-size: var(--fs-result-title); margin: 0; color:#1976d2; margin-bottom:10px;}
     .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid #eee; margin-top: 10px; }
-    table { width: 100%; border-collapse: collapse; font-size: clamp(14px, 4.5vw, 18px); text-align: center; min-width: 340px; }
-    th, td { padding: 12px 2px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; }
-    th:last-child, td:last-child { border-right: none; }
-    th { background: #e9f5ff; color: #1976d2; font-weight: 800; font-size: clamp(13px, 4vw, 16px); vertical-align: middle; }
+    .base-table { width: 100%; border-collapse: collapse; font-size: clamp(14px, 4.5vw, 18px); text-align: center; min-width: 340px; background:#fff;}
+    .base-table th, .base-table td { padding: 12px 2px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; }
+    .base-table th { background: #e9f5ff; color: #1976d2; font-weight: 800; font-size: clamp(13px, 4vw, 16px); vertical-align: middle; }
     .th-group { background: #d4ebff; border-bottom: 2px solid #fff; }
-    td { font-weight: 600; color: #333; }
-    tr:last-child td { border-bottom: none; }
+    .base-table td { font-weight: 600; color: #333; }
     .td-highlight { color: #ff9800; font-weight: 800; font-size: clamp(15px, 5vw, 19px); }
 
     .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -141,107 +90,103 @@
     .result-box p { margin: 4px 0; color: #555; font-size: var(--fs-label); }
     .value { font-size: var(--fs-value); font-weight: 800; color: #1976d2; }
     .final { margin-top: 12px; border-radius: 16px; padding: 12px; text-align: center; font-size: var(--fs-final); font-weight: 600; line-height: 1.4; }
-    .ok { background: #e0f7e9; color: #1b5e20; }
-    .no { background: #fff3e0; color: #bf360c; }
-
-    /* ====== THỜI TIẾT & DANH MỤC & CÀI ĐẶT ====== */
-    .weather-res-box { background: #f0f7ff; border-radius: 15px; padding: 20px; text-align: center; margin-top: 15px; border: 2px solid #1976d2; display: none; }
+    .ok { background: #e0f7e9; color: #1b5e20; } .no { background: #fff3e0; color: #bf360c; }
     .w-val { font-size: 32px; font-weight: 800; color: #ff9800; margin: 5px 0; }
-    .w-label { font-size: 14px; color: #555; font-weight: bold; }
-    .loading-text { color: #888; font-style: italic; margin: 10px 0; display: none; text-align: center; }
 
-    .search-bar-container { display: flex; gap: 8px; margin-bottom: 10px; }
-    .search-input { flex: 1; padding: 12px 15px !important; font-size: 16px !important; border-radius: 12px !important; border: 1px solid #ddd !important; background: #fdfdfd !important; text-align: left !important; }
-    .search-input:focus { outline: none; border: 2px solid #1976d2 !important; }
-    .action-btn { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: white; border-radius: 50%; font-size: 22px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-    
-    .setting-panel { background: #fff9e6; border: 2px solid #ff9800; border-radius: 12px; padding: 15px; margin-bottom: 15px; display: none; }
-    .set-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 14px; font-weight: bold; color: #333; }
-    .set-row input[type="number"] { width: 60px !important; padding: 8px 5px !important; font-size: 16px !important; text-align: center !important; border-radius: 6px !important; border: 1px solid #ccc !important; background: #fff !important; }
-    .set-row input[type="checkbox"] { transform: scale(1.5); margin-right: 15px; width: auto !important; }
-    
-    #bang-danh-muc { table-layout: fixed; }
-    #bang-danh-muc th { background: #5c6bc0; color: #fff; position: sticky; top: 0; z-index: 10; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;}
-    #bang-danh-muc td { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
-
-    .sort-btn { background: #eaf6ff; color: #1976d2; border: 1px solid #1976d2; border-radius: 6px; padding: 4px 10px; font-size: 16px; cursor: pointer; margin-left: 5px; font-weight: bold;}
-    .sort-btn:active { background: #1976d2; color: #fff; }
-    
-    /* Giao diện tìm kiếm địa điểm */
-    .loc-suggestions {
-        position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
-        border: 1px solid #1976d2; border-radius: 8px; max-height: 200px;
-        overflow-y: auto; z-index: 20; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
+    /* MENU THANH ĐÁY */
+    .bottom-nav-container { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; align-items: center; box-shadow: 0 -2px 15px rgba(0,0,0,0.08); padding-bottom: env(safe-area-inset-bottom); padding-top: 5px; z-index: 100; }
+    .home-btn-fixed { padding: 5px 12px; border-right: 1px solid #eee; display: flex; flex-direction: column; align-items: center; justify-content: center; background: none; border-top: none; border-bottom: none; border-left: none; min-width: 65px; cursor: pointer;}
+    .scrollable-tabs { display: flex; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; flex: 1; scroll-behavior: smooth; }
+    .scrollable-tabs::-webkit-scrollbar { display: none; }
+    .nav-btn { flex: 0 0 auto; min-width: 75px; padding: 5px 2px; text-align: center; border: none; background: none; font-size: 11px; font-weight: 800; color: #a0aab5; cursor: pointer; display: flex; flex-direction: column; align-items: center; transition: 0.2s; }
+    .nav-btn.active, .home-btn-fixed.active { color: #1976d2; }
+    .nav-icon { font-size: 24px; margin-bottom: 4px; transition: 0.2s; }
+    .nav-btn.active .nav-icon, .home-btn-fixed.active .nav-icon { transform: scale(1.15); }
 
     /* ========================================== */
     /* ====== CSS CÔ LẬP CHO TAB CHẤM CÔNG ====== */
     /* ========================================== */
     #tab-cham-cong { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 10px; }
     .cc-nav { display: flex; background: #eaf6ff; padding: 4px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #b3d4fc;}
-    .cc-nav-btn { flex: 1; border: none; background: transparent; padding: 8px 2px; font-size: 11px; font-weight: 900; color: #1976d2; border-radius: 8px; cursor: pointer; text-align: center; transition: 0.2s; white-space: nowrap;}
+    .cc-nav-btn { flex: 1; border: none; background: transparent; padding: 10px 4px; font-size: 12px; font-weight: 900; color: #1976d2; border-radius: 8px; cursor: pointer; text-align: center; transition: 0.2s; white-space: nowrap;}
     .cc-nav-btn.active { background: #1976d2; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
     .cc-sub-content { display: none; animation: fadeIn 0.2s; }
     .cc-sub-content.active { display: block; }
-    .cc-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.04); border: 1px solid #eee;}
+
+    .cc-card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.04); border: 1px solid #f0f0f0;}
     .cc-card-title { font-size: 13px; font-weight: 800; color: #1976d2; border-bottom: 2px solid #eaf6ff; padding-bottom: 8px; margin-bottom: 12px; margin-top: 0; text-transform: uppercase; }
 
-    .cc-btn { display: block; width: 100%; padding: 10px; font-size: 13px; font-weight: 800; text-align: center; border: none; border-radius: 8px; cursor: pointer; color: white; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-transform: uppercase;}
+    .cc-label { display: block; font-size: 12px; font-weight: bold; color: #555; margin: 10px 0 4px 0; text-align:left;}
+    .cc-input, .cc-select { width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid #ddd; border-radius: 8px; background: #fafafa; color: #333; text-align:left;}
+    .cc-input:focus, .cc-select:focus { outline: none; border-color: #1976d2; background: #fff;}
+
+    .cc-btn { display: block; width: 100%; padding: 12px; font-size: 13px; font-weight: 800; text-align: center; border: none; border-radius: 8px; cursor: pointer; color: white; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-transform: uppercase;}
     .cc-btn:active { transform: scale(0.97); }
     .cc-btn-primary { background: #1976d2; } .cc-btn-warning { background: #f39c12; } .cc-btn-info { background: #00bcd4; } .cc-btn-danger { background: #e74c3c; } .cc-btn-success { background: #27ae60; }
-    .cc-btn-small { padding: 4px 8px; font-size: 11px; border-radius: 6px; font-weight: bold; border: 1px solid #1976d2; background: #eaf6ff; color: #1976d2; cursor: pointer; }
-
-    .cc-quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;}
+    
+    .cc-quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;}
     .cc-quick-btn { background: #f8f9fa; border: 1px solid #ddd; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; text-align: center; transition: 0.2s;}
     .cc-quick-btn.active { background: #1976d2; color: #fff; border-color: #1976d2; box-shadow: 0 2px 8px rgba(25,118,210,0.3); }
 
     .cc-toggle-group { display: flex; background: #eee; border-radius: 8px; overflow: hidden; margin-top: 5px; border: 1px solid #ddd;}
     .cc-toggle-group input[type="radio"] { display: none; }
-    .cc-toggle-group label { flex: 1; text-align: center; padding: 8px 4px; margin: 0; font-size: 12px; font-weight: bold; color: #666; cursor: pointer; transition: 0.2s; }
+    .cc-toggle-group label { flex: 1; text-align: center; padding: 10px 5px; margin: 0; font-size: 12px; font-weight: bold; color: #666; cursor: pointer; transition: 0.2s; }
     .cc-toggle-group input[type="radio"]:checked + label { background: #1976d2; color: white; }
 
     .cc-checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 6px; max-height: 200px; overflow-y: auto; padding: 4px; margin-bottom:10px;}
-    .cc-check-item { display: flex; align-items: center; background: #f8f9fa; padding: 8px; border-radius: 8px; border: 1px solid #eee; cursor: pointer; transition: 0.2s; margin: 0;}
+    .cc-check-item { display: flex; align-items: center; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eee; cursor: pointer; transition: 0.2s; margin: 0;}
     .cc-check-item.active { background: #eaf6ff; border-color: #1976d2; color: #1976d2; font-weight: bold; }
     .cc-check-item input { display: none; }
-    .cc-check-icon { width: 16px; height: 16px; border-radius: 3px; border: 2px solid #ccc; margin-right: 6px; display: flex; align-items: center; justify-content: center; }
+    .cc-check-icon { width: 16px; height: 16px; border-radius: 3px; border: 2px solid #ccc; margin-right: 8px; display: flex; align-items: center; justify-content: center; }
     .cc-check-item.active .cc-check-icon { background: #1976d2; border-color: #1976d2; }
     .cc-check-item.active .cc-check-icon::after { content: "✔"; color: white; font-size: 11px; font-weight: bold; }
 
-    .cc-list-item { background: #fff; border-left: 4px solid #1976d2; padding: 10px; border-radius: 8px; margin-bottom: 8px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #eee;}
+    .cc-list-item { background: #fff; border-left: 4px solid #1976d2; padding: 12px; border-radius: 8px; margin-bottom: 10px; position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.04); border: 1px solid #eee;}
     .cc-list-item.type-hoctap { border-left-color: #00bcd4; } .cc-list-item.type-viec { border-left-color: #f39c12; } .cc-list-item.type-nghi-auto { border-left-color: #e74c3c; background: #fffcfc; }
-    .cc-list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-right: 25px;}
-    .cc-list-item-title { font-weight: 900; font-size: 13px; color: #333; }
-    .cc-list-item-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #eee; font-weight: bold; color: #555; }
-    .cc-list-item-users { font-size: 12px; color: #2c3e50; line-height: 1.4; font-weight: bold;}
-    .cc-btn-del { position: absolute; top: 8px; right: 8px; color: #e74c3c; background: #ffeeee; border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+    .cc-list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding-right: 30px;}
+    .cc-list-item-title { font-weight: 900; font-size: 14px; color: #333; }
+    .cc-list-item-badge { font-size: 10px; padding: 3px 6px; border-radius: 4px; background: #eee; font-weight: bold; color: #555; }
+    .cc-list-item-users { font-size: 13px; color: #2c3e50; line-height: 1.4; font-weight: bold;}
+    .cc-btn-delete { position: absolute; top: 10px; right: 10px; color: #e74c3c; background: #ffeeee; border: none; width: 24px; height: 24px; border-radius: 50%; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;}
 
-    /* Bảng Tổng Hợp Chấm Công */
+    /* Ép bảng Chấm Công vừa màn hình */
     .cc-table-wrapper { width: 100%; border-radius: 8px; border: 1px solid #eee; overflow: hidden; }
     .cc-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; table-layout: fixed; background: white; }
-    .cc-table th, .cc-table td { padding: 6px 4px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; vertical-align: top; word-break: break-word;}
-    .cc-table th { background: #eaf6ff; color: #1976d2; font-weight: 800; font-size: 9px; text-transform: uppercase; }
-    .cc-table td.td-left { text-align: left; font-weight: 800; color: #333; font-size: 11px; width: 22%; padding-left: 4px;}
+    .cc-table th, .cc-table td { padding: 8px 4px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; vertical-align: top; word-break: break-word;}
+    .cc-table th { background: #eaf6ff; color: #1976d2; font-weight: 800; font-size: 10px; text-transform: uppercase; }
+    .cc-table td.td-left { text-align: left; font-weight: 800; color: #333; font-size: 12px; width: 22%; padding-left: 6px;}
     .cc-table td.td-number { color: #e74c3c; width: 26%; }
     .cc-table td.td-hoctap { color: #00bcd4; width: 26%; }
     .cc-table td.td-task { color: #f39c12; width: 26%; }
     .cc-table tr.total-row td { background: #fdf2e9; font-weight: 900; color: #d35400; font-size: 13px; }
-    .cc-main-val { font-weight: 900; font-size: 14px; margin-bottom: 2px;}
+    .cc-main-val { font-weight: 900; font-size: 15px; margin-bottom: 2px;}
     .cc-detail-text { font-size: 10px; color: #666; font-weight: normal; display: block; line-height: 1.3; text-align: left; padding-left:2px;}
 
-    .cc-summary-box { background: #eaf6ff; border: 1px solid #b3d4fc; padding: 10px; border-radius: 10px; margin-bottom: 12px; }
+    .cc-summary-box { background: #eaf6ff; border: 1px solid #b3d4fc; padding: 12px; border-radius: 10px; margin-bottom: 15px; }
     .cc-summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; font-size: 11px; color: #333; margin-top: 6px;}
     .cc-summary-grid div { background: #fff; padding: 8px 2px; border-radius: 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
     .cc-val-b { font-weight: 900; font-size: 15px; display: block; margin-top: 4px; }
-    .cc-summary-details { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #b3d4fc; font-size: 11px; color: #444; line-height: 1.5; text-align: left; }
+    .cc-summary-details { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #b3d4fc; font-size: 12px; color: #444; line-height: 1.5; text-align: left; }
 
-    .cc-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); display: none; justify-content: center; align-items: flex-end; z-index: 200; }
-    .cc-modal-content { background: white; width: 100%; max-width: 600px; border-radius: 16px 16px 0 0; padding: 15px; max-height: 90vh; overflow-y: auto; position: relative; animation: slideUp 0.3s ease; }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .cc-close-modal { position: absolute; top: 10px; right: 10px; font-size: 24px; color: #888; cursor: pointer; line-height: 1; background: #f0f0f0; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;}
+    /* ====== MODAL (POPUP) BẢN MỚI CHO MOBILE ====== */
+    .cc-modal-overlay { 
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.6); display: none; 
+        justify-content: center; align-items: center; /* Center trên màn hình */
+        z-index: 9999; padding: 15px; 
+    }
+    .cc-modal-content { 
+        background: white; width: 100%; max-width: 500px; 
+        border-radius: 16px; padding: 20px 15px; 
+        max-height: 85vh; /* Khống chế chiều cao 85% màn hình */
+        overflow-y: auto; /* Cho phép cuộn nội dung mượt mà */
+        position: relative; animation: zoomIn 0.3s ease; 
+        -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iOS */
+    }
+    @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .cc-close-modal { position: absolute; top: 12px; right: 12px; font-size: 26px; color: #888; cursor: pointer; line-height: 1; background: #f0f0f0; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;}
 
-    .cc-tag-chip { display: inline-block; background: #eaf6ff; color: #1976d2; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; margin: 0 4px 6px 0; border: 1px solid #b3d4fc; }
-    .cc-tag-chip.task { background: #fff8e1; color: #f39c12; border-color: #ffe0b2; }
+    .cc-tag-chip { display: inline-block; background: #eaf6ff; color: #1976d2; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin: 0 4px 6px 0; border: 1px solid #b3d4fc; }
   </style>
 </head>
 <body>
@@ -249,7 +194,7 @@
   <div id="lock-screen">
     <div class="lock-box">
       <div id="lock-spinner" class="lock-icon">🔒</div>
-      <h2 id="lock-title" style="margin: 0 0 5px 0; color:#1976d2;">ỨNG DỤNG ĐÃ KHÓA</h2>
+      <h2 id="lock-title" style="margin: 0 0 5px 0; color:#1976d2; font-size: 18px;">ỨNG DỤNG ĐÃ KHÓA</h2>
       
       <button id="btn-faceid-trigger" onclick="quetFaceIDThoCong()" class="btn-faceid" style="display:none;">
         <span style="font-size:24px;">👤</span> MỞ KHÓA BẰNG FACE ID
@@ -269,7 +214,7 @@
       <div class="dash-header">
         <h2>QUẢN LÝ NHÀ</h2>
       </div>
-      <div class="grid-3" id="dashboard-grid">
+      <div class="grid-dashboard" id="dashboard-grid">
          </div>
     </div>
 
@@ -277,22 +222,22 @@
       <div class="grid-2">
         <div class="card">
           <div class="card-title">TRONG NHÀ</div>
-          <label>Nhiệt độ (°C)</label>
-          <input id="nt" type="text" inputmode="decimal" value="22" />
-          <label>Độ ẩm (%)</label>
-          <input id="dt" type="text" inputmode="decimal" value="73" />
+          <label class="base-label">Nhiệt độ (°C)</label>
+          <input id="nt" class="base-input" type="text" inputmode="decimal" value="22" onclick="this.select()" onfocus="this.select()" />
+          <label class="base-label">Độ ẩm (%)</label>
+          <input id="dt" class="base-input" type="text" inputmode="decimal" value="73" onclick="this.select()" onfocus="this.select()" />
         </div>
 
         <div class="card">
           <div class="card-title">NGOÀI NHÀ</div>
-          <label>Nhiệt độ (°C)</label>
-          <input id="nn" type="text" inputmode="decimal" value="28" />
-          <label>Độ ẩm (%)</label>
-          <input id="dn" type="text" inputmode="decimal" value="75" />
+          <label class="base-label">Nhiệt độ (°C)</label>
+          <input id="nn" class="base-input" type="text" inputmode="decimal" value="28" onclick="this.select()" onfocus="this.select()" />
+          <label class="base-label">Độ ẩm (%)</label>
+          <input id="dn" class="base-input" type="text" inputmode="decimal" value="75" onclick="this.select()" onfocus="this.select()" />
         </div>
       </div>
 
-      <button id="btnTinh" class="btn">TÍNH TOÁN</button>
+      <button id="btnTinh" class="btn-main">TÍNH TOÁN</button>
 
       <div id="ketqua" class="card" style="display:none">
         <div class="result-title">KẾT QUẢ</div>
@@ -336,22 +281,22 @@
         </div>
 
         <div id="view-edit" style="display: none; padding-top: 5px;">
-          <label>Ca Sáng (Vào - Ra)</label>
+          <label class="base-label">Ca Sáng (Vào - Ra)</label>
           <div class="time-flex" style="margin-bottom: 10px;">
-            <input type="time" id="sang-vao" value="06:45"> 
+            <input type="time" class="base-input" id="sang-vao" value="06:45"> 
             <span>-</span>
-            <input type="time" id="sang-ra" value="11:15">
+            <input type="time" class="base-input" id="sang-ra" value="11:15">
           </div>
 
-          <label>Ca Chiều (Vào - Ra)</label>
+          <label class="base-label">Ca Chiều (Vào - Ra)</label>
           <div class="time-flex" style="margin-bottom: 10px;">
-            <input type="time" id="chieu-vao" value="13:15"> 
+            <input type="time" class="base-input" id="chieu-vao" value="13:15"> 
             <span>-</span>
-            <input type="time" id="chieu-ra" value="16:45">
+            <input type="time" class="base-input" id="chieu-ra" value="16:45">
           </div>
 
-          <label>Số lượng nhà</label>
-          <select id="so-nha">
+          <label class="base-label">Số lượng nhà</label>
+          <select id="so-nha" class="base-select">
             <option value="1">1 Nhà</option>
             <option value="2">2 Nhà</option>
             <option value="3" selected>3 Nhà</option>
@@ -360,7 +305,7 @@
             <option value="6">6 Nhà</option>
           </select>
           
-          <button onclick="luuKhungSua()" class="btn" style="margin-top: 15px; margin-bottom: 0; background-color: #ff9800; font-size: 16px; padding: 12px;">XONG</button>
+          <button onclick="luuKhungSua()" class="btn-main" style="margin-top: 15px; margin-bottom: 0; background-color: #ff9800; font-size: 16px; padding: 12px;">XONG</button>
         </div>
 
         <div id="mo-ta-content" class="mo-ta-box" style="display: none;">
@@ -382,7 +327,7 @@
         </div>
       </div>
 
-      <button onclick="xuLyNhanChiaLich()" class="btn">CHIA LỊCH TỰ ĐỘNG</button>
+      <button onclick="xuLyNhanChiaLich()" class="btn-main">CHIA LỊCH TỰ ĐỘNG</button>
 
       <div id="ket-qua-chia-gio" style="display:none">
         <div class="card">
@@ -400,11 +345,11 @@
             
             <div id="form-co-dinh-list" style="display:none; max-height:40vh; overflow-y:auto; padding-right:5px;"></div>
             
-            <button onclick="luuCaiDatCoDinh()" class="btn" style="background:#1976d2; padding:10px; margin-bottom:0; font-size: 14px; margin-top:10px;">LƯU LỊCH CỐ ĐỊNH</button>
+            <button onclick="luuCaiDatCoDinh()" class="btn-main" style="background:#1976d2; padding:10px; margin-bottom:0; font-size: 14px; margin-top:10px;">LƯU LỊCH CỐ ĐỊNH</button>
           </div>
 
           <div id="wrap-bang-ra-vao" class="table-container">
-            <table id="bang-ra-vao">
+            <table id="bang-ra-vao" class="base-table">
               <thead>
                 <tr><th rowspan="2">Nhà</th><th colspan="2" class="th-group">Sáng</th><th colspan="2" class="th-group">Chiều</th></tr>
                 <tr><th>Vào</th><th>Ra</th><th>Vào</th><th>Ra</th></tr>
@@ -417,7 +362,7 @@
         <div class="card">
           <div id="title-thong-gio" class="result-title" style="color: #1976d2; margin: 0;">2. LỊCH THÔNG GIÓ</div>
           <div class="table-container">
-            <table id="bang-thong-gio">
+            <table id="bang-thong-gio" class="base-table">
               <thead>
                 <tr><th rowspan="2">Nhà</th><th colspan="2" class="th-group">Sáng</th><th colspan="2" class="th-group">Chiều</th></tr>
                 <tr><th>Mốc 1</th><th>Mốc 2</th><th>Mốc 1</th><th>Mốc 2</th></tr>
@@ -433,9 +378,9 @@
       <div class="card">
         <div class="card-title">TRA CỨU THỜI TIẾT VÂN NHAM</div>
         
-        <label>Chọn vị trí:</label>
+        <label class="base-label">Vị trí đo thời tiết:</label>
         <div style="position: relative;">
-          <input type="text" id="weather-location-search" placeholder="Nhập tên Xã, Tỉnh... (VD: Vân Nham)" autocomplete="off" oninput="debounceSearchLocation(this.value)">
+          <input type="text" class="base-input" id="weather-location-search" placeholder="Nhập tên Xã, Tỉnh... (VD: Vân Nham)" autocomplete="off" oninput="debounceSearchLocation(this.value)">
           <div id="location-suggestions" class="loc-suggestions" style="display:none;"></div>
         </div>
         
@@ -444,13 +389,13 @@
           <div id="location-status" style="font-size: 12px; color: #4caf50; font-weight: bold;">Mặc định: Vân Nham</div>
         </div>
 
-        <label style="margin-top: 15px;">Chọn ngày (Hôm nay & 10 ngày trước):</label>
-        <select id="weather-date"></select>
+        <label class="base-label" style="margin-top: 15px;">Chọn ngày (Hôm nay & 10 ngày trước):</label>
+        <select class="base-select" id="weather-date"></select>
 
-        <label style="margin-top: 15px;">Chọn giờ (00:00 - 23:00):</label>
-        <select id="weather-hour"></select>
+        <label class="base-label" style="margin-top: 15px;">Chọn giờ (00:00 - 23:00):</label>
+        <select class="base-select" id="weather-hour"></select>
 
-        <button onclick="fetchWeather()" class="btn" style="background:#1976d2; margin-top:15px;">LẤY DỮ LIỆU NGAY</button>
+        <button onclick="fetchWeather()" class="btn-main" style="background:#1976d2; margin-top:15px;">LẤY DỮ LIỆU NGAY</button>
 
         <div id="weather-loading" class="loading-text">
           Đang kết nối hệ thống vệ tinh...
@@ -468,7 +413,7 @@
 
     <div id="tab-danh-muc" class="tab-content container">
       <div class="search-bar-container">
-        <input type="text" id="search-danh-muc" class="search-input" placeholder="Tìm kiếm đạn dược..." onkeyup="timKiemDanhMuc()">
+        <input type="text" id="search-danh-muc" class="search-input base-input" placeholder="Tìm kiếm đạn dược..." onkeyup="timKiemDanhMuc()">
         <button class="action-btn btn-setting" style="background:#ff9800" onclick="toggleCaiDatDanhMuc()">⚙️</button>
         <button class="action-btn btn-upload" style="background:#4caf50" onclick="document.getElementById('excel-upload').click()">+</button>
         <input type="file" id="excel-upload" style="display:none;" accept=".xlsx, .xls, .csv" onchange="xuLyFileExcel(event)">
@@ -479,7 +424,7 @@
         
         <div class="set-row">
           <span>Cỡ chữ hiển thị:</span>
-          <select id="set-fontsize" style="width: 100px !important; padding: 5px !important; font-size: 16px !important; border-radius:6px; background:#fff; border: 1px solid #ccc;">
+          <select id="set-fontsize" class="base-select" style="width: 100px !important; padding: 5px !important; font-size: 16px !important; border-radius:6px; background:#fff; border: 1px solid #ccc;">
             <option value="5">5 px</option><option value="6">6 px</option><option value="7">7 px</option>
             <option value="8">8 px</option><option value="9">9 px</option><option value="10">10 px</option>
             <option value="11">11 px</option><option value="12">12 px</option><option value="13">13 px</option>
@@ -496,12 +441,12 @@
         
         <div id="danh-sach-cot-cai-dat"></div>
 
-        <button onclick="luuCaiDatDanhMuc()" class="btn" style="background:#ff9800; padding:12px; margin-bottom:0; margin-top:10px; font-size: 16px;">LƯU VÀ ÁP DỤNG</button>
+        <button onclick="luuCaiDatDanhMuc()" class="btn-main" style="background:#ff9800; padding:12px; margin-bottom:0; margin-top:10px; font-size: 16px;">LƯU VÀ ÁP DỤNG</button>
       </div>
 
       <div class="card" style="padding: 0; overflow: hidden; border-radius: 12px;">
         <div class="table-container" style="max-height: 65vh; overflow-y: auto; margin-top:0; border: none;">
-          <table id="bang-danh-muc">
+          <table id="bang-danh-muc" class="base-table">
             <thead><tr id="dm-header"><th>DỮ LIỆU DANH MỤC</th></tr></thead>
             <tbody id="dm-body">
               <tr><td style="color:#999; padding: 30px; text-align: center;">Chưa có dữ liệu.<br><br>Bấm nút <b>+</b> màu xanh để tải file Excel.</td></tr>
@@ -525,7 +470,7 @@
         <div class="cc-summary-box">
           <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #b3d4fc; padding-bottom:8px; margin-bottom:8px;">
              <div style="font-weight:900; color:#1976d2; font-size:12px;">TỔNG KẾT QUÂN SỐ</div>
-             <input type="date" id="cc-date-picker" style="width:130px; padding:4px; font-size:13px; border:1px solid #1976d2; color:#1976d2; font-weight:bold; background:#fff; border-radius:4px;" onchange="ccLoadDuLieuNgay()">
+             <input type="date" id="cc-date-picker" class="cc-input" style="width:130px; padding:4px; font-size:13px; border:1px solid #1976d2; color:#1976d2; font-weight:bold; background:#fff; border-radius:4px;" onchange="ccLoadDuLieuNgay()">
           </div>
 
           <div class="cc-summary-grid">
@@ -571,16 +516,16 @@
             <button class="cc-quick-btn" id="cc-btn-thang-truoc" onclick="ccChonThangTruoc()">Tháng trước</button>
             <button class="cc-quick-btn" id="cc-btn-thang-nay" onclick="ccChonThangNay()">Tháng này</button>
           </div>
-          <div class="date-group-cc">
-            <div class="date-row-cc"><label class="cc-label" style="width:60px; margin:0;">Từ ngày:</label><input type="date" class="cc-input" id="cc-cycle-start" onchange="ccClearQuickActive(); ccAutoCalcEndDate();"></div>
-            <div class="date-row-cc"><label class="cc-label" style="width:60px; margin:0;">Đến ngày:</label><input type="date" class="cc-input" id="cc-cycle-end" onchange="ccClearQuickActive();"></div>
+          <div class="cc-date-group">
+            <div class="cc-date-row"><label class="cc-label" style="width:60px; margin:0;">Từ ngày:</label><input type="date" class="cc-input" id="cc-cycle-start" onchange="ccClearQuickActive(); ccAutoCalcEndDate();"></div>
+            <div class="cc-date-row"><label class="cc-label" style="width:60px; margin:0;">Đến ngày:</label><input type="date" class="cc-input" id="cc-cycle-end" onchange="ccClearQuickActive();"></div>
           </div>
           <button class="cc-btn cc-btn-primary" onclick="ccXemTongHop()" style="margin-top: 10px; padding:10px;">📊 TẠO BẢNG TỔNG HỢP</button>
         </div>
 
         <div id="cc-cycle-summary-box" class="cc-summary-box" style="display:none; margin-bottom: 12px;">
-            <div style="font-weight: 900; color: #1976d2; font-size: 12px; text-align: center; border-bottom: 1px solid #b3d4fc; padding-bottom: 6px; margin-bottom: 8px;">📊 TỔNG KẾT TOÀN ĐỘI KỲ NÀY</div>
-            <div id="cc-cycle-summary-text" style="font-size: 11px; color: #333; line-height: 1.5; text-align:left;"></div>
+            <div style="font-weight: 900; color: #1976d2; font-size: 13px; text-align: center; border-bottom: 1px solid #b3d4fc; padding-bottom: 8px; margin-bottom: 10px;">📊 TỔNG KẾT TOÀN ĐỘI KỲ NÀY</div>
+            <div id="cc-cycle-summary-text" style="font-size: 12px; color: #333; line-height: 1.5; text-align:left;"></div>
         </div>
 
         <div class="cc-card" style="padding: 0; border: 1px solid #eee;">
@@ -597,13 +542,13 @@
       <div id="cc-caidat" class="cc-sub-content">
         <div class="cc-card" style="background:#f4fbff; border-color:#b3d4fc; text-align:center;">
           <h3 class="cc-card-title" style="color:#27ae60; margin-bottom:5px;">💾 SAO LƯU & PHỤC HỒI</h3>
-          <p style="font-size:10px; color:#555; margin-bottom:10px;">Lưu file (.json) để cất giữ dữ liệu chấm công. Dùng file đó để phục hồi nếu chuyển máy.</p>
+          <p style="font-size:11px; color:#555; margin-bottom:12px;">Tải file (.json) về điện thoại để cất giữ an toàn. Khi đổi máy, hãy chọn file đó để Phục hồi toàn bộ.</p>
           <div style="display:flex; gap:8px;">
-            <button class="cc-btn cc-btn-success" style="padding: 8px; font-size: 11px;" onclick="ccExportBackupJSON()">📥 TẢI BACKUP</button>
-            <button class="cc-btn cc-btn-warning" style="padding: 8px; font-size: 11px;" onclick="document.getElementById('cc-import-file').click()">📤 PHỤC HỒI</button>
+            <button class="cc-btn cc-btn-success" style="padding: 10px; font-size: 11px;" onclick="ccExportBackupJSON()">📥 TẢI BACKUP</button>
+            <button class="cc-btn cc-btn-warning" style="padding: 10px; font-size: 11px;" onclick="document.getElementById('cc-import-file').click()">📤 PHỤC HỒI</button>
           </div>
           <input type="file" id="cc-import-file" style="display:none;" accept=".json" onchange="ccImportBackupJSON(event)">
-          <button class="cc-btn" style="background:#fff; color:#1976d2; border:1px solid #1976d2; margin-top: 10px; padding:8px; font-size:11px;" onclick="ccXuatDuLieuRaExcel()">Xuất Excel để xem / nộp báo cáo</button>
+          <button class="cc-btn" style="background:#fff; color:#1976d2; border:1px solid #1976d2; margin-top: 10px; padding:10px; font-size:11px;" onclick="ccXuatDuLieuRaExcel()">Xuất Excel để xem / nộp báo cáo</button>
         </div>
 
         <div class="cc-card">
@@ -646,19 +591,19 @@
 
         <div class="set-row" style="border-bottom: 1px solid #eee; padding-bottom: 15px;">
           <span style="font-size:15px; font-weight:bold; color:#333;">Đổi Mật khẩu:</span>
-          <input type="text" id="set-app-password" style="width: 120px !important; padding: 8px !important; font-size: 18px !important; text-align: center !important; border-radius: 8px !important; border: 1px solid #1976d2 !important;" maxlength="8" inputmode="numeric">
+          <input type="text" class="base-input" id="set-app-password" style="width: 120px !important; padding: 10px !important; font-size: 18px !important; text-align: center !important; border-radius: 8px !important; border: 1px solid #1976d2 !important;" maxlength="8" inputmode="numeric">
         </div>
 
         <div style="font-size: 15px; color: #333; font-weight: bold; margin-top: 20px; margin-bottom: 10px;">Sắp xếp Menu Tab chính:</div>
         <div id="sort-tab-list" style="margin-bottom: 20px;"></div>
 
-        <button onclick="luuCaiDatApp()" class="btn" style="background:#1976d2; padding:12px; font-size: 16px; margin-bottom: 10px;">LƯU CÀI ĐẶT</button>
+        <button onclick="luuCaiDatApp()" class="btn-main" style="background:#1976d2; margin-bottom: 10px;">LƯU CÀI ĐẶT</button>
       </div>
 
       <div class="card">
         <h3 class="card-title" style="color:#ff9800;">DỌN DẸP DỮ LIỆU</h3>
-        <button onclick="xoaLichSuChiaGio()" class="btn" style="background:#f44336; padding:12px; font-size: 15px; margin-bottom: 10px;">XÓA LỊCH SỬ CHIA GIỜ</button>
-        <button onclick="xoaDuLieuExcel()" class="btn" style="background:#f44336; padding:12px; font-size: 15px; margin-bottom: 0;">XÓA DANH MỤC EXCEL</button>
+        <button onclick="xoaLichSuChiaGio()" class="btn-main" style="background:#f44336; margin-bottom: 10px;">XÓA LỊCH SỬ CHIA GIỜ</button>
+        <button onclick="xoaDuLieuExcel()" class="btn-main" style="background:#f44336; margin-bottom: 0;">XÓA DANH MỤC EXCEL</button>
       </div>
     </div>
 
@@ -673,7 +618,7 @@
   <div class="cc-modal-overlay" id="cc-modal-thongke-nghi">
     <div class="cc-modal-content">
       <div class="cc-close-modal" onclick="ccDongModal('cc-modal-thongke-nghi')">&times;</div>
-      <h3 style="margin-top:0; font-size:13px; color:#9b59b6; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">📊 THỐNG KÊ NGHỈ NĂM</h3>
+      <h3 style="margin-top:0; font-size:14px; color:#9b59b6; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">📊 THỐNG KÊ NGHỈ NĂM</h3>
       <div style="display:flex; gap:8px; align-items:center; margin-bottom: 12px;">
         <label class="cc-label" style="margin:0; width:70px;">Chọn Năm:</label>
         <input type="number" class="cc-input" id="cc-tk-nam" value="2026" style="padding: 8px; font-size:14px;">
@@ -691,7 +636,7 @@
   <div class="cc-modal-overlay" id="cc-modal-hoctap">
     <div class="cc-modal-content">
       <div class="cc-close-modal" onclick="ccDongModal('cc-modal-hoctap')">&times;</div>
-      <h3 style="margin-top:0; font-size:13px; color:#00bcd4; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">📘 Học tập / Công tác</h3>
+      <h3 style="margin-top:0; font-size:14px; color:#00bcd4; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">📘 Học tập / Công tác</h3>
       <label class="cc-label">1. Phân loại:</label>
       <select id="cc-sel-loai-hoctap" class="cc-select" style="font-weight:bold; color:#1976d2;"><option value="Học tập">Học tập</option><option value="Công tác">Công tác</option><option value="Đi tuyến">Đi tuyến</option><option value="khac">-- ✍️ Nhập lý do khác --</option></select>
       <input type="text" class="cc-input" id="cc-txt-hoctap-moi" placeholder="Nhập lý do cụ thể..." style="display:none; margin-top:8px;">
@@ -703,7 +648,7 @@
       </div>
       <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 12px;">
         <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
-        <button class="cc-btn-small" onclick="ccSelectAll('cc-grid-user-hoctap')">☑ Chọn hết</button>
+        <button class="cc-btn-small" style="padding:4px 8px; font-size:11px; border-radius:6px; font-weight:bold; border:1px solid #1976d2; background:#eaf6ff; color:#1976d2;" onclick="ccSelectAll('cc-grid-user-hoctap')">☑ Chọn hết</button>
       </div>
       <div class="cc-checkbox-grid" id="cc-grid-user-hoctap"></div>
       <div style="display:flex; gap:8px; margin-top:15px;">
@@ -716,7 +661,7 @@
   <div class="cc-modal-overlay" id="cc-modal-tang-cuong">
     <div class="cc-modal-content">
       <div class="cc-close-modal" onclick="ccDongModal('cc-modal-tang-cuong')">&times;</div>
-      <h3 style="margin-top:0; font-size:13px; color:#f39c12; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">⚡ Ghi nhận Tăng Cường</h3>
+      <h3 style="margin-top:0; font-size:14px; color:#f39c12; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">⚡ Ghi nhận Tăng Cường</h3>
       <label class="cc-label">1. Chọn công việc:</label>
       <select id="cc-sel-loai-viec" class="cc-select" style="font-weight:bold; color:#1976d2;"></select>
       <div id="cc-wrap-viec-moi" style="display:none; margin-top:8px;">
@@ -730,7 +675,7 @@
       </div>
       <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 12px;">
         <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
-        <button class="cc-btn-small" onclick="ccSelectAll('cc-grid-user-viec')">☑ Chọn hết</button>
+        <button class="cc-btn-small" style="padding:4px 8px; font-size:11px; border-radius:6px; font-weight:bold; border:1px solid #1976d2; background:#eaf6ff; color:#1976d2;" onclick="ccSelectAll('cc-grid-user-viec')">☑ Chọn hết</button>
       </div>
       <div class="cc-checkbox-grid" id="cc-grid-user-viec"></div>
       <div style="display:flex; gap:8px; margin-top:15px;">
@@ -743,13 +688,13 @@
   <div class="cc-modal-overlay" id="cc-modal-nghi">
     <div class="cc-modal-content">
       <div class="cc-close-modal" onclick="ccDongModal('cc-modal-nghi')">&times;</div>
-      <h3 style="margin-top:0; font-size:13px; color:#e74c3c; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">⛱️ Đăng ký Nghỉ</h3>
+      <h3 style="margin-top:0; font-size:14px; color:#e74c3c; border-bottom:1px solid #eee; padding-bottom:8px; text-transform:uppercase;">⛱️ Đăng ký Nghỉ</h3>
       <label class="cc-label">1. Phân loại nghỉ:</label>
       <select id="cc-sel-loai-nghi" class="cc-select" style="font-weight:bold; color:#1976d2;"></select>
       <label class="cc-label">2. Thời gian nghỉ:</label>
-      <div class="date-group-cc">
-        <div class="date-row-cc"><label class="cc-label" style="margin:0; width:60px; color:#888;">Từ ngày:</label><input type="date" class="cc-input" id="cc-nghi-tu" onchange="ccKiemTraHienThiBuoiNghi()"></div>
-        <div class="date-row-cc"><label class="cc-label" style="margin:0; width:60px; color:#888;">Đến ngày:</label><input type="date" class="cc-input" id="cc-nghi-den" onchange="ccKiemTraHienThiBuoiNghi()"></div>
+      <div class="cc-date-group">
+        <div class="cc-date-row"><label class="cc-label" style="margin:0; width:60px; color:#888;">Từ ngày:</label><input type="date" class="cc-input" id="cc-nghi-tu" onchange="ccKiemTraHienThiBuoiNghi()"></div>
+        <div class="cc-date-row"><label class="cc-label" style="margin:0; width:60px; color:#888;">Đến ngày:</label><input type="date" class="cc-input" id="cc-nghi-den" onchange="ccKiemTraHienThiBuoiNghi()"></div>
       </div>
       <div id="cc-wrap-buoi-nghi" style="margin-top: 10px;">
         <span style="font-size:11px; color:#888; font-weight:bold;">Nghỉ theo buổi (Chỉ áp dụng khi chọn 1 ngày):</span>
@@ -761,7 +706,7 @@
       </div>
       <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top: 12px;">
         <label class="cc-label" style="margin:0;">3. Chọn nhân sự:</label>
-        <button class="cc-btn-small" onclick="ccSelectAll('cc-grid-user-nghi')">☑ Chọn hết</button>
+        <button class="cc-btn-small" style="padding:4px 8px; font-size:11px; border-radius:6px; font-weight:bold; border:1px solid #1976d2; background:#eaf6ff; color:#1976d2;" onclick="ccSelectAll('cc-grid-user-nghi')">☑ Chọn hết</button>
       </div>
       <div class="cc-checkbox-grid" id="cc-grid-user-nghi"></div>
       <div style="display:flex; gap:8px; margin-top:15px;">
@@ -857,7 +802,7 @@
     let order = getMainTabOrder(); let html = '';
     order.forEach(id => {
       if(id === 'tab-cai-dat') return; 
-      html += `<div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 15px; border-radius:10px; border:1px solid #eee; margin-bottom:8px;"><span style="font-weight:bold; color:#1976d2; font-size:14px;">${dashData[id].title}</span><div><button class="sort-btn" onclick="moveMainTabUp('${id}')">▲</button><button class="sort-btn" onclick="moveMainTabDown('${id}')">▼</button></div></div>`;
+      html += `<div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:10px 15px; border-radius:10px; border:1px solid #eee; margin-bottom:8px;"><span style="font-weight:bold; color:#1976d2; font-size:14px;">${dashData[id].title}</span><div><button class="btn-small" onclick="moveMainTabUp('${id}')">▲</button><button class="btn-small" onclick="moveMainTabDown('${id}')">▼</button></div></div>`;
     });
     document.getElementById('sort-tab-list').innerHTML = html;
   }
@@ -1055,7 +1000,7 @@
     let htmlCaiDatCot = "";
     Object.keys(cauHinhBang.cot).forEach(tenCot => {
       if (tenCot.startsWith('__EMPTY')) return; let isChecked = cauHinhBang.cot[tenCot].show ? "checked" : ""; let widthVal = cauHinhBang.cot[tenCot].width;
-      htmlCaiDatCot += `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; font-size:12px; font-weight:bold; color:#333;"><label style="margin:0; display:flex; align-items:center; flex:1; cursor:pointer;"><input type="checkbox" id="chk-${tenCot}" style="transform:scale(1.3); margin-right:10px;" onchange="chuyenPhanTramTuDong('${tenCot}')" ${isChecked}> ${tenCot}</label><div style="display:flex; align-items:center;"><input type="number" id="width-${tenCot}" value="${widthVal}" style="width:60px; padding:4px;" ${!cauHinhBang.cot[tenCot].show ? 'disabled style="background:#f0f0f0;"' : ''}> <span style="margin-left:5px;">%</span></div></div>`;
+      htmlCaiDatCot += `<div class="set-row"><label style="margin:0; display:flex; align-items:center; flex:1; font-size:13px; color:#333; cursor:pointer;"><input type="checkbox" id="chk-${tenCot}" style="transform:scale(1.3); margin-right:10px;" onchange="chuyenPhanTramTuDong('${tenCot}')" ${isChecked}> ${tenCot}</label><div style="display:flex; align-items:center;"><input type="number" id="width-${tenCot}" value="${widthVal}" style="width:60px; padding:4px;" ${!cauHinhBang.cot[tenCot].show ? 'disabled style="background:#f0f0f0;"' : ''}> <span style="margin-left:5px;">%</span></div></div>`;
     });
     document.getElementById('danh-sach-cot-cai-dat').innerHTML = htmlCaiDatCot; panel.style.display = 'block';
   }
@@ -1087,8 +1032,9 @@
   }
   function timKiemDanhMuc() { let tuKhoa = document.getElementById('search-danh-muc').value.toLowerCase(); if (!tuKhoa) { hienThiBangDanhMuc(duLieuDanhMuc); return; } let ketQua = duLieuDanhMuc.filter(hang => { return Object.values(hang).some(giaTri => String(giaTri).toLowerCase().includes(tuKhoa)); }); hienThiBangDanhMuc(ketQua); }
 
+
   // ==========================================
-  // 3. LOGIC CHẤM CÔNG (ĐÃ CÔ LẬP CSS)
+  // 3. LOGIC APP CHẤM CÔNG NHÂN SỰ ĐỘC LẬP
   // ==========================================
   function ccInitThangNhanh() {
       let sel = document.getElementById('sel-thang-nhanh'); let curr = new Date();
@@ -1112,7 +1058,7 @@
       if(subTabId === 'cc-caidat') ccLoadCaiDat();
   }
 
-  // CC CÀI ĐẶT & BACKUP
+  // CC CÀI ĐẶT
   function ccLoadCaiDat() {
     let htmlUsers = '';
     dsNhanVien.forEach((u, i) => {
@@ -1130,6 +1076,7 @@
   function ccThemViec() { let v = document.getElementById('cc-input-new-task').value.trim(); if(v && !dsViecTangCuong.includes(v)) { dsViecTangCuong.push(v); saveData('cc_tasks', dsViecTangCuong); document.getElementById('cc-input-new-task').value = ''; ccLoadCaiDat(); } }
   function ccXoaViec(i) { dsViecTangCuong.splice(i, 1); saveData('cc_tasks', dsViecTangCuong); ccLoadCaiDat(); }
 
+  // CC BACKUP & EXCEL
   function ccExportBackupJSON() {
       let data = { cc_users: dsNhanVien, cc_tasks: dsViecTangCuong, cc_leaves: dsLoaiNghi, cc_daily: dsDaily, cc_leaves_data: dsLeaves };
       let dataStr = JSON.stringify(data); let blob = new Blob([dataStr], {type: "application/json"}); let url = URL.createObjectURL(blob);
@@ -1217,15 +1164,15 @@
     let tcRecords = recordsDaily.filter(r => r.type === 'viec'); if (tcRecords.length > 0) { detailText.push(`<span style="color:#f39c12; font-weight:bold;">⚡ Tăng cường:</span><br>${ccFormatGroupedUsers(tcRecords, 'taskName', false)}`); }
     let htRecords = recordsDaily.filter(r => r.type === 'hoctap'); if (htRecords.length > 0) { detailText.push(`<span style="color:#00bcd4; font-weight:bold;">📘 Học tập/CT:</span><br>${ccFormatGroupedUsers(htRecords, 'taskName', false)}`); }
     if (recordsLeave.length > 0) { detailText.push(`<span style="color:#e74c3c; font-weight:bold;">⛱️ Nghỉ:</span><br>${ccFormatGroupedUsers(recordsLeave, 'category', true)}`); }
-    document.getElementById('cc-summary-details-text').innerHTML = detailText.length > 0 ? detailText.join('<div style="margin-top:5px;"></div>') : '';
+    document.getElementById('cc-summary-details-text').innerHTML = detailText.length > 0 ? detailText.join('<div style="margin-top:5px;"></div>') : '<i style="color:#888;">Chưa có phân công chi tiết</i>';
 
     let html = '';
     if(recordsDaily.length + recordsLeave.length === 0) { html = '<div style="text-align:center; padding:15px; color:#888; font-size:12px; background:#f9f9f9; border-radius:8px;">Chưa có báo cáo nào.</div>'; }
     recordsLeave.forEach(r => { let isMulti = r.start !== r.end; let sessionText = isMulti ? 'Xuyên suốt' : SES_LABELS_FULL[r.session]; html += `<div class="cc-list-item type-nghi-auto"><div class="cc-list-item-header"><span class="cc-list-item-title">⛱️ Nghỉ: ${r.category}</span><span class="cc-list-item-badge" style="background:#fadbd8; color:#c0392b;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; });
     recordsDaily.forEach(r => {
       let sessionText = SES_LABELS_FULL[r.session];
-      if(r.type === 'hoctap') { html += `<div class="cc-list-item type-hoctap"><button class="cc-btn-delete" onclick="ccXoaRecordDaily('${r.id}')">×</button><div class="cc-list-item-header"><span class="cc-list-item-title">📘 ${r.taskName}</span><span class="cc-list-item-badge" style="background:#e0f7fa; color:#0097a7;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; } 
-      else if (r.type === 'viec') { html += `<div class="cc-list-item type-viec"><button class="cc-btn-delete" onclick="ccXoaRecordDaily('${r.id}')">×</button><div class="cc-list-item-header"><span class="cc-list-item-title">⚡ T.Cường: ${r.taskName}</span><span class="cc-list-item-badge" style="background:#ffe0b2; color:#d35400;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; }
+      if(r.type === 'hoctap') { html += `<div class="cc-list-item type-hoctap"><button class="cc-btn-del" onclick="ccXoaRecordDaily('${r.id}')">×</button><div class="cc-list-item-header"><span class="cc-list-item-title">📘 ${r.taskName}</span><span class="cc-list-item-badge" style="background:#e0f7fa; color:#0097a7;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; } 
+      else if (r.type === 'viec') { html += `<div class="cc-list-item type-viec"><button class="cc-btn-del" onclick="ccXoaRecordDaily('${r.id}')">×</button><div class="cc-list-item-header"><span class="cc-list-item-title">⚡ T.Cường: ${r.taskName}</span><span class="cc-list-item-badge" style="background:#ffe0b2; color:#d35400;">${sessionText}</span></div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`; }
     });
     document.getElementById('cc-list-records-today').innerHTML = html;
   }
@@ -1246,7 +1193,7 @@
     let users = ccGetSelectedUsers('cc-grid-user-nghi'); if(users.length === 0) { alert('Vui lòng chọn ít nhất 1 nhân sự!'); return; }
     let tu = document.getElementById('cc-nghi-tu').value; let den = document.getElementById('cc-nghi-den').value; if(den < tu) { alert('Ngày kết thúc không hợp lệ!'); return; }
     let cat = document.getElementById('cc-sel-loai-nghi').value; let sess = document.querySelector('input[name="cc_sess_nghi"]:checked').value;
-    dsLeaves.push({ id: Date.now().toString(), start: tu, end: den, category: cat, session: sess, users: users }); saveData('cc_leaves_data', dsLeaves); ccDongModal('cc-modal-nghi'); ccLoadDanhSachNghi(); if(document.getElementById('tab-cham-cong').classList.contains('active')) ccLoadDuLieuNgay();
+    dsLeaves.push({ id: Date.now().toString(), start: tu, end: den, category: cat, session: sess, users: users }); saveData('cc_leaves_data', dsLeaves); ccDongModal('cc-modal-nghi'); ccLoadDanhSachNghi(); if(document.getElementById('cc-ngay').classList.contains('active')) ccLoadDuLieuNgay();
   }
   function ccLoadDanhSachNghi() {
     let html = ''; let sorted = [...dsLeaves].sort((a,b) => new Date(b.start) - new Date(a.start));
@@ -1254,7 +1201,7 @@
     sorted.forEach(r => {
       let dateText = r.start === r.end ? formatDateVN(r.start) : `${formatDateVN(r.start)} - ${formatDateVN(r.end)}`;
       let sessText = r.start === r.end ? ` (${SES_LABELS_FULL[r.session]})` : '';
-      html += `<div class="cc-list-item type-nghi-auto"><button class="cc-btn-delete" onclick="ccXoaLeave('${r.id}')">×</button><div class="cc-list-item-title">⛱️ ${r.category} ${sessText}</div><div style="font-size:11px; color:#c0392b; margin-bottom:4px; font-weight:bold;">📅 ${dateText}</div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`;
+      html += `<div class="cc-list-item type-nghi-auto"><button class="cc-btn-del" onclick="ccXoaLeave('${r.id}')">×</button><div class="cc-list-item-title">⛱️ ${r.category} ${sessText}</div><div style="font-size:11px; color:#c0392b; margin-bottom:4px; font-weight:bold;">📅 ${dateText}</div><div class="cc-list-item-users">👤 ${r.users.join(', ')}</div></div>`;
     });
     document.getElementById('cc-list-nghi-dai-han').innerHTML = html;
   }
@@ -1284,7 +1231,7 @@
   }
 
   // CC TỔNG HỢP CHU KỲ
-  function ccClearQuickActive() { document.querySelectorAll('.quick-btn').forEach(b => b.classList.remove('active')); }
+  function ccClearQuickActive() { document.querySelectorAll('.cc-quick-btn').forEach(b => b.classList.remove('active')); }
   function ccChonTuanTruoc() { ccClearQuickActive(); document.getElementById('cc-btn-tuan-truoc').classList.add('active'); let curr = new Date(); let first = curr.getDate() - curr.getDay() + 1 - 7; let start = new Date(curr.setDate(first)); let end = new Date(start); end.setDate(end.getDate() + 6); document.getElementById('cc-cycle-start').value = start.toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = end.toISOString().split('T')[0]; document.getElementById('sel-thang-nhanh').value="";}
   function ccChonTuanNay() { ccClearQuickActive(); document.getElementById('cc-btn-tuan-nay').classList.add('active'); let curr = new Date(); let first = curr.getDate() - curr.getDay() + 1; let last = first + 6; document.getElementById('cc-cycle-start').value = new Date(curr.setDate(first)).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(curr.setDate(last)).toISOString().split('T')[0]; document.getElementById('sel-thang-nhanh').value="";}
   function ccChonThangTruoc() { ccClearQuickActive(); document.getElementById('cc-btn-thang-truoc').classList.add('active'); let date = new Date(); document.getElementById('cc-cycle-start').value = new Date(date.getFullYear(), date.getMonth() - 1, 1).toISOString().split('T')[0]; document.getElementById('cc-cycle-end').value = new Date(date.getFullYear(), date.getMonth(), 0).toISOString().split('T')[0]; document.getElementById('sel-thang-nhanh').value="";}
@@ -1334,7 +1281,7 @@
     if(Object.keys(globalNghiStats).length > 0) { textSummary.push(`<span style="color:#e74c3c; font-weight:900;">⛱️ NGHỈ:</span><br>${ccFormatGlobalStat(globalNghiStats)}`); }
     if(Object.keys(globalHocStats).length > 0) { textSummary.push(`<span style="color:#00bcd4; font-weight:900;">📘 HỌC TẬP/CT:</span><br>${ccFormatGlobalStat(globalHocStats)}`); }
     if(Object.keys(globalTaskStats).length > 0) { textSummary.push(`<span style="color:#f39c12; font-weight:900;">⚡ TĂNG CƯỜNG:</span><br>${ccFormatGlobalStat(globalTaskStats)}`); }
-    document.getElementById('cc-cycle-summary-text').innerHTML = textSummary.length > 0 ? textSummary.join('<br><div style="margin-top:4px;"></div>') : '<i style="color:#888;">Không có dữ liệu trong chu kỳ</i>';
+    document.getElementById('cc-cycle-summary-text').innerHTML = textSummary.length > 0 ? textSummary.join('<br><div style="margin-top:4px;"></div>') : '<i style="color:#888;">Không có dữ liệu trong chu kỳ này</i>';
     document.getElementById('cc-cycle-summary-box').style.display = 'block';
 
     let tbody = '';
