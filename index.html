@@ -374,6 +374,7 @@
         <label style="margin-top: 15px;">Chọn nguồn dữ liệu:</label>
         <select id="weather-source">
           <option value="weatherapi" selected>WeatherAPI (Độ chính xác cao)</option>
+          <option value="visualcrossing">Visual Crossing (Chuyên sâu/Lịch sử)</option>
           <option value="openmeteo">Open-Meteo (Dự phòng)</option>
         </select>
 
@@ -695,7 +696,7 @@
   }
 
   // ==========================================
-  // THỜI TIẾT (ĐÃ THÊM CHỌN GIỜ HIỆN TẠI)
+  // THỜI TIẾT (KIẾN TRÚC 3 NGUỒN: WEATHERAPI, VISUAL CROSSING, OPEN-METEO)
   // ==========================================
   let weatherLat = 21.52; let weatherLon = 106.31; let searchTimeout;
   
@@ -708,7 +709,6 @@
       dSel.innerHTML+=`<option value="${dStr}">${dDisp}</option>`; 
     }
     
-    // BỔ SUNG LỰA CHỌN "HIỆN TẠI"
     hSel.innerHTML = '<option value="current" selected>Hiện tại</option>';
     for(let h=0;h<24;h++){ 
       let hDisp=(h<10?'0'+h:h)+':00'; 
@@ -738,7 +738,6 @@
   async function fetchWeather() {
     const date = document.getElementById('weather-date').value; 
     const hourVal = document.getElementById('weather-hour').value; 
-    // XỬ LÝ LOGIC: NẾU CHỌN "HIỆN TẠI" THÌ LẤY GIỜ HỆ THỐNG
     const hour = (hourVal === 'current') ? new Date().getHours() : parseInt(hourVal);
     
     const source = document.getElementById('weather-source').value;
@@ -750,6 +749,7 @@
     
     try {
       if (source === 'weatherapi') {
+        // NGUỒN 1: WEATHERAPI
         const apiKey = 'b8bb28c7f1fe4d6e97142012262203';
         const today = new Date();
         const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
@@ -769,10 +769,30 @@
         document.getElementById('res-temp').innerText = hourData.temp_c + "°C"; 
         document.getElementById('res-hum').innerText = hourData.humidity + "%";
         
+      } else if (source === 'visualcrossing') {
+        // NGUỒN 2: VISUAL CROSSING
+        // ==============================================================
+        // BẠN HÃY DÁN API KEY CỦA VISUAL CROSSING VÀO GIỮA 2 DẤU NHÁY DƯỚI ĐÂY:
+        const vcKey = 'KJ558S6G2GG56PV24J72F35B9'; 
+        // ==============================================================
+        
+        const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${weatherLat},${weatherLon}/${date}?key=${vcKey}&unitGroup=metric&include=hours`;
+        
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error("Visual Crossing API Error");
+        const data = await resp.json();
+        
+        const hourData = data.days[0].hours[hour];
+        document.getElementById('res-temp').innerText = hourData.temp + "°C"; 
+        document.getElementById('res-hum').innerText = Math.round(hourData.humidity) + "%";
+          
       } else {
+        // NGUỒN 3: OPEN-METEO (DỰ PHÒNG)
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${weatherLat}&longitude=${weatherLon}&hourly=temperature_2m,relative_humidity_2m&timezone=Asia%2FBangkok&start_date=${date}&end_date=${date}`;
         const resp = await fetch(url); 
+        if (!resp.ok) throw new Error("Open-Meteo API Error");
         const data = await resp.json();
+        
         document.getElementById('res-temp').innerText = data.hourly.temperature_2m[hour] + "°C"; 
         document.getElementById('res-hum').innerText = data.hourly.relative_humidity_2m[hour] + "%";
       }
@@ -780,7 +800,8 @@
       load.style.display = 'none'; 
       resB.style.display = 'block';
     } catch(e) { 
-      alert("Lỗi kết nối vệ tinh hoặc hết lượt API!"); 
+      alert("Lỗi kết nối vệ tinh hoặc chưa cấu hình đúng API Key!"); 
+      console.error(e);
       load.style.display = 'none'; 
     }
   }
