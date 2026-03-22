@@ -695,7 +695,7 @@
   }
 
   // ==========================================
-  // THỜI TIẾT (ĐÃ CẬP NHẬT 2 API, GIỚI HẠN 7 NGÀY)
+  // THỜI TIẾT (ĐÃ THÊM CHỌN GIỜ HIỆN TẠI)
   // ==========================================
   let weatherLat = 21.52; let weatherLon = 106.31; let searchTimeout;
   
@@ -707,7 +707,13 @@
       let dDisp=i===0?"Hôm nay":d.toLocaleDateString('vi-VN'); 
       dSel.innerHTML+=`<option value="${dStr}">${dDisp}</option>`; 
     }
-    for(let h=0;h<24;h++){ let hDisp=(h<10?'0'+h:h)+':00'; hSel.innerHTML+=`<option value="${h}" ${h===14?'selected':''}>${hDisp}</option>`; }
+    
+    // BỔ SUNG LỰA CHỌN "HIỆN TẠI"
+    hSel.innerHTML = '<option value="current" selected>Hiện tại</option>';
+    for(let h=0;h<24;h++){ 
+      let hDisp=(h<10?'0'+h:h)+':00'; 
+      hSel.innerHTML+=`<option value="${h}">${hDisp}</option>`; 
+    }
   }
   
   function debounceSearchLocation(query) {
@@ -731,7 +737,10 @@
   
   async function fetchWeather() {
     const date = document.getElementById('weather-date').value; 
-    const hour = parseInt(document.getElementById('weather-hour').value); 
+    const hourVal = document.getElementById('weather-hour').value; 
+    // XỬ LÝ LOGIC: NẾU CHỌN "HIỆN TẠI" THÌ LẤY GIỜ HỆ THỐNG
+    const hour = (hourVal === 'current') ? new Date().getHours() : parseInt(hourVal);
+    
     const source = document.getElementById('weather-source').value;
     const load = document.getElementById('weather-loading'); 
     const resB = document.getElementById('weather-result');
