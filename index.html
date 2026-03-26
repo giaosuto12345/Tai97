@@ -831,7 +831,7 @@
     finance: {
         expenseChartInstance: null,
         allFinanceRawData: { listCaNhan: [], listChiChung: [], tongNo: [] },
-        isHidden: false,
+        isHidden: true, // Đã sửa: Mặc định để ẩn Tổng nợ
         trueDebtValue: "0K"
     }
   };
@@ -1895,8 +1895,11 @@
       document.getElementById('val-cc').innerText = formatMoney(totalCC);
       
       STATE.finance.trueDebtValue = formatMoney(totalDebt);
+      // Đã sửa: Gán text mặc định tuân theo biến trạng thái isHidden
       if (!STATE.finance.isHidden) {
           document.getElementById('total-debt-lbl').innerText = STATE.finance.trueDebtValue;
+      } else {
+          document.getElementById('total-debt-lbl').innerText = "****** ₫";
       }
   }
 
@@ -1930,6 +1933,16 @@
 
   function renderFinanceDebtSection(tongNo) {
       const container = document.getElementById('debt-list-container');
+      // Đã sửa: Xử lý ẩn/hiện danh sách nợ ngay khi render (nếu mặc định là ẩn)
+      const hiddenMsg = document.getElementById('debt-hidden-msg');
+      if (STATE.finance.isHidden) {
+          container.style.display = 'none';
+          hiddenMsg.style.display = 'block';
+      } else {
+          container.style.display = 'block';
+          hiddenMsg.style.display = 'none';
+      }
+
       if (!tongNo || tongNo.length === 0) {
           container.innerHTML = '<div style="text-align:center; padding: 20px; color:#8E8E93;">Không có khoản nợ nào.</div>';
           return;
@@ -1949,7 +1962,7 @@
           let diff = parseDateVN_Finance(b.date) - parseDateVN_Finance(a.date);
           if (diff !== 0) return diff;
           return (b.originalIndex || 0) - (a.originalIndex || 0);
-      }).slice(0, 5);
+      }).slice(0, 20); // Đã sửa: Từ 5 lên 20 giao dịch
       
       if(allRecent.length === 0) {
           container.innerHTML = '<div style="text-align:center; padding:15px; color:#8E8E93;">Chưa có giao dịch nào.</div>';
@@ -1995,10 +2008,10 @@
       let sortedArr = Object.keys(groups).map(k => ({ label: k, value: groups[k] })).sort((a, b) => b.value - a.value);
       let labels = [], data = [], otherVal = 0;
       sortedArr.forEach((item, index) => {
-         if(index < 4) { labels.push(item.label); data.push(item.value); }
+         if(index < 9) { labels.push(item.label); data.push(item.value); } // Đã sửa: Lấy 9 mục đầu tiên
          else { otherVal += item.value; }
       });
-      if(otherVal > 0) { labels.push('Khác'); data.push(otherVal); }
+      if(otherVal > 0) { labels.push('Khác'); data.push(otherVal); } // Cộng thêm mục "Khác" thành 10
 
       STATE.finance.expenseChartInstance = new Chart(ctx, {
           type: 'doughnut',
@@ -2006,7 +2019,8 @@
               labels: labels,
               datasets: [{
                   data: data,
-                  backgroundColor: ['#007AFF', '#FF3B30', '#34C759', '#FF9500', '#AF52DE'],
+                  // Đã sửa: Bổ sung palette thành 10 màu cho mảng
+                  backgroundColor: ['#007AFF', '#FF3B30', '#34C759', '#FF9500', '#AF52DE', '#5AC8FA', '#FF2D55', '#5856D6', '#FFCC00', '#8E8E93'],
                   borderWidth: 2, borderColor: '#fff', hoverOffset: 4
               }]
           },
@@ -2053,11 +2067,28 @@
       };
 
       let dataArr = type === 'caNhan' ? STATE.finance.allFinanceRawData.listCaNhan : STATE.finance.allFinanceRawData.listChiChung;
-      dataArr = (dataArr || []).filter(i => isMatch(i.date)).sort((a, b) => {
-         let diff = parseDateVN_Finance(b.date) - parseDateVN_Finance(a.date);
-         if (diff !== 0) return diff;
-         return (b.originalIndex || 0) - (a.originalIndex || 0);
-      });
+      dataArr = (dataArr || []).filter(i => isMatch(i.date));
+
+      // Đã sửa: Thuật toán gộp nội dung (Group by) cho mục Cá nhân
+      if (type === 'caNhan') {
+          let grouped = {};
+          dataArr.forEach(item => {
+              let key = item.content || 'Khác';
+              if (!grouped[key]) {
+                  grouped[key] = { ...item, amount: 0, count: 0 };
+              }
+              grouped[key].amount += item.amount;
+              grouped[key].count += 1;
+          });
+          // Sắp xếp theo tổng tiền giảm dần
+          dataArr = Object.values(grouped).sort((a, b) => b.amount - a.amount);
+      } else {
+          dataArr.sort((a, b) => {
+             let diff = parseDateVN_Finance(b.date) - parseDateVN_Finance(a.date);
+             if (diff !== 0) return diff;
+             return (b.originalIndex || 0) - (a.originalIndex || 0);
+          });
+      }
 
       const container = document.getElementById('fin-modal-body');
 
@@ -2070,17 +2101,30 @@
               let subHtml = subText ? `<div class="tx-sub">${subText}</div>` : '';
               let noteHtml = item.note ? `<div class="tx-note">${item.note}</div>` : '';
               
-              return `
-                <div class="tx-item">
-                  <div class="tx-left">
-                    <span class="tx-date" style="color: ${color}">${item.date}</span>
-                    <span class="tx-title">${item.content}</span>
-                    ${subHtml}
-                    ${noteHtml}
-                  </div>
-                  <span class="tx-amount" style="color: ${color}">${formatMoney(item.amount)}</span>
-                </div>
-              `;
+              // Đã sửa: Giao diện Modal khi đã được gộp sẽ loại bỏ ngày tháng cho gọn và thêm số lần (Count)
+              if (type === 'caNhan') {
+                  let countHtml = item.count > 1 ? `<span style="color:#AF52DE; font-weight:bold; font-size:13px; margin-left:4px;">(x${item.count})</span>` : '';
+                  return `
+                    <div class="tx-item">
+                      <div class="tx-left">
+                        <span class="tx-title">${item.content}${countHtml}</span>
+                      </div>
+                      <span class="tx-amount" style="color: ${color}">${formatMoney(item.amount)}</span>
+                    </div>
+                  `;
+              } else {
+                  return `
+                    <div class="tx-item">
+                      <div class="tx-left">
+                        <span class="tx-date" style="color: ${color}">${item.date}</span>
+                        <span class="tx-title">${item.content}</span>
+                        ${subHtml}
+                        ${noteHtml}
+                      </div>
+                      <span class="tx-amount" style="color: ${color}">${formatMoney(item.amount)}</span>
+                    </div>
+                  `;
+              }
           }).join('');
       }
       
