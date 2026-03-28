@@ -478,55 +478,52 @@
       </div>
     </div>
 
-    <!-- TAB THỜI TIẾT (ĐÃ THIẾT KẾ LẠI GỌN GÀNG HƠN CHO IPHONE) -->
+    <!-- TAB THỜI TIẾT -->
     <div id="tab-thoi-tiet" class="tab-content container">
-      <div class="card" style="padding-bottom: 15px;">
-        <div class="card-title" style="margin-bottom: 10px;">TRA CỨU THỜI TIẾT</div>
+      <div class="card">
+        <div class="card-title">TRA CỨU THỜI TIẾT</div>
         
-        <div style="position: relative; margin-bottom: 5px;">
-          <input type="text" id="weather-location-search" placeholder="Nhập tên Xã, Tỉnh..." oninput="debounceSearchLocation(this.value)" style="padding: 10px; font-size: 15px; margin-bottom: 5px;">
+        <label>Chọn vị trí:</label>
+        <div style="position: relative;">
+          <input type="text" id="weather-location-search" placeholder="Nhập tên Xã, Tỉnh... (VD: Vân Nham)" autocomplete="off" oninput="debounceSearchLocation(this.value)">
           <div id="location-suggestions" class="loc-suggestions" style="display:none;"></div>
         </div>
         
-        <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size: 12px;">
-          <button onclick="getCurrentLocation()" style="background:none; border:none; color:var(--primary-color); font-weight:bold; padding:0; cursor:pointer; font-size: 12px;">📍 Dùng vị trí hiện tại</button>
-          <div id="location-status" style="color: var(--success-color); font-weight: bold;">Mặc định: Vân Nham</div>
+        <div style="display:flex; justify-content:space-between; margin-top:10px;">
+          <button onclick="getCurrentLocation()" style="background:none; border:none; color:var(--primary-color); font-weight:bold; font-size:13px; padding:0; cursor:pointer;">📍 Dùng vị trí hiện tại</button>
+          <div id="location-status" style="font-size: 12px; color: var(--success-color); font-weight: bold;">Mặc định: Vân Nham</div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label style="margin-top: 0; font-size: 12px;">Ngày:</label>
-            <select id="weather-date" style="padding: 8px; font-size: 14px; margin-bottom: 0;"></select>
-          </div>
-          <div>
-            <label style="margin-top: 0; font-size: 12px;">Giờ:</label>
-            <select id="weather-hour" style="padding: 8px; font-size: 14px; margin-bottom: 0;"></select>
-          </div>
-          <div>
-            <label style="margin-top: 5px; font-size: 12px;">Nguồn:</label>
-            <select id="weather-source" style="padding: 8px; font-size: 13px; margin-bottom: 0;">
-              <option value="weatherapi" selected>WeatherAPI</option>
-              <option value="visualcrossing">VisCrossing</option>
-              <option value="openmeteo">Open-Meteo</option>
-            </select>
-          </div>
-          <div style="display: flex; align-items: flex-end;">
-            <button onclick="fetchWeather()" class="btn" style="background:var(--primary-color); margin:0; padding: 8px; font-size: 14px; height: 37px;">LẤY DỮ LIỆU</button>
-          </div>
+        <label style="margin-top: 15px;">Chọn nguồn dữ liệu:</label>
+        <select id="weather-source">
+          <option value="weatherapi" selected>WeatherAPI (Độ chính xác cao)</option>
+          <option value="visualcrossing">Visual Crossing (Chuyên sâu/Lịch sử)</option>
+          <option value="openmeteo">Open-Meteo (Dự phòng)</option>
+        </select>
+
+        <label style="margin-top: 15px;">Chọn ngày (Hôm nay & 7 ngày trước):</label>
+        <select id="weather-date"></select>
+
+        <label style="margin-top: 15px;">Chọn giờ (00:00 - 23:00):</label>
+        <select id="weather-hour"></select>
+
+        <button onclick="fetchWeather()" class="btn" style="background:var(--primary-color); margin-top:15px;">LẤY DỮ LIỆU NGAY</button>
+
+        <div id="weather-loading" class="loading-text">
+          Đang kết nối hệ thống vệ tinh...
         </div>
 
-        <div id="weather-loading" class="loading-text" style="font-size:12px; margin-top:15px;">Đang kết nối hệ thống vệ tinh...</div>
-        
-        <div id="weather-result" class="weather-res-box" style="margin-top: 15px; padding: 15px;">
+        <!-- KHU VỰC HIỂN THỊ KẾT QUẢ ĐƯỢC CHIA CỘT VÀ BƠM TO -->
+        <div id="weather-result" class="weather-res-box" style="margin-top: 15px; padding: 25px 15px;">
           <div style="display: flex; justify-content: space-around; align-items: center;">
-            <div>
-              <div class="w-label" style="font-size: 12px;">NHIỆT ĐỘ</div>
-              <div id="res-temp" class="w-val" style="font-size: 26px; margin-top: 5px;">--°C</div>
+            <div style="flex: 1;">
+              <div class="w-label" style="font-size: 15px; color: var(--text-sub);">NHIỆT ĐỘ</div>
+              <div id="res-temp" class="w-val" style="font-size: 38px; color: var(--warning-color); margin-top: 8px;">--°C</div>
             </div>
-            <div style="width: 1px; height: 50px; background: var(--primary-color); opacity: 0.3;"></div>
-            <div>
-              <div class="w-label" style="font-size: 12px;">ĐỘ ẨM</div>
-              <div id="res-hum" class="w-val" style="font-size: 26px; margin-top: 5px;">--%</div>
+            <div style="width: 2px; height: 60px; background: var(--primary-color); opacity: 0.2;"></div>
+            <div style="flex: 1;">
+              <div class="w-label" style="font-size: 15px; color: var(--text-sub);">ĐỘ ẨM</div>
+              <div id="res-hum" class="w-val" style="font-size: 38px; color: var(--primary-color); margin-top: 8px;">--%</div>
             </div>
           </div>
         </div>
