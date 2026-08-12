@@ -841,17 +841,22 @@
   // MODULE TÀI CHÍNH GỐC
   // ==========================================
   function initFinanceDateSelectors() { 
-      const d = new Date(); 
-      document.getElementById('finMonthSelect').value = (d.getMonth() + 1).toString(); 
-      const ySel = document.getElementById('finYearSelect'); 
-      if (ySel) {
-          let optionsHtml = ''; 
-          for(let i = d.getFullYear() - 2; i <= d.getFullYear() + 2; i++) { 
-              optionsHtml += `<option value="${i}" ${i === d.getFullYear() ? 'selected' : ''}>Năm ${i}</option>`; 
-          } 
-          ySel.innerHTML = optionsHtml; 
-      }
-  }
+    const d = new Date(); 
+    
+    // Cập nhật tất cả các ô tháng (đề phòng bị trùng lặp ID)
+    document.querySelectorAll('#finMonthSelect').forEach(el => {
+        el.value = (d.getMonth() + 1).toString();
+    });
+    
+    // Cập nhật tất cả các ô năm 
+    let optionsHtml = ''; 
+    for(let i = d.getFullYear() - 2; i <= d.getFullYear() + 2; i++) { 
+        optionsHtml += `<option value="${i}" ${i === d.getFullYear() ? 'selected' : ''}>Năm ${i}</option>`; 
+    } 
+    document.querySelectorAll('#finYearSelect').forEach(el => {
+        el.innerHTML = optionsHtml;
+    });
+}
 
   function getCleanUrl_Finance() { let url = localStorage.getItem('gasWebAppUrl'); if (!url) return null; url = url.trim(); if (!url.startsWith('http')) url = 'https://' + url; if (url.includes('/edit')) url = url.substring(0, url.indexOf('/edit')) + '/exec'; return url; }
   function openFinanceSettings() { document.getElementById('gas-url-modal').value = localStorage.getItem('gasWebAppUrl') || ''; document.getElementById('inp-budget').value = localStorage.getItem('myBudget') || ''; let modal = document.getElementById('fin-settings-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('show'), 10); }
@@ -877,24 +882,37 @@
   }
 
   function renderFinanceUI() { 
-      const { listCaNhan, listChiChung, tongNo } = STATE.finance.allFinanceRawData; 
-      const selMonth = document.getElementById('finMonthSelect') ? document.getElementById('finMonthSelect').value : ""; 
-      const selYear = document.getElementById('finYearSelect') ? document.getElementById('finYearSelect').value : ""; 
-      
-      const isMatch = (dateStr) => { 
-          const d = parseDateVN_Finance(dateStr); 
-          if (!d) return false; 
-          const dt = new Date(d); 
-          return (selMonth === "" ? true : (dt.getMonth() + 1).toString() === selMonth) && (dt.getFullYear().toString() === selYear); 
-      }; 
-      
-      const filteredCN = listCaNhan.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Cá nhân'})); 
-      const filteredCC = listChiChung.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Chi chung'})); 
-      const totalCN = filteredCN.reduce((a, b) => a + (b.amount || 0), 0); const totalCC = filteredCC.reduce((a, b) => a + (b.amount || 0), 0); 
-      const totalExpense = totalCN + totalCC; const totalDebt = tongNo.reduce((a, b) => a + (b.total || 0), 0); 
-      
-      renderFinanceSummaryCards(totalCN, totalCC, totalDebt); renderFinanceBudgetCard(totalExpense); renderFinanceDebtSection(tongNo); renderFinanceRecentTransactions(filteredCN, filteredCC); renderFinanceChart(filteredCN); 
-  }
+    const { listCaNhan, listChiChung, tongNo } = STATE.finance.allFinanceRawData; 
+    
+    // Lấy tất cả các select bị trùng, dùng mảng để chốt lấy ô cuối cùng (ô đang hiển thị)
+    const mSels = document.querySelectorAll('#finMonthSelect');
+    const ySels = document.querySelectorAll('#finYearSelect');
+    
+    let selMonth = "";
+    let selYear = "";
+    if (mSels.length > 0) selMonth = mSels[mSels.length - 1].value;
+    if (ySels.length > 0) selYear = ySels[ySels.length - 1].value;
+    
+    const isMatch = (dateStr) => { 
+        const d = parseDateVN_Finance(dateStr); 
+        if (!d) return false; 
+        const dt = new Date(d); 
+        return (selMonth === "" ? true : (dt.getMonth() + 1).toString() === selMonth) && (dt.getFullYear().toString() === selYear); 
+    }; 
+    
+    const filteredCN = listCaNhan.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Cá nhân'})); 
+    const filteredCC = listChiChung.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Chi chung'})); 
+    const totalCN = filteredCN.reduce((a, b) => a + (b.amount || 0), 0); 
+    const totalCC = filteredCC.reduce((a, b) => a + (b.amount || 0), 0); 
+    const totalExpense = totalCN + totalCC; 
+    const totalDebt = tongNo.reduce((a, b) => a + (b.total || 0), 0); 
+    
+    renderFinanceSummaryCards(totalCN, totalCC, totalDebt); 
+    renderFinanceBudgetCard(totalExpense); 
+    renderFinanceDebtSection(tongNo); 
+    renderFinanceRecentTransactions(filteredCN, filteredCC); 
+    renderFinanceChart(filteredCN); 
+}
   
   function renderFinanceSummaryCards(totalCN, totalCC, totalDebt) { 
       document.getElementById('val-cn').innerText = formatMoney(totalCN); document.getElementById('val-cc').innerText = formatMoney(totalCC); 
