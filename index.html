@@ -212,7 +212,7 @@
     .w-label { font-size: 12px; color: var(--text-sub); font-weight: bold; }
     .loading-text { color: var(--text-sub); font-style: italic; margin: 10px 0; display: none; text-align: center; }
 
-    /* ================== DANH MỤC & TÌM KIẾM (CỐ ĐỊNH CỘT EXCEL) ================== */
+    /* ================== DANH MỤC & TÌM KIẾM ================== */
     .search-bar-container { display: flex; gap: 8px; margin-bottom: 10px; }
     .search-input { flex: 1; padding: 12px 15px !important; font-size: 16px !important; border-radius: 12px !important; border: 1px solid var(--border-light) !important; background: var(--input-bg) !important; text-align: left !important; color: var(--text-main) !important;}
     .search-input:focus { outline: none; border: 2px solid var(--primary-color) !important; }
@@ -223,10 +223,8 @@
     .set-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 14px; font-weight: bold; }
     
     #bang-danh-muc { table-layout: fixed; }
-    /* NÂNG CẤP: Cố định Cột đầu tiên của bảng Excel */
     #bang-danh-muc th:first-child { position: sticky; left: 0; z-index: 12; background: var(--primary-color); color: #fff; }
     #bang-danh-muc td:first-child { position: sticky; left: 0; z-index: 11; background: var(--bg-card); font-weight: bold; border-right: 2px solid var(--border-light); }
-    
     #bang-danh-muc th { background: var(--primary-color); color: #fff; position: sticky; top: 0; z-index: 10; font-weight: 800; font-size: 14px;}
     #bang-danh-muc td { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
 
@@ -241,7 +239,7 @@
     .btn-down { background: rgba(255, 149, 0, 0.15); color: var(--warning-color); }
     .btn-sort:active { transform: scale(0.9); }
 
-    /* ================== MODULE TÀI CHÍNH (CSS) ================== */
+    /* ================== MODULE TÀI CHÍNH ================== */
     .btn-icon-ios {
       width: 38px; height: 38px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 50%;
       font-size: 16px; display: flex; align-items: center; justify-content: center;
@@ -326,7 +324,7 @@
       border-radius: 24px 24px 0 0; padding: 20px 16px 40px 16px;
       overflow-y: auto;
       transform: translateY(100%); 
-      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Spring Effect */
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .modal-overlay.show .modal-content { transform: translateY(0); }
     
@@ -351,6 +349,29 @@
     .dialog-message { font-size: 15px; color: var(--text-sub); margin: 0 0 20px 0; line-height: 1.4; }
     .dialog-buttons { display: flex; gap: 10px; margin-top: 20px;}
     .btn-dialog { flex: 1; padding: 12px; border-radius: 10px; font-weight: bold; border: none; font-size: 15px; cursor: pointer;}
+
+    /* ================== CSS CHO MODAL NHẬP LIỆU MỚI ================== */
+    .segmented-control { display: flex; background: var(--input-bg); border-radius: 12px; padding: 4px; margin-bottom: 15px;}
+    .seg-item { flex: 1; text-align: center; padding: 10px 4px; font-size: 13px; font-weight: 700; color: var(--text-main); border-radius: 10px; cursor: pointer; transition: 0.3s;}
+    .seg-item.active { background: var(--bg-card); box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: var(--primary-color); }
+    .input-view { display: none; animation: fadeIn 0.3s ease; }
+    .input-view.active { display: block; }
+
+    .tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; margin-bottom: 10px;}
+    .tag-chip { padding: 8px 14px; background: var(--input-bg); border: 1px solid var(--border-light); border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-main); cursor: pointer; transition: 0.2s;}
+    .tag-chip.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+    .debt-check-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--input-bg); border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border-light);}
+    .debt-check-item label { margin: 0; flex: 1; display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-main); font-weight: 600;}
+    .debt-check-item input[type="checkbox"] { transform: scale(1.3); accent-color: var(--primary-color); }
+    .debt-amt-badge { font-weight: 800; color: var(--danger-color); font-size: 15px;}
+    
+    .form-input-box {
+      width: 100%; padding: 12px; font-size: 16px; text-align: left; 
+      border-radius: 12px; border: 1px solid var(--border-light); background: var(--input-bg); color: var(--text-main);
+      box-sizing: border-box; appearance: none; -webkit-appearance: none; margin-bottom: 10px;
+    }
+    .form-input-box:focus { outline: none; border-color: var(--primary-color); }
   </style>
 </head>
 <body>
@@ -513,7 +534,6 @@
           Đang kết nối hệ thống vệ tinh...
         </div>
 
-        <!-- KHU VỰC HIỂN THỊ KẾT QUẢ ĐƯỢC CHIA CỘT VÀ BƠM TO -->
         <div id="weather-result" class="weather-res-box" style="margin-top: 15px; padding: 25px 15px;">
           <div style="display: flex; justify-content: space-around; align-items: center;">
             <div style="flex: 1;">
@@ -542,7 +562,6 @@
       <div id="panel-cai-dat-danh-muc" class="setting-panel">
         <div style="text-align: center; color: var(--warning-color); font-weight: 800; margin-bottom: 10px;">CÀI ĐẶT BẢNG</div>
         
-        <!-- NÂNG CẤP: Ô TỰ ĐIỀN CỠ CHỮ (Cho phép nhập thập phân) -->
         <div class="set-row">
           <span>Cỡ chữ (px):</span>
           <input type="number" id="set-fontsize" step="0.25" placeholder="VD: 10.5" style="width: 100px !important; padding: 8px !important; font-size: 16px !important; border-radius:6px; background:var(--input-bg); border: 1px solid var(--border-light); color:var(--text-main);" value="14">
@@ -567,6 +586,10 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2 style="margin: 0; color: var(--primary-color); font-weight: 800; font-size: var(--fs-header); letter-spacing: -0.5px;">TÀI CHÍNH</h2>
         <div style="display: flex; gap: 10px;">
+          
+          <!-- NÚT GỌI FORM NHẬP MỚI ĐƯỢC CHÈN VÀO ĐÂY -->
+          <button class="btn-icon-ios" style="background: var(--primary-color); color: white;" onclick="openInputModal()">+</button>
+          
           <button id="btn-update-finance" class="btn-icon-ios" onclick="fetchAllFinanceData()">🔄</button>
           <button class="btn-icon-ios" onclick="openFinanceSettings(); haptic();">⚙️</button>
         </div>
@@ -610,7 +633,7 @@
       </div>
     </div>
 
-    <!-- TAB CÀI ĐẶT NÂNG CẤP BACKUP -->
+    <!-- TAB CÀI ĐẶT -->
     <div id="tab-cai-dat" class="tab-content container">
       <div class="card">
           <h3 class="card-title" style="color:var(--success-color);">HỆ THỐNG</h3>
@@ -632,7 +655,6 @@
         <button onclick="luuCaiDatApp()" class="btn" style="background:var(--primary-color); padding:12px; margin-top: 10px;">LƯU BẢO MẬT</button>
       </div>
 
-      <!-- TÍNH NĂNG SAO LƯU & KHÔI PHỤC TOÀN CỤC -->
       <div class="card">
         <h3 class="card-title" style="color:#AF52DE;">📦 SAO LƯU & KHÔI PHỤC</h3>
         <p style="font-size: 12px; color: var(--text-sub); text-align: center; margin-bottom: 15px;">Phòng chống bị Safari xóa trắng dữ liệu (Lịch sử, Cài đặt, Excel).</p>
@@ -662,7 +684,7 @@
     <div class="scrollable-tabs" id="main-tab-container"></div>
   </div>
 
-  <!-- CÁC MODAL DIALOG (HIỆU ỨNG NẢY) -->
+  <!-- CÁC MODAL DIALOG -->
   <div id="fin-bottom-modal" class="modal-overlay" onclick="if(event.target === this) closeFinanceModal()">
     <div class="modal-content">
       <div class="pull-bar"></div>
@@ -692,6 +714,102 @@
     </div>
   </div>
 
+  <!-- MODAL NHẬP LIỆU TÀI CHÍNH -->
+  <div id="input-modal" class="modal-overlay" onclick="if(event.target === this) closeInputModal()">
+    <div class="modal-content">
+      <div class="pull-bar"></div>
+      <div class="modal-head">
+        <h3 class="modal-title" style="color: var(--text-main);">Nhập Giao Dịch</h3>
+        <button class="btn-close-modal" onclick="closeInputModal()">✕</button>
+      </div>
+      
+      <!-- Segmented Control -->
+      <div class="segmented-control">
+        <div id="seg-cn" class="seg-item active" onclick="switchInputTab('cn')">Cá Nhân</div>
+        <div id="seg-cc" class="seg-item" onclick="switchInputTab('cc')">Chi Chung</div>
+        <div id="seg-cv" class="seg-item" onclick="switchInputTab('cv')">Cho Vay</div>
+        <div id="seg-tn" class="seg-item" onclick="switchInputTab('tn')">Trả Nợ</div>
+      </div>
+
+      <!-- VIEW 1: CÁ NHÂN -->
+      <div id="inp-view-cn" class="input-view active">
+        <label>Nội dung:</label>
+        <input type="text" id="inp-cn-content" class="form-input-box" placeholder="VD: Ăn sáng, Đổ xăng..." />
+        
+        <div class="tag-container">
+          <div class="tag-chip" onclick="setPersonalTag('Ăn sáng', 25, this)">Ăn sáng</div>
+          <div class="tag-chip" onclick="setPersonalTag('Cơm trưa', 35, this)">Cơm trưa</div>
+          <div class="tag-chip" onclick="setPersonalTag('Cafe', 20, this)">Cafe</div>
+          <div class="tag-chip" onclick="setPersonalTag('Xăng xe', 50, this)">Xăng xe</div>
+          <div class="tag-chip" onclick="setPersonalTag('Đi chợ', 100, this)">Đi chợ</div>
+        </div>
+        
+        <label>Số tiền (K):</label>
+        <input type="number" id="inp-cn-amount" class="form-input-box" placeholder="Nhập số tiền..." inputmode="numeric" />
+      </div>
+
+      <!-- VIEW 2: CHI CHUNG -->
+      <div id="inp-view-cc" class="input-view">
+        <label>Nội dung / Tên bữa tiệc:</label>
+        <input type="text" id="inp-cc-content" class="form-input-box" placeholder="VD: Nhậu, Tiền điện..." />
+
+        <label>Tổng Bill (K):</label>
+        <input type="number" id="inp-cc-total" class="form-input-box" placeholder="VD: 300" inputmode="numeric" />
+        
+        <label>Người tham gia (Bao gồm cả bạn):</label>
+        <input type="text" id="inp-cc-participants" class="form-input-box" placeholder="A, B, C..." />
+        <div class="tag-container" id="tags-cc-participants"></div>
+
+        <label>Người trả tiền:</label>
+        <select id="inp-cc-payer" class="form-input-box">
+          <option value="Tôi">Tôi (Bạn đã trả)</option>
+        </select>
+        <div id="cc-payer-amount-box" style="display: none; margin-top: 10px;">
+             <label>Số tiền người này đã chi (K):</label>
+             <input type="number" id="inp-cc-payer-amount" class="form-input-box" placeholder="VD: 300" />
+        </div>
+      </div>
+
+      <!-- VIEW 3: CHO VAY -->
+      <div id="inp-view-cv" class="input-view">
+        <label>Người vay:</label>
+        <input type="text" id="inp-cv-person" class="form-input-box" placeholder="Nhập tên người vay" />
+        <div class="tag-container" id="tags-cv-person"></div>
+        
+        <label>Lý do / Nội dung (Tùy chọn):</label>
+        <input type="text" id="inp-cv-reason" class="form-input-box" placeholder="VD: Mượn đóng tiền nhà..." />
+
+        <label>Số tiền (K):</label>
+        <input type="number" id="inp-cv-amount" class="form-input-box" placeholder="VD: 500" inputmode="numeric" />
+      </div>
+
+      <!-- VIEW 4: TRẢ NỢ -->
+      <div id="inp-view-tn" class="input-view">
+        <label>Ai đang trả nợ cho bạn?</label>
+        <div class="tag-container" id="tags-tn-person">
+          <div style="font-size: 13px; color:var(--text-sub);">Đang tải danh sách nợ...</div>
+        </div>
+
+        <div id="tn-debt-container" style="display: none; margin-top: 15px; background: var(--bg-card); padding: 15px; border-radius: 12px; border: 1px solid var(--border-light);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">
+                <span id="tn-selected-name" style="font-weight: bold; color: var(--primary-color);">Người nợ</span>
+                <label style="display: flex; align-items: center; gap: 6px; margin: 0; font-size: 13px; color: var(--primary-color); cursor: pointer;">
+                    <input type="checkbox" id="chk-tn-all" onchange="selectAllDebts(this)"> Chọn hết
+                </label>
+            </div>
+            <div id="tn-debt-items-list" style="max-height: 200px; overflow-y: auto;"></div>
+
+            <label style="margin-top: 15px; color: var(--success-color);">Tổng tiền thanh toán (K):</label>
+            <input type="number" id="inp-tn-amount" class="form-input-box" readonly style="color: var(--success-color); font-weight: bold;" value="0" />
+        </div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <button class="btn" id="btn-submit-tx" onclick="submitTransaction()">LƯU GIAO DỊCH</button>
+      </div>
+    </div>
+  </div>
+
 <script>
   // ==========================================
   // HAPTIC TOUCH & GLOBAL STATE
@@ -704,7 +822,7 @@
     weather: { lat: 21.52, lon: 106.31, searchTimeout: null },
     excel: { data: [], config: { fontSize: 14, cot: {} } },
     schedule: { clickCount: 0, clickTimer: null },
-    finance: { expenseChartInstance: null, allFinanceRawData: { listCaNhan: [], listChiChung: [], tongNo: [] }, isHidden: true, trueDebtValue: "0K" }
+    finance: { expenseChartInstance: null, allFinanceRawData: { listCaNhan: [], listChiChung: [], tongNo: [] }, isHidden: true, trueDebtValue: "0K", knownNames: new Set() }
   };
 
   const DEFAULT_FINANCE_API_URL = "https://script.google.com/macros/s/AKfycbwr7GWM6XzgeA1YUZ9TrFq71ysJpKnGxoaBFCoVW_JG97Mj2ny_o0xleytM_1bkRzpb_A/exec";
@@ -745,20 +863,20 @@
     } else { 
        moKhoaThanhCong(); 
     }
+
+    // Sự kiện cho modal nhập liệu chi chung
+    let ccPayer = document.getElementById('inp-cc-payer');
+    if(ccPayer) {
+        ccPayer.addEventListener('change', function(e) {
+            document.getElementById('cc-payer-amount-box').style.display = e.target.value !== 'Tôi' ? 'block' : 'none';
+        });
+    }
   });
 
   // ==========================================
   // HELPER FUNCTIONS
   // ==========================================
-  function capNhatApp() {
-      haptic();
-      if(confirm("Ứng dụng sẽ tự làm mới để cập nhật các thay đổi mới nhất từ máy chủ?")) {
-          const url = new URL(window.location.href);
-          url.searchParams.set('v', Date.now()); 
-          window.location.replace(url.toString());
-      }
-  }
-
+  function capNhatApp() { haptic(); if(confirm("Ứng dụng sẽ tự làm mới để cập nhật các thay đổi mới nhất từ máy chủ?")) { const url = new URL(window.location.href); url.searchParams.set('v', Date.now()); window.location.replace(url.toString()); } }
   function formatTime(mins) { let h = Math.floor(mins/60); let m = mins % 60; return (h<10?'0'+h:h) + ':' + (m<10?'0'+m:m); }
   function parseTime(t) { let p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); }
   function addMinutes(timeStr, mins) { let parts = timeStr.split(':'); let h = parseInt(parts[0], 10); let m = parseInt(parts[1], 10); m += mins; h += Math.floor(m / 60); m = m % 60; return (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m); }
@@ -766,8 +884,7 @@
   function taoDayThoiGianTheoThuTu(baseMin, isForward, numHouses) { let t = []; let c = baseMin; for(let i = 0; i < numHouses; i++) { t.push(c); let s = getRandom(5,10); c = isForward ? c + s : c - s; } return t.sort((a,b) => a - b); }
   function formatMoney(num) { if (!num && num !== 0) return '0K'; return Number(Math.round(num)).toLocaleString('vi-VN') + 'K'; }
   function parseDateVN_Finance(dateStr) { if (!dateStr || typeof dateStr !== 'string') return 0; const parts = dateStr.split('/'); if (parts.length === 3) { return new Date(parts[2], parts[1]-1, parts[0]).getTime(); } return 0; }
-
-  // Custom Dialog
+  
   window.showDialog = function(title, message, type, confirmCallback, defaultValue = '') {
       haptic();
       document.getElementById('dialog-title').innerText = title; document.getElementById('dialog-message').innerHTML = message; 
@@ -841,7 +958,6 @@
   function xoaLichSuChiaGio() { showDialog("Cảnh báo", "Bạn có muốn xóa toàn bộ lịch sử Chia giờ không?", "confirm", () => { localStorage.removeItem('lichSuChiaGio'); showDialog("Thành công", "Đã xóa Lịch sử chia giờ!", "alert"); }); }
   function xoaDuLieuExcel() { showDialog("Cảnh báo", "Bạn có muốn xóa dữ liệu Excel đã tải lên không?", "confirm", () => { localStorage.removeItem('duLieuExcelOffline'); localStorage.removeItem('cauHinhBangExcel'); showDialog("Thành công", "Đã xóa dữ liệu Danh mục!", "alert", () => location.reload()); }); }
 
-  /* TÍNH NĂNG SAO LƯU KHÔI PHỤC TOÀN CỤC */
   function exportToJSON() {
       haptic();
       let data = {
@@ -1012,47 +1128,268 @@
   function taoCauHinhMacDinh() { let cacCot = Object.keys(STATE.excel.data[0]).filter(c => !c.startsWith('__EMPTY')); let defaultWidth = Math.floor(100 / cacCot.length); STATE.excel.config.cot = {}; cacCot.forEach(c => { STATE.excel.config.cot[c] = { show: true, width: defaultWidth }; }); if(cacCot[0]) STATE.excel.config.cot[cacCot[0]].width = 50; localStorage.setItem('cauHinhBangExcel', JSON.stringify(STATE.excel.config)); }
   function toggleCaiDatDanhMuc() { haptic(); let panel = document.getElementById('panel-cai-dat-danh-muc'); if(panel.style.display === 'block') { panel.style.display = 'none'; return; } if(STATE.excel.data.length === 0) { showDialog("Lỗi", "Vui lòng tải file Excel lên trước!", "alert"); return; } document.getElementById('set-fontsize').value = STATE.excel.config.fontSize; let htmlCaiDatCot = Object.keys(STATE.excel.config.cot).map(tenCot => { if (tenCot.startsWith('__EMPTY')) return ''; let isChecked = STATE.excel.config.cot[tenCot].show ? "checked" : ""; let widthVal = STATE.excel.config.cot[tenCot].width; return `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; font-size:12px; font-weight:bold;"><label style="margin:0; display:flex; align-items:center; flex:1; cursor:pointer;"><input type="checkbox" id="chk-${tenCot}" style="transform:scale(1.3); margin-right:10px;" onchange="chuyenPhanTramTuDong('${tenCot}')" ${isChecked}> ${tenCot}</label><div style="display:flex; align-items:center;"><input type="number" id="width-${tenCot}" value="${widthVal}" style="width:60px; padding:4px; margin-bottom:0;" ${!STATE.excel.config.cot[tenCot].show ? 'disabled style="background:var(--bg-body);"' : ''}> <span style="margin-left:5px;">%</span></div></div>`; }).join(''); document.getElementById('danh-sach-cot-cai-dat').innerHTML = htmlCaiDatCot; panel.style.display = 'block'; }
   function chuyenPhanTramTuDong(cotNay) { let chk = document.getElementById('chk-' + cotNay); let inp = document.getElementById('width-' + cotNay); let soPhanTramHienTai = parseInt(inp.value) || 0; let tatCaCacCot = Object.keys(STATE.excel.config.cot).filter(c => !c.startsWith('__EMPTY')); let viTriHienTai = tatCaCacCot.indexOf(cotNay); if (!chk.checked) { inp.value = 0; inp.disabled = true; inp.style.background = "var(--bg-body)"; let daTimThayCotNhan = false; for (let i = viTriHienTai + 1; i < tatCaCacCot.length; i++) { let chkTiepTheo = document.getElementById('chk-' + tatCaCacCot[i]); if (chkTiepTheo && chkTiepTheo.checked) { let inpTiepTheo = document.getElementById('width-' + tatCaCacCot[i]); inpTiepTheo.value = (parseInt(inpTiepTheo.value) || 0) + soPhanTramHienTai; daTimThayCotNhan = true; break; } } if (!daTimThayCotNhan) { for (let i = viTriHienTai - 1; i >= 0; i--) { let chkPhiaTruoc = document.getElementById('chk-' + tatCaCacCot[i]); if (chkPhiaTruoc && chkPhiaTruoc.checked) { let inpPhiaTruoc = document.getElementById('width-' + tatCaCacCot[i]); inpPhiaTruoc.value = (parseInt(inpPhiaTruoc.value) || 0) + soPhanTramHienTai; break; } } } } else { inp.disabled = false; inp.style.background = "var(--input-bg)"; } }
-  function luuCaiDatDanhMuc() { 
-      haptic(); 
-      let rawFontSize = document.getElementById('set-fontsize').value;
-      if(typeof rawFontSize === 'string') rawFontSize = rawFontSize.replace(',', '.');
-      STATE.excel.config.fontSize = parseFloat(rawFontSize) || 14; 
-      
-      Object.keys(STATE.excel.config.cot).forEach(tenCot => { 
-          if(tenCot.startsWith('__EMPTY')) return; 
-          let el = document.getElementById(`chk-${tenCot}`); 
-          if(el) { 
-              STATE.excel.config.cot[tenCot].show = el.checked; 
-              let widthInput = parseInt(document.getElementById(`width-${tenCot}`).value); 
-              STATE.excel.config.cot[tenCot].width = isNaN(widthInput) ? 0 : widthInput; 
-          } 
-      }); 
-      localStorage.setItem('cauHinhBangExcel', JSON.stringify(STATE.excel.config)); 
-      document.getElementById('panel-cai-dat-danh-muc').style.display = 'none'; 
-      timKiemDanhMuc(); 
-  }
-  function hienThiBangDanhMuc(data) { let thead = document.getElementById('dm-header'); let tbody = document.getElementById('dm-body'); if (!data || data.length === 0) { thead.innerHTML = "<th>DỮ LIỆU</th>"; tbody.innerHTML = "<tr><td style='color:var(--text-sub); padding: 20px; text-align:center;'>Không tìm thấy kết quả.</td></tr>"; return; } let cotHienThi = Object.keys(STATE.excel.config.cot).filter(c => STATE.excel.config.cot[c].show && !c.startsWith('__EMPTY')); thead.innerHTML = cotHienThi.map(cot => `<th style="width: ${STATE.excel.config.cot[cot].width}%;">${cot}</th>`).join(''); let fontSize = STATE.excel.config.fontSize + "px"; let htmlNoiDung = data.map(hang => { let cacOCuaHang = cotHienThi.map(cot => { let align = cotHienThi.indexOf(cot) === 0 ? "left" : "center"; return `<td style="text-align: ${align}; font-size: ${fontSize};">${hang[cot] !== undefined ? hang[cot] : ''}</td>`; }).join(''); return `<tr>${cacOCuaHang}</tr>`; }).join(''); tbody.innerHTML = htmlNoiDung; }
+  function luuCaiDatDanhMuc() { haptic(); let rawFontSize = document.getElementById('set-fontsize').value; if(typeof rawFontSize === 'string') rawFontSize = rawFontSize.replace(',', '.'); STATE.excel.config.fontSize = parseFloat(rawFontSize) || 14; Object.keys(STATE.excel.config.cot).forEach(tenCot => { if(tenCot.startsWith('__EMPTY')) return; let el = document.getElementById(`chk-${tenCot}`); if(el) { STATE.excel.config.cot[tenCot].show = el.checked; let widthInput = parseInt(document.getElementById(`width-${tenCot}`).value); STATE.excel.config.cot[tenCot].width = isNaN(widthInput) ? 0 : widthInput; } }); localStorage.setItem('cauHinhBangExcel', JSON.stringify(STATE.excel.config)); document.getElementById('panel-cai-dat-danh-muc').style.display = 'none'; timKiemDanhMuc(); }
+  function hienThiBangDanhMuc(data) { let thead = document.getElementById('dm-header'); let tbody = document.getElementById('dm-body'); if (!data || data.length === 0) { thead.innerHTML = "<th>DỮ LIỆU</th>"; tbody.innerHTML = "<tr><td style='color:var(--text-sub); padding: 30px; text-align: center;'>Chưa có dữ liệu.<br><br>Bấm nút <b>+</b> để tải file Excel.</td></tr>"; return; } let cotHienThi = Object.keys(STATE.excel.config.cot).filter(c => STATE.excel.config.cot[c].show && !c.startsWith('__EMPTY')); thead.innerHTML = cotHienThi.map(cot => `<th style="width: ${STATE.excel.config.cot[cot].width}%;">${cot}</th>`).join(''); let fontSize = STATE.excel.config.fontSize + "px"; let htmlNoiDung = data.map(hang => { let cacOCuaHang = cotHienThi.map(cot => { let align = cotHienThi.indexOf(cot) === 0 ? "left" : "center"; return `<td style="text-align: ${align}; font-size: ${fontSize};">${hang[cot] !== undefined ? hang[cot] : ''}</td>`; }).join(''); return `<tr>${cacOCuaHang}</tr>`; }).join(''); tbody.innerHTML = htmlNoiDung; }
   function timKiemDanhMuc() { let tuKhoa = document.getElementById('search-danh-muc').value.toLowerCase(); if (!tuKhoa) { hienThiBangDanhMuc(STATE.excel.data); return; } let ketQua = STATE.excel.data.filter(hang => { return Object.values(hang).some(giaTri => String(giaTri).toLowerCase().includes(tuKhoa)); }); hienThiBangDanhMuc(ketQua); }
 
   // ==========================================
-  // MODULE TÀI CHÍNH
+  // MODULE TÀI CHÍNH GỐC
   // ==========================================
-  function initFinanceDateSelectors() { const d = new Date(); document.getElementById('finMonthSelect').value = (d.getMonth() + 1).toString(); const ySel = document.getElementById('finYearSelect'); let optionsHtml = ''; for(let i = d.getFullYear() - 2; i <= d.getFullYear() + 2; i++) { optionsHtml += `<option value="${i}" ${i === d.getFullYear() ? 'selected' : ''}>${i}</option>`; } ySel.innerHTML = optionsHtml; }
   function getCleanUrl_Finance() { let url = localStorage.getItem('gasWebAppUrl'); if (!url) return null; url = url.trim(); if (!url.startsWith('http')) url = 'https://' + url; if (url.includes('/edit')) url = url.substring(0, url.indexOf('/edit')) + '/exec'; return url; }
   function openFinanceSettings() { document.getElementById('gas-url-modal').value = localStorage.getItem('gasWebAppUrl') || ''; document.getElementById('inp-budget').value = localStorage.getItem('myBudget') || ''; let modal = document.getElementById('fin-settings-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('show'), 10); }
   function closeFinanceSettings() { haptic(); let modal = document.getElementById('fin-settings-modal'); modal.classList.remove('show'); setTimeout(() => modal.style.display = 'none', 300); }
   function saveFinanceSettings() { haptic(); const url = document.getElementById('gas-url-modal').value.trim(); const budget = document.getElementById('inp-budget').value.trim(); if(!url) { showDialog("Lỗi", "Vui lòng nhập link Google Script!", "alert"); return; } localStorage.setItem('gasWebAppUrl', url); localStorage.setItem('myBudget', budget); closeFinanceSettings(); fetchAllFinanceData(); }
-  async function fetchAllFinanceData() { haptic(); let url = getCleanUrl_Finance(); if (!url) return; let iconSpin = document.getElementById('btn-update-finance'); if(iconSpin) iconSpin.classList.add('spin'); try { const response = await fetch(`${url}?action=getAllData`); if (!response.ok) throw new Error('HTTP error'); const data = await response.json(); if (data.status === 'success') { const rawData = data.data || {}; rawData.listCaNhan = rawData.listCaNhan || []; rawData.listChiChung = rawData.listChiChung || []; rawData.tongNo = rawData.tongNo || []; rawData.listCaNhan.forEach((item, idx) => item.originalIndex = idx); rawData.listChiChung.forEach((item, idx) => item.originalIndex = idx); rawData.tongNo.forEach(person => { if(person.loans) person.loans.forEach((l, idx) => l.originalIndex = idx); if(person.commonExpenses) person.commonExpenses.forEach((c, idx) => c.originalIndex = idx); }); STATE.finance.allFinanceRawData = rawData; if (document.getElementById('tab-tai-chinh').classList.contains('active')) { renderFinanceUI(); } } } catch (e) { console.error("Lỗi API:", e); } finally { if(iconSpin) iconSpin.classList.remove('spin'); } }
-  function renderFinanceUI() { const { listCaNhan, listChiChung, tongNo } = STATE.finance.allFinanceRawData; const selMonth = document.getElementById('finMonthSelect').value; const selYear = document.getElementById('finYearSelect').value; const isMatch = (dateStr) => { const d = parseDateVN_Finance(dateStr); if (!d) return false; const dt = new Date(d); return (selMonth === "" ? true : (dt.getMonth() + 1).toString() === selMonth) && (dt.getFullYear().toString() === selYear); }; const filteredCN = listCaNhan.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Cá nhân'})); const filteredCC = listChiChung.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Chi chung'})); const totalCN = filteredCN.reduce((a, b) => a + (b.amount || 0), 0); const totalCC = filteredCC.reduce((a, b) => a + (b.amount || 0), 0); const totalExpense = totalCN + totalCC; const totalDebt = tongNo.reduce((a, b) => a + (b.total || 0), 0); renderFinanceSummaryCards(totalCN, totalCC, totalDebt); renderFinanceBudgetCard(totalExpense); renderFinanceDebtSection(tongNo); renderFinanceRecentTransactions(filteredCN, filteredCC); renderFinanceChart(filteredCN); }
-  function renderFinanceSummaryCards(totalCN, totalCC, totalDebt) { document.getElementById('val-cn').innerText = formatMoney(totalCN); document.getElementById('val-cc').innerText = formatMoney(totalCC); STATE.finance.trueDebtValue = formatMoney(totalDebt); if (!STATE.finance.isHidden) { document.getElementById('total-debt-lbl').innerText = STATE.finance.trueDebtValue; } else { document.getElementById('total-debt-lbl').innerText = "****** ₫"; } }
-  function renderFinanceBudgetCard(totalExpense) { let budget = parseFloat(localStorage.getItem('myBudget')) || 0; let budgetCard = document.getElementById('budget-card'); if (budget > 0) { document.getElementById('total-expense-lbl').innerText = formatMoney(totalExpense); let pct = Math.min((totalExpense / budget) * 100, 100); let pBar = document.getElementById('budget-progress-bar'); pBar.style.width = pct + '%'; pBar.style.backgroundColor = pct >= 100 ? 'var(--danger-color)' : (pct >= 80 ? 'var(--warning-color)' : 'var(--success-color)'); document.getElementById('budget-status-lbl').innerText = `Dự chi: ${formatMoney(budget)}`; let leftLbl = document.getElementById('budget-left-lbl'); if (totalExpense > budget) { leftLbl.innerText = `Vượt: ${formatMoney(totalExpense - budget)}`; leftLbl.style.color = 'var(--danger-color)'; } else { leftLbl.innerText = `Còn lại: ${formatMoney(budget - totalExpense)}`; leftLbl.style.color = 'var(--text-sub)'; } budgetCard.style.display = 'block'; } else { budgetCard.style.display = 'none'; } }
-  function renderFinanceDebtSection(tongNo) { const container = document.getElementById('debt-list-container'); const hiddenMsg = document.getElementById('debt-hidden-msg'); if (STATE.finance.isHidden) { container.style.display = 'none'; hiddenMsg.style.display = 'block'; } else { container.style.display = 'block'; hiddenMsg.style.display = 'none'; } if (!tongNo || tongNo.length === 0) { container.innerHTML = '<div style="text-align:center; padding: 20px; color:var(--text-sub);">Không có khoản nợ nào.</div>'; return; } container.innerHTML = tongNo.map((item, index) => `<div class="debt-card-ios" onclick="openFinanceDebtModal(${index})"><div class="debt-name-col"><span class="debt-avatar">👤</span><span>${item.name}</span></div><div class="debt-amt-col"><span class="debt-amt-val">${formatMoney(item.total)}</span><span class="debt-amt-arrow">❯</span></div></div>`).join(''); }
-  function renderFinanceRecentTransactions(filteredCN, filteredCC) { const container = document.getElementById('recent-tx-container'); let allRecent = [...filteredCN, ...filteredCC].sort((a, b) => { let diff = parseDateVN_Finance(b.date) - parseDateVN_Finance(a.date); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); }).slice(0, 20); if(allRecent.length === 0) { container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-sub);">Chưa có giao dịch nào.</div>'; return; } container.innerHTML = allRecent.map(tx => { let isCN = tx.txType === 'Cá nhân'; let iconClass = isCN ? 'cn' : 'cc'; let iconChar = isCN ? '💸' : '👥'; return `<div class="recent-tx-item"><div class="rtx-left"><div class="rtx-icon ${iconClass}">${iconChar}</div><div class="rtx-info"><span class="rtx-title">${tx.content || 'Chi tiêu'}</span><span class="rtx-date">${tx.date} • ${tx.txType}</span></div></div><span class="rtx-amount">${formatMoney(tx.amount)}</span></div>`; }).join(''); }
-  function renderFinanceChart(cnData) { const canvas = document.getElementById('expenseChart'); if(!canvas) return; const ctx = canvas.getContext('2d'); if (STATE.finance.expenseChartInstance) STATE.finance.expenseChartInstance.destroy(); if(cnData.length === 0) { STATE.finance.expenseChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: ['Trống'], datasets: [{ data: [1], backgroundColor: ['var(--border-light)'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: {display:false}, tooltip:{enabled:false} } } }); return; } let groups = {}; cnData.forEach(i => { groups[i.content || 'Khác'] = (groups[i.content || 'Khác'] || 0) + i.amount; }); let sortedArr = Object.keys(groups).map(k => ({ label: k, value: groups[k] })).sort((a, b) => b.value - a.value); let labels = [], data = [], otherVal = 0; sortedArr.forEach((item, index) => { if(index < 9) { labels.push(item.label); data.push(item.value); } else { otherVal += item.value; } }); if(otherVal > 0) { labels.push('Khác'); data.push(otherVal); } STATE.finance.expenseChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#007AFF', '#FF3B30', '#34C759', '#FF9500', '#AF52DE', '#5AC8FA', '#FF2D55', '#5856D6', '#FFCC00', '#8E8E93'], borderWidth: 2, borderColor: 'var(--bg-card)', hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: 'bottom', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-main'), padding: 20, font: {family: '-apple-system', size: 12, weight: 'bold'} } }, datalabels: { color: '#fff', font: { weight: 'bold', size: 13 }, formatter: (v, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0); let pct = Math.round(v/sum*100); return pct >= 5 ? pct + '%' : ''; } } } } }); }
+  
+  async function fetchAllFinanceData() { 
+      haptic(); let url = getCleanUrl_Finance(); if (!url) return; 
+      let iconSpin = document.getElementById('btn-update-finance'); if(iconSpin) iconSpin.classList.add('spin'); 
+      try { 
+          const response = await fetch(`${url}?action=getAllData`); 
+          if (!response.ok) throw new Error('HTTP error'); 
+          const data = await response.json(); 
+          if (data.status === 'success') { 
+              const rawData = data.data || {}; 
+              rawData.listCaNhan = rawData.listCaNhan || []; rawData.listChiChung = rawData.listChiChung || []; rawData.tongNo = rawData.tongNo || []; 
+              rawData.listCaNhan.forEach((item, idx) => item.originalIndex = idx); rawData.listChiChung.forEach((item, idx) => item.originalIndex = idx); 
+              rawData.tongNo.forEach(person => { if(person.loans) person.loans.forEach((l, idx) => l.originalIndex = idx); if(person.commonExpenses) person.commonExpenses.forEach((c, idx) => c.originalIndex = idx); }); 
+              STATE.finance.allFinanceRawData = rawData; 
+              if (document.getElementById('tab-tai-chinh').classList.contains('active')) { renderFinanceUI(); } 
+          } 
+      } catch (e) { console.error("Lỗi API:", e); } finally { if(iconSpin) iconSpin.classList.remove('spin'); } 
+  }
+
+  function renderFinanceUI() { 
+      const { listCaNhan, listChiChung, tongNo } = STATE.finance.allFinanceRawData; 
+      const selMonth = document.getElementById('finMonthSelect').value; const selYear = document.getElementById('finYearSelect').value; 
+      const isMatch = (dateStr) => { const d = parseDateVN_Finance(dateStr); if (!d) return false; const dt = new Date(d); return (selMonth === "" ? true : (dt.getMonth() + 1).toString() === selMonth) && (dt.getFullYear().toString() === selYear); }; 
+      const filteredCN = listCaNhan.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Cá nhân'})); 
+      const filteredCC = listChiChung.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Chi chung'})); 
+      const totalCN = filteredCN.reduce((a, b) => a + (b.amount || 0), 0); const totalCC = filteredCC.reduce((a, b) => a + (b.amount || 0), 0); 
+      const totalExpense = totalCN + totalCC; const totalDebt = tongNo.reduce((a, b) => a + (b.total || 0), 0); 
+      renderFinanceSummaryCards(totalCN, totalCC, totalDebt); renderFinanceBudgetCard(totalExpense); renderFinanceDebtSection(tongNo); renderFinanceRecentTransactions(filteredCN, filteredCC); renderFinanceChart(filteredCN); 
+  }
+  
+  function renderFinanceSummaryCards(totalCN, totalCC, totalDebt) { 
+      document.getElementById('val-cn').innerText = formatMoney(totalCN); document.getElementById('val-cc').innerText = formatMoney(totalCC); 
+      STATE.finance.trueDebtValue = formatMoney(totalDebt); 
+      if (!STATE.finance.isHidden) { document.getElementById('total-debt-lbl').innerText = STATE.finance.trueDebtValue; } else { document.getElementById('total-debt-lbl').innerText = "****** ₫"; } 
+  }
+
+  function renderFinanceBudgetCard(totalExpense) { 
+      let budget = parseFloat(localStorage.getItem('myBudget')) || 0; let budgetCard = document.getElementById('budget-card'); 
+      if (budget > 0) { 
+          document.getElementById('total-expense-lbl').innerText = formatMoney(totalExpense); 
+          let pct = Math.min((totalExpense / budget) * 100, 100); let pBar = document.getElementById('budget-progress-bar'); pBar.style.width = pct + '%'; 
+          pBar.style.backgroundColor = pct >= 100 ? 'var(--danger-color)' : (pct >= 80 ? 'var(--warning-color)' : 'var(--success-color)'); 
+          document.getElementById('budget-status-lbl').innerText = `Dự chi: ${formatMoney(budget)}`; let leftLbl = document.getElementById('budget-left-lbl'); 
+          if (totalExpense > budget) { leftLbl.innerText = `Vượt: ${formatMoney(totalExpense - budget)}`; leftLbl.style.color = 'var(--danger-color)'; } else { leftLbl.innerText = `Còn lại: ${formatMoney(budget - totalExpense)}`; leftLbl.style.color = 'var(--text-sub)'; } 
+          budgetCard.style.display = 'block'; 
+      } else { budgetCard.style.display = 'none'; } 
+  }
+
+  function renderFinanceDebtSection(tongNo) { 
+      const container = document.getElementById('debt-list-container'); const hiddenMsg = document.getElementById('debt-hidden-msg'); 
+      if (STATE.finance.isHidden) { container.style.display = 'none'; hiddenMsg.style.display = 'block'; } else { container.style.display = 'block'; hiddenMsg.style.display = 'none'; } 
+      if (!tongNo || tongNo.length === 0) { container.innerHTML = '<div style="text-align:center; padding: 20px; color:var(--text-sub);">Không có khoản nợ nào.</div>'; return; } 
+      container.innerHTML = tongNo.map((item, index) => `<div class="debt-card-ios" onclick="openFinanceDebtModal(${index})"><div class="debt-name-col"><span class="debt-avatar">👤</span><span>${item.name}</span></div><div class="debt-amt-col"><span class="debt-amt-val">${formatMoney(item.total)}</span><span class="debt-amt-arrow">❯</span></div></div>`).join(''); 
+  }
+
+  function renderFinanceRecentTransactions(filteredCN, filteredCC) { 
+      const container = document.getElementById('recent-tx-container'); 
+      let allRecent = [...filteredCN, ...filteredCC].sort((a, b) => { let diff = parseDateVN_Finance(b.date) - parseDateVN_Finance(a.date); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); }).slice(0, 20); 
+      if(allRecent.length === 0) { container.innerHTML = '<div style="text-align:center; padding:15px; color:var(--text-sub);">Chưa có giao dịch nào.</div>'; return; } 
+      container.innerHTML = allRecent.map(tx => { let isCN = tx.txType === 'Cá nhân'; let iconClass = isCN ? 'cn' : 'cc'; let iconChar = isCN ? '💸' : '👥'; return `<div class="recent-tx-item"><div class="rtx-left"><div class="rtx-icon ${iconClass}">${iconChar}</div><div class="rtx-info"><span class="rtx-title">${tx.content || 'Chi tiêu'}</span><span class="rtx-date">${tx.date} • ${tx.txType}</span></div></div><span class="rtx-amount">${formatMoney(tx.amount)}</span></div>`; }).join(''); 
+  }
+
+  function renderFinanceChart(cnData) { 
+      const canvas = document.getElementById('expenseChart'); if(!canvas) return; const ctx = canvas.getContext('2d'); 
+      if (STATE.finance.expenseChartInstance) STATE.finance.expenseChartInstance.destroy(); 
+      if(cnData.length === 0) { STATE.finance.expenseChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: ['Trống'], datasets: [{ data: [1], backgroundColor: ['var(--border-light)'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: {display:false}, tooltip:{enabled:false} } } }); return; } 
+      let groups = {}; cnData.forEach(i => { groups[i.content || 'Khác'] = (groups[i.content || 'Khác'] || 0) + i.amount; }); 
+      let sortedArr = Object.keys(groups).map(k => ({ label: k, value: groups[k] })).sort((a, b) => b.value - a.value); 
+      let labels = [], data = [], otherVal = 0; sortedArr.forEach((item, index) => { if(index < 9) { labels.push(item.label); data.push(item.value); } else { otherVal += item.value; } }); if(otherVal > 0) { labels.push('Khác'); data.push(otherVal); } 
+      STATE.finance.expenseChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#007AFF', '#FF3B30', '#34C759', '#FF9500', '#AF52DE', '#5AC8FA', '#FF2D55', '#5856D6', '#FFCC00', '#8E8E93'], borderWidth: 2, borderColor: 'var(--bg-card)', hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: 'bottom', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-main'), padding: 20, font: {family: '-apple-system', size: 12, weight: 'bold'} } }, datalabels: { color: '#fff', font: { weight: 'bold', size: 13 }, formatter: (v, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0); let pct = Math.round(v/sum*100); return pct >= 5 ? pct + '%' : ''; } } } } }); 
+  }
+
   function toggleDebt() { haptic(); STATE.finance.isHidden = !STATE.finance.isHidden; document.getElementById('total-debt-lbl').innerText = STATE.finance.isHidden ? "****** ₫" : (STATE.finance.trueDebtValue || "0K"); if (STATE.finance.isHidden) { document.getElementById('debt-list-container').style.display = 'none'; document.getElementById('debt-hidden-msg').style.display = 'block'; } else { document.getElementById('debt-list-container').style.display = 'block'; document.getElementById('debt-hidden-msg').style.display = 'none'; } }
-  function openFinanceDetailModal(title, type) { haptic(); document.getElementById('fin-modal-title').innerText = title; document.getElementById('fin-modal-title').style.color = type === 'caNhan' ? 'var(--warning-color)' : 'var(--success-color)'; const selMonth = document.getElementById('finMonthSelect').value; const selYear = document.getElementById('finYearSelect').value; const isMatch = (dateStr) => { const d = parseDateVN_Finance(dateStr); if (!d) return false; const dt = new Date(d); return (selMonth === "" ? true : (dt.getMonth() + 1).toString() === selMonth) && (dt.getFullYear().toString() === selYear); }; let dataArr = type === 'caNhan' ? STATE.finance.allFinanceRawData.listCaNhan : STATE.finance.allFinanceRawData.listChiChung; dataArr = (dataArr || []).filter(i => isMatch(i.date)); if (type === 'caNhan') { let grouped = {}; dataArr.forEach(item => { let key = item.content || 'Khác'; if (!grouped[key]) { grouped[key] = { ...item, amount: 0, count: 0 }; } grouped[key].amount += item.amount; grouped[key].count += 1; }); dataArr = Object.values(grouped).sort((a, b) => b.amount - a.amount); } else { dataArr.sort((a, b) => { let diff = parseDateVN_Finance(b.date) - parseDateVN_Finance(a.date); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); }); } const container = document.getElementById('fin-modal-body'); if(dataArr.length === 0) { container.innerHTML = '<div style="text-align:center; padding: 20px; color:var(--text-sub);">Không có giao dịch trong tháng này.</div>'; } else { const color = type === 'caNhan' ? 'var(--warning-color)' : 'var(--success-color)'; container.innerHTML = dataArr.map(item => { let subText = item.totalBill ? `Tổng bill: ${formatMoney(item.totalBill)} - ${item.participants || 'Bạn'}` : (item.participants || ''); let subHtml = subText ? `<div class="tx-sub">${subText}</div>` : ''; let noteHtml = item.note ? `<div class="tx-note">${item.note}</div>` : ''; if (type === 'caNhan') { let countHtml = item.count > 1 ? `<span style="color:var(--primary-color); font-weight:bold; font-size:13px; margin-left:4px;">(x${item.count})</span>` : ''; return `<div class="tx-item"><div class="tx-left"><span class="tx-title">${item.content}${countHtml}</span></div><span class="tx-amount" style="color: ${color}">${formatMoney(item.amount)}</span></div>`; } else { return `<div class="tx-item"><div class="tx-left"><span class="tx-date" style="color: ${color}">${item.date}</span><span class="tx-title">${item.content}</span>${subHtml}${noteHtml}</div><span class="tx-amount" style="color: ${color}">${formatMoney(item.amount)}</span></div>`; } }).join(''); } let modal = document.getElementById('fin-bottom-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('show'), 10); }
-  function openFinanceDebtModal(idx) { haptic(); let person = STATE.finance.allFinanceRawData.tongNo[idx]; if(!person) return; document.getElementById('fin-modal-title').innerText = `👤 ${person.name}`; document.getElementById('fin-modal-title').style.color = 'var(--text-main)'; let htmlBlocks = [`<div style="color:var(--danger-color); font-weight:900; font-size:18px; margin-bottom:15px; padding-bottom:10px; border-bottom:1px solid var(--border-light);">Tổng nợ: ${formatMoney(person.total)}</div>`]; if (person.loans && person.loans.length > 0) { htmlBlocks.push(`<div style="font-size: 13px; font-weight: 800; color: var(--primary-color); margin-bottom: 8px;">💸 TIỀN VAY (${formatMoney(person.totalLoan)})</div>`); let sortedLoans = [...person.loans].sort((a, b) => { let diff = parseDateVN_Finance(b.time) - parseDateVN_Finance(a.time); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); }); htmlBlocks.push(sortedLoans.map(l => `<div class="tx-item"><div class="tx-left"><span class="tx-date" style="color:var(--primary-color)">${l.time || 'N/A'}</span><span class="tx-title">Cho vay</span></div><span class="tx-amount" style="color:var(--primary-color)">${formatMoney(l.amount)}</span></div>`).join('')); } if (person.commonExpenses && person.commonExpenses.length > 0) { htmlBlocks.push(`<div style="font-size: 13px; font-weight: 800; color: var(--success-color); margin-bottom: 8px; margin-top: 15px;">👥 CHI CHUNG (${formatMoney(person.totalCommon)})</div>`); let sortedCommon = [...person.commonExpenses].sort((a, b) => { let diff = parseDateVN_Finance(b.time) - parseDateVN_Finance(a.time); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); }); htmlBlocks.push(sortedCommon.map(c => { let subText = c.total ? `Tổng bill: ${formatMoney(c.total)} - ${c.participants || ''}` : (c.participants || ''); let subHtml = subText ? `<div class="tx-sub">${subText}</div>` : ''; let noteHtml = c.payerNote ? `<div class="tx-note">${c.payerNote}</div>` : ''; return `<div class="tx-item"><div class="tx-left"><span class="tx-date" style="color:var(--success-color)">${c.time || ''}</span><span class="tx-title">${c.content || 'Chi tiêu'}</span>${subHtml}${noteHtml}</div><span class="tx-amount" style="color:var(--success-color)">${formatMoney(c.amount)}</span></div>`; }).join('')); } document.getElementById('fin-modal-body').innerHTML = htmlBlocks.join(''); let modal = document.getElementById('fin-bottom-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('show'), 10); }
+  
+  function openFinanceDetailModal(title, type) { 
+      haptic(); document.getElementById('fin-modal-title').innerText = title; document.getElementById('fin-modal-title').style.color = type === 'caNhan' ? 'var(--warning-color)' : 'var(--success-color)'; 
+      const selMonth = document.getElementById('finMonthSelect').value; const selYear = document.getElementById('finYearSelect').value; 
+      const isMatch = (dateStr) => { const d = parseDateVN_Finance(dateStr); if (!d) return false; const dt = new Date(d); return (selMonth === "" ? true : (dt.getMonth() + 1).toString() === selMonth) && (dt.getFullYear().toString() === selYear); }; 
+      let dataArr = type === 'caNhan' ? STATE.finance.allFinanceRawData.listCaNhan : STATE.finance.allFinanceRawData.listChiChung; 
+      dataArr = (dataArr || []).filter(i => isMatch(i.date)); 
+      if (type === 'caNhan') { let grouped = {}; dataArr.forEach(item => { let key = item.content || 'Khác'; if (!grouped[key]) { grouped[key] = { ...item, amount: 0, count: 0 }; } grouped[key].amount += item.amount; grouped[key].count += 1; }); dataArr = Object.values(grouped).sort((a, b) => b.amount - a.amount); } else { dataArr.sort((a, b) => { let diff = parseDateVN_Finance(b.date) - parseDateVN_Finance(a.date); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); }); } 
+      const container = document.getElementById('fin-modal-body'); 
+      if(dataArr.length === 0) { container.innerHTML = '<div style="text-align:center; padding: 20px; color:var(--text-sub);">Không có giao dịch trong tháng này.</div>'; } else { const color = type === 'caNhan' ? 'var(--warning-color)' : 'var(--success-color)'; container.innerHTML = dataArr.map(item => { let subText = item.totalBill ? `Tổng bill: ${formatMoney(item.totalBill)} - ${item.participants || 'Bạn'}` : (item.participants || ''); let subHtml = subText ? `<div class="tx-sub">${subText}</div>` : ''; let noteHtml = item.note ? `<div class="tx-note">${item.note}</div>` : ''; if (type === 'caNhan') { let countHtml = item.count > 1 ? `<span style="color:var(--primary-color); font-weight:bold; font-size:13px; margin-left:4px;">(x${item.count})</span>` : ''; return `<div class="tx-item"><div class="tx-left"><span class="tx-title">${item.content}${countHtml}</span></div><span class="tx-amount" style="color: ${color}">${formatMoney(item.amount)}</span></div>`; } else { return `<div class="tx-item"><div class="tx-left"><span class="tx-date" style="color: ${color}">${item.date}</span><span class="tx-title">${item.content}</span>${subHtml}${noteHtml}</div><span class="tx-amount" style="color: ${color}">${formatMoney(item.amount)}</span></div>`; } }).join(''); } 
+      let modal = document.getElementById('fin-bottom-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('show'), 10); 
+  }
+
+  function openFinanceDebtModal(idx) { 
+      haptic(); let person = STATE.finance.allFinanceRawData.tongNo[idx]; if(!person) return; 
+      document.getElementById('fin-modal-title').innerText = `👤 ${person.name}`; document.getElementById('fin-modal-title').style.color = 'var(--text-main)'; 
+      let htmlBlocks = [`<div style="color:var(--danger-color); font-weight:900; font-size:18px; margin-bottom:15px; padding-bottom:10px; border-bottom:1px solid var(--border-light);">Tổng nợ: ${formatMoney(person.total)}</div>`]; 
+      if (person.loans && person.loans.length > 0) { htmlBlocks.push(`<div style="font-size: 13px; font-weight: 800; color: var(--primary-color); margin-bottom: 8px;">💸 TIỀN VAY (${formatMoney(person.totalLoan)})</div>`); let sortedLoans = [...person.loans].sort((a, b) => { let diff = parseDateVN_Finance(b.time) - parseDateVN_Finance(a.time); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); }); htmlBlocks.push(sortedLoans.map(l => `<div class="tx-item"><div class="tx-left"><span class="tx-date" style="color:var(--primary-color)">${l.time || 'N/A'}</span><span class="tx-title">Cho vay</span></div><span class="tx-amount" style="color:var(--primary-color)">${formatMoney(l.amount)}</span></div>`).join('')); } 
+      if (person.commonExpenses && person.commonExpenses.length > 0) { htmlBlocks.push(`<div style="font-size: 13px; font-weight: 800; color: var(--success-color); margin-bottom: 8px; margin-top: 15px;">👥 CHI CHUNG (${formatMoney(person.totalCommon)})</div>`); let sortedCommon = [...person.commonExpenses].sort((a, b) => { let diff = parseDateVN_Finance(b.time) - parseDateVN_Finance(a.time); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); }); htmlBlocks.push(sortedCommon.map(c => { let subText = c.total ? `Tổng bill: ${formatMoney(c.total)} - ${c.participants || ''}` : (c.participants || ''); let subHtml = subText ? `<div class="tx-sub">${subText}</div>` : ''; let noteHtml = c.payerNote ? `<div class="tx-note">${c.payerNote}</div>` : ''; return `<div class="tx-item"><div class="tx-left"><span class="tx-date" style="color:var(--success-color)">${c.time || ''}</span><span class="tx-title">${c.content || 'Chi tiêu'}</span>${subHtml}${noteHtml}</div><span class="tx-amount" style="color:var(--success-color)">${formatMoney(c.amount)}</span></div>`; }).join('')); } 
+      document.getElementById('fin-modal-body').innerHTML = htmlBlocks.join(''); 
+      let modal = document.getElementById('fin-bottom-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('show'), 10); 
+  }
   function closeFinanceModal() { haptic(); let modal = document.getElementById('fin-bottom-modal'); modal.classList.remove('show'); setTimeout(() => modal.style.display = 'none', 300); }
+
+  // ==========================================
+  // JAVASCRIPT CHO MODAL NHẬP LIỆU MỚI
+  // ==========================================
+  let currentInputTab = 'cn';
+  
+  function openInputModal() {
+      haptic();
+      populateInputTags();
+      let modal = document.getElementById('input-modal');
+      modal.style.display = 'flex';
+      setTimeout(() => modal.classList.add('show'), 10);
+  }
+
+  function closeInputModal() {
+      haptic();
+      let modal = document.getElementById('input-modal');
+      modal.classList.remove('show');
+      setTimeout(() => modal.style.display = 'none', 300);
+      document.getElementById('tn-debt-container').style.display = 'none';
+      document.querySelectorAll('#tags-tn-person .tag-chip').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('#inp-view-cn .tag-chip').forEach(c => c.classList.remove('active'));
+  }
+
+  function switchInputTab(tab) {
+      haptic();
+      currentInputTab = tab;
+      document.querySelectorAll('.seg-item').forEach(el => el.classList.remove('active'));
+      document.getElementById('seg-' + tab).classList.add('active');
+      document.querySelectorAll('.input-view').forEach(el => el.classList.remove('active'));
+      document.getElementById('inp-view-' + tab).classList.add('active');
+  }
+
+  function setPersonalTag(content, defaultAmount, element) {
+      haptic();
+      document.getElementById('inp-cn-content').value = content;
+      document.getElementById('inp-cn-amount').value = defaultAmount;
+      document.querySelectorAll('#inp-view-cn .tag-chip').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+  }
+
+  function setInputValue(inputId, val) { haptic(); document.getElementById(inputId).value = val; }
+
+  function toggleParticipant(name, element) {
+      haptic();
+      let inp = document.getElementById('inp-cc-participants');
+      let current = inp.value.split(',').map(s => s.trim()).filter(Boolean);
+      let idx = current.indexOf(name);
+      if (idx > -1) {
+          current.splice(idx, 1);
+          element.classList.remove('active');
+      } else {
+          current.push(name);
+          element.classList.add('active');
+      }
+      inp.value = current.join(', ');
+  }
+
+  function populateInputTags() {
+      let names = new Set();
+      let debtors = [];
+      if (STATE.finance.allFinanceRawData && STATE.finance.allFinanceRawData.tongNo) {
+          STATE.finance.allFinanceRawData.tongNo.forEach(p => {
+              names.add(p.name);
+              if(p.total > 0) debtors.push(p); 
+          });
+      }
+      let nameArr = Array.from(names);
+
+      document.getElementById('tags-cc-participants').innerHTML = nameArr.map(n => `<div class="tag-chip" onclick="toggleParticipant('${n}', this)">${n}</div>`).join("");
+      document.getElementById('inp-cc-payer').innerHTML = `<option value="Tôi">Tôi (Bạn đã trả)</option>` + nameArr.map(n => `<option value="${n}">${n} trả</option>`).join("");
+      document.getElementById('tags-cv-person').innerHTML = nameArr.map(n => `<div class="tag-chip" onclick="setInputValue('inp-cv-person', '${n}')">${n}</div>`).join("");
+
+      if(debtors.length > 0) {
+          document.getElementById('tags-tn-person').innerHTML = debtors.map(d => `<div class="tag-chip tn-person-tag" onclick="selectRepaymentPerson('${d.name}', this)">${d.name} (${formatMoney(d.total)})</div>`).join("");
+      } else {
+          document.getElementById('tags-tn-person').innerHTML = `<div style="font-size: 13px; color:var(--text-sub);">Không có ai nợ bạn.</div>`;
+      }
+  }
+
+  function selectRepaymentPerson(name, element) {
+      haptic();
+      document.querySelectorAll('.tn-person-tag').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+
+      const person = STATE.finance.allFinanceRawData.tongNo.find(p => p.name === name);
+      if(!person) return;
+
+      document.getElementById('tn-selected-name').innerText = `Khoản nợ của ${name}`;
+      let debtHtml = ''; let index = 0;
+
+      if(person.loans) {
+          person.loans.forEach(loan => {
+              debtHtml += `
+                <div class="debt-check-item">
+                    <label><input type="checkbox" class="chk-debt-item" value="${loan.amount}" data-type="loan" data-idx="${index}" onchange="calcRepaymentTotal()">
+                    <div><div style="font-weight: bold; font-size:14px;">Vay: ${loan.reason || 'Không rõ'}</div><div style="font-size:12px; color:var(--text-sub);">${loan.time}</div></div></label>
+                    <span class="debt-amt-badge">${formatMoney(loan.amount)}</span>
+                </div>`;
+              index++;
+          });
+      }
+      if(person.commonExpenses) {
+          person.commonExpenses.forEach(exp => {
+              debtHtml += `
+                <div class="debt-check-item">
+                    <label><input type="checkbox" class="chk-debt-item" value="${exp.amount}" data-type="common" data-idx="${index}" onchange="calcRepaymentTotal()">
+                    <div><div style="font-weight: bold; font-size:14px;">Chung: ${exp.content}</div><div style="font-size:12px; color:var(--text-sub);">${exp.time}</div></div></label>
+                    <span class="debt-amt-badge">${formatMoney(exp.amount)}</span>
+                </div>`;
+              index++;
+          });
+      }
+
+      document.getElementById('tn-debt-items-list').innerHTML = debtHtml;
+      document.getElementById('chk-tn-all').checked = false;
+      document.getElementById('inp-tn-amount').value = 0;
+      document.getElementById('tn-debt-container').style.display = 'block';
+  }
+
+  function selectAllDebts(masterCheckbox) {
+      haptic();
+      const checkboxes = document.querySelectorAll('.chk-debt-item');
+      checkboxes.forEach(chk => chk.checked = masterCheckbox.checked);
+      calcRepaymentTotal();
+  }
+
+  function calcRepaymentTotal() {
+      const checkboxes = document.querySelectorAll('.chk-debt-item:checked');
+      let total = 0;
+      checkboxes.forEach(chk => { total += parseFloat(chk.value); });
+      document.getElementById('inp-tn-amount').value = total;
+      const allCheckboxes = document.querySelectorAll('.chk-debt-item');
+      document.getElementById('chk-tn-all').checked = (checkboxes.length === allCheckboxes.length && allCheckboxes.length > 0);
+  }
+
+  async function submitTransaction() {
+      haptic();
+      let url = localStorage.getItem('gasWebAppUrl');
+      if (!url) { showDialog("Lỗi", "Vui lòng cấu hình URL Google Script trong Cài đặt!", "alert"); return; }
+      
+      let btn = document.getElementById('btn-submit-tx');
+      let ogText = btn.innerHTML;
+      btn.innerHTML = "ĐANG LƯU..."; btn.disabled = true;
+
+      try {
+          await new Promise(r => setTimeout(r, 800)); // Giả lập call API
+          showDialog("Thành công", "Giao diện nhập liệu đã hoàn thiện! Chờ gắn API POST.", "alert");
+          closeInputModal();
+      } catch (e) {
+          showDialog("Lỗi", "Lỗi kết nối.", "alert");
+      } finally {
+          btn.innerHTML = ogText; btn.disabled = false;
+      }
+  }
 </script>
 </body>
 </html>
