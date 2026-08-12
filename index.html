@@ -707,18 +707,13 @@
         <div id="seg-tn" class="seg-item" onclick="switchInputTab('tn')">Trả Nợ</div>
       </div>
 
-      <!-- VIEW 1: CÁ NHÂN -->
+     <!-- VIEW 1: CÁ NHÂN -->
       <div id="inp-view-cn" class="input-view active">
         <label>Nội dung:</label>
         <input type="text" id="inp-cn-content" class="form-input-box" placeholder="VD: Ăn sáng, Đổ xăng..." />
         
-        <div class="tag-container" style="margin-bottom: 10px;">
-          <div class="tag-chip" onclick="setPersonalTag('Ăn sáng', 25, this)">Ăn sáng</div>
-          <div class="tag-chip" onclick="setPersonalTag('Cơm trưa', 35, this)">Cơm trưa</div>
-          <div class="tag-chip" onclick="setPersonalTag('Cafe', 20, this)">Cafe</div>
-          <div class="tag-chip" onclick="setPersonalTag('Xăng xe', 50, this)">Xăng xe</div>
-          <div class="tag-chip" onclick="setPersonalTag('Đi chợ', 100, this)">Đi chợ</div>
-        </div>
+        <!-- Thẻ Tag sẽ được đổ tự động bằng Javascript -->
+        <div class="tag-container" id="tags-cn-content" style="margin-bottom: 10px;"></div>
         
         <label>Số tiền (K):</label>
         <input type="number" id="inp-cn-amount" class="form-input-box" placeholder="Nhập số tiền..." inputmode="numeric" />
@@ -728,6 +723,8 @@
       <div id="inp-view-cc" class="input-view">
         <label>Nội dung / Tên bữa tiệc:</label>
         <input type="text" id="inp-cc-content" class="form-input-box" placeholder="VD: Nhậu, Tiền điện..." />
+        
+        <div class="tag-container" id="tags-cc-content" style="margin-bottom: 10px;"></div>
 
         <label>Tổng Bill (K):</label>
         <input type="number" id="inp-cc-total" class="form-input-box" placeholder="VD: 300" inputmode="numeric" />
@@ -737,16 +734,18 @@
         <div class="tag-container" id="tags-cc-participants" style="margin-bottom: 10px;"></div>
 
         <label>Người trả tiền:</label>
-        <select id="inp-cc-payer" class="form-input-box">
+        <!-- Chèn trực tiếp onchange để hiển thị luôn khu vực chi riêng -->
+        <select id="inp-cc-payer" class="form-input-box" onchange="document.getElementById('cc-payer-amount-box').style.display = this.value !== 'Tôi' ? 'block' : 'none';">
           <option value="Tôi">Tôi (Bạn đã trả)</option>
         </select>
-        <div id="cc-payer-amount-box" style="display: none; margin-top: 10px;">
-             <label>Số tiền người này đã chi (K):</label>
-             <input type="number" id="inp-cc-payer-amount" class="form-input-box" placeholder="VD: 300" />
+        
+        <!-- Khung chi riêng được thiết kế nổi bật lên -->
+        <div id="cc-payer-amount-box" style="display: none; margin-top: 10px; padding: 12px; background: #eef2f5; border-radius: 12px; border: 1px dashed var(--primary-color);">
+             <label style="margin-top: 0; color: var(--primary-color);">Số tiền người này đã chi (K):</label>
+             <input type="number" id="inp-cc-payer-amount" class="form-input-box" placeholder="VD: 50" />
              
-             <!-- TRƯỜNG THÊM MỚI THEO YÊU CẦU: LÝ DO CHI -->
-             <label style="margin-top: 10px;">Lý do (Tùy chọn):</label>
-             <input type="text" id="inp-cc-payer-note" class="form-input-box" placeholder="VD: Mua bia, trả tiền phòng..." />
+             <label style="color: var(--primary-color);">Lý do chi riêng:</label>
+             <input type="text" id="inp-cc-payer-note" class="form-input-box" style="margin-bottom:0;" placeholder="VD: Mua bia, trả tiền phòng..." />
         </div>
       </div>
 
@@ -1165,25 +1164,6 @@
       document.getElementById('inp-view-' + tab).classList.add('active');
   }
 
-  function setPersonalTag(content, defaultAmount, element) {
-      haptic();
-      document.getElementById('inp-cn-content').value = content;
-      
-      let suggestedAmount = defaultAmount;
-      if (STATE.finance.allFinanceRawData && STATE.finance.allFinanceRawData.listCaNhan) {
-          const list = STATE.finance.allFinanceRawData.listCaNhan;
-          for (let i = list.length - 1; i >= 0; i--) {
-              if (list[i].content && list[i].content.toLowerCase() === content.toLowerCase()) {
-                  suggestedAmount = list[i].amount;
-                  break;
-              }
-          }
-      }
-      
-      document.getElementById('inp-cn-amount').value = suggestedAmount;
-      document.querySelectorAll('#inp-view-cn .tag-chip').forEach(el => el.classList.remove('active'));
-      element.classList.add('active');
-  }
 
   function setInputValue(inputId, val) { haptic(); document.getElementById(inputId).value = val; }
 
@@ -1220,14 +1200,17 @@
       updatePayerSelect();
   }
 
-  function populateInputTags() {
-      let names = new Set();
+ function populateInputTags() {
+      let nameCount = {};
+      let contentCNCount = {};
+      let contentCCCount = {};
       let debtors = [];
       
       if (STATE.finance.allFinanceRawData) {
+          // Đếm tần suất tên
           if (STATE.finance.allFinanceRawData.tongNo) {
               STATE.finance.allFinanceRawData.tongNo.forEach(p => {
-                  names.add(p.name);
+                  nameCount[p.name] = (nameCount[p.name] || 0) + 1;
                   if(p.total > 0) debtors.push(p); 
               });
           }
@@ -1236,23 +1219,76 @@
                   if(tx.participants) {
                       tx.participants.split(',').forEach(n => {
                           let trimmed = n.trim();
-                          if(trimmed && trimmed !== 'Tôi' && trimmed !== 'Tài') names.add(trimmed);
+                          if(trimmed && trimmed !== 'Tôi' && trimmed !== 'Tài') {
+                              nameCount[trimmed] = (nameCount[trimmed] || 0) + 1;
+                          }
                       });
+                  }
+                  if(tx.content) {
+                      let c = tx.content.trim();
+                      contentCCCount[c] = (contentCCCount[c] || 0) + 1;
+                  }
+              });
+          }
+          // Đếm tần suất nội dung cá nhân
+          if (STATE.finance.allFinanceRawData.listCaNhan) {
+              STATE.finance.allFinanceRawData.listCaNhan.forEach(tx => {
+                  if(tx.content) {
+                      let c = tx.content.trim();
+                      contentCNCount[c] = (contentCNCount[c] || 0) + 1;
                   }
               });
           }
       }
-      let nameArr = Array.from(names).sort();
+      
+      // Sắp xếp mảng theo số lần xuất hiện (Giảm dần)
+      let nameArr = Object.keys(nameCount).sort((a, b) => nameCount[b] - nameCount[a]);
+      let topCN = Object.keys(contentCNCount).sort((a, b) => contentCNCount[b] - contentCNCount[a]).slice(0, 6);
+      let topCC = Object.keys(contentCCCount).sort((a, b) => contentCCCount[b] - contentCCCount[a]).slice(0, 6);
+
+      // Mặc định nếu chưa có dữ liệu
+      if(topCN.length === 0) topCN = ['Ăn sáng', 'Cơm trưa', 'Cafe', 'Xăng xe', 'Đi chợ'];
+      if(topCC.length === 0) topCC = ['Nhậu', 'Ăn uống', 'Tiền điện', 'Tiền nước'];
+
+      // Trả Tag cho HTML
+      document.getElementById('tags-cn-content').innerHTML = topCN.map(c => `<div class="tag-chip" onclick="setPersonalTag('${c}', getRecentAmount('${c}', 'cn'), this)">${c}</div>`).join("");
+      
+      let ccContentBox = document.getElementById('tags-cc-content');
+      if(ccContentBox) {
+          ccContentBox.innerHTML = topCC.map(c => `<div class="tag-chip" onclick="setInputValue('inp-cc-content', '${c}'); document.querySelectorAll('#tags-cc-content .tag-chip').forEach(el=>el.classList.remove('active')); this.classList.add('active');">${c}</div>`).join("");
+      }
 
       document.getElementById('tags-cc-participants').innerHTML = nameArr.map(n => `<div class="tag-chip" onclick="toggleParticipant('${n}', this)">${n}</div>`).join("");
       updatePayerSelect();
-      document.getElementById('tags-cv-person').innerHTML = nameArr.map(n => `<div class="tag-chip" onclick="setInputValue('inp-cv-person', '${n}')">${n}</div>`).join("");
+      document.getElementById('tags-cv-person').innerHTML = nameArr.map(n => `<div class="tag-chip" onclick="setInputValue('inp-cv-person', '${n}'); document.querySelectorAll('#tags-cv-person .tag-chip').forEach(el=>el.classList.remove('active')); this.classList.add('active');">${n}</div>`).join("");
 
       if(debtors.length > 0) {
           document.getElementById('tags-tn-person').innerHTML = debtors.map(d => `<div class="tag-chip tn-person-tag" onclick="selectRepaymentPerson('${d.name}', this)">${d.name} (${formatMoney(d.total)})</div>`).join("");
       } else {
           document.getElementById('tags-tn-person').innerHTML = `<div style="font-size: 13px; color:var(--text-sub);">Không có ai nợ bạn.</div>`;
       }
+  }
+
+  // Hàm tự mò số tiền gần nhất
+  function getRecentAmount(content, type) {
+      let list = [];
+      if (type === 'cn' && STATE.finance.allFinanceRawData.listCaNhan) list = STATE.finance.allFinanceRawData.listCaNhan;
+      
+      // Quét từ giao dịch gần nhất (cuối mảng) lên đầu
+      for (let i = list.length - 1; i >= 0; i--) {
+          if (list[i].content && list[i].content.toLowerCase() === content.toLowerCase()) {
+              return list[i].amount;
+          }
+      }
+      return '';
+  }
+
+  function setPersonalTag(content, amount, element) {
+      haptic();
+      document.getElementById('inp-cn-content').value = content;
+      document.getElementById('inp-cn-amount').value = amount || '';
+      document.querySelectorAll('#inp-view-cn .tag-chip').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
   }
 
   function selectRepaymentPerson(name, element) {
@@ -1359,7 +1395,7 @@
               body: JSON.stringify(payload)
           });
           
-          showDialog("Thành công", "Đã ghi", "alert"); 
+          showDialog("Thành công", "Đã ghi", "alert");
           closeInputModal();
           
           document.getElementById('inp-cn-content').value = '';
