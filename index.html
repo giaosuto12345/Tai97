@@ -10,14 +10,18 @@
 
   <title>Quản lý Tài</title>
 
+  <!-- TỐI ƯU HÓA MỞ APP NHANH: KẾT NỐI TRƯỚC VÀ TẢI NGẦM THƯ VIỆN -->
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   
+  <!-- Thư viện Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- Thư viện Biểu đồ (Tài chính) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
   <style>
+    /* ================== BIẾN MÀU SẮC TỰ ĐỘNG (LIGHT / DARK MODE) ================== */
     :root {
       --fs-header: clamp(22px, 6vw, 32px);
       --fs-card-title: clamp(15px, 4vw, 20px);
@@ -28,6 +32,7 @@
       --fs-value: clamp(20px, 6vw, 28px);
       --fs-final: clamp(20px, 4vw, 18px);
 
+      /* Chế độ Sáng mặc định */
       --bg-body: #F2F2F7;
       --bg-card: #FFFFFF;
       --text-main: #1C1C1E;
@@ -45,6 +50,7 @@
 
     @media (prefers-color-scheme: dark) {
       :root {
+        /* Chế độ Tối (Dark Mode) */
         --bg-body: #000000;
         --bg-card: #1C1C1E;
         --text-main: #FFFFFF;
@@ -61,6 +67,7 @@
       }
     }
 
+    /* ================== CƠ BẢN ================== */
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
     body { 
       margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; 
@@ -68,28 +75,69 @@
       padding-bottom: 110px; overflow-x: hidden; transition: background 0.3s, color 0.3s;
     }
 
-    #lock-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary-color), var(--success-color)); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; color: white; transition: opacity 0.3s; }
-    .lock-box { background: var(--bg-card); padding: 30px 20px; border-radius: 20px; text-align: center; width: 85%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    /* ================== MÀN HÌNH KHÓA ================== */
+    #lock-screen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 99999; color: white; transition: opacity 0.3s;
+    }
+    .lock-box {
+      background: var(--bg-card); padding: 30px 20px; border-radius: 20px;
+      text-align: center; width: 85%; max-width: 360px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
     .lock-icon { font-size: 50px; margin-bottom: 5px; color: var(--primary-color); }
-    .pin-input { width: 100%; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 5px; border: 2px solid var(--border-light); border-radius: 12px; margin-bottom: 15px; background: var(--input-bg); color: var(--text-main); }
+    .pin-input {
+      width: 100%; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 5px;
+      border: 2px solid var(--border-light); border-radius: 12px; margin-bottom: 15px; background: var(--input-bg); color: var(--text-main);
+    }
     .pin-input:focus { outline: none; border-color: var(--primary-color); }
+    
     .btn-unlock { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: var(--primary-color); border: none; border-radius: 12px; cursor: pointer; }
     .btn-faceid { width: 100%; padding: 15px; font-size: 16px; font-weight: bold; color: white; background: var(--success-color); border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 15px 0; }
     .btn-faceid:active, .btn-unlock:active { transform: scale(0.98); }
 
+    /* ================== BỐ CỤC CHUNG ================== */
     #app-content { display: none; }
-    .bottom-nav-container { position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border-light); display: flex; align-items: center; padding-bottom: calc(env(safe-area-inset-bottom) + 15px); padding-top: 10px; z-index: 1000; }
-    .home-btn-fixed { padding: 5px 15px; border-right: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: center; justify-content: center; background: none; border-top: none; border-bottom: none; border-left: none; min-width: 80px; }
-    .scrollable-tabs { display: flex; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; flex: 1; scroll-behavior: smooth; }
+
+    /* ================== HIỆU ỨNG FROSTED GLASS CHO BOTTOM NAV ================== */
+    .bottom-nav-container {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--nav-bg); 
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-light);
+      display: flex; align-items: center;
+      padding-bottom: calc(env(safe-area-inset-bottom) + 15px);
+      padding-top: 10px; z-index: 1000;
+    }
+    .home-btn-fixed {
+      padding: 5px 15px; border-right: 1px solid var(--border-light); display: flex; flex-direction: column; 
+      align-items: center; justify-content: center; background: none; border-top: none; 
+      border-bottom: none; border-left: none; min-width: 80px;
+    }
+    .scrollable-tabs {
+      display: flex; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; 
+      flex: 1; scroll-behavior: smooth;
+    }
     .scrollable-tabs::-webkit-scrollbar { display: none; }
-    .nav-btn { flex: 0 0 auto; min-width: 85px; padding: 5px 5px; text-align: center; border: none; background: none; font-size: 13px; font-weight: 800; color: var(--text-sub); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s; }
+    
+    .nav-btn {
+      flex: 0 0 auto; min-width: 85px; padding: 5px 5px; text-align: center; border: none; background: none;
+      font-size: 13px; font-weight: 800; color: var(--text-sub); cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.2s;
+    }
     .nav-btn.active { color: var(--primary-color); }
     .nav-icon { font-size: 28px; margin-bottom: 5px; }
 
+    /* ================== THÀNH PHẦN GIAO DIỆN CHUNG ================== */
     .dash-header { padding: 30px 15px 10px 15px; text-align: center; }
     .dash-header h2 { color: var(--primary-color); margin: 0; font-size: var(--fs-header); font-weight: 800; letter-spacing: 1px; text-transform: uppercase;}
+    
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 15px; max-width: 600px; margin: 0 auto; }
-    .dash-card { background: var(--bg-card); border-radius: 16px; padding: 20px 5px; text-align: center; box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s; border: 1px solid var(--border-light); }
+    .dash-card {
+      background: var(--bg-card); border-radius: 16px; padding: 20px 5px; text-align: center;
+      box-shadow: var(--card-shadow); cursor: pointer; transition: 0.2s; border: 1px solid var(--border-light);
+    }
     .dash-card:active { transform: scale(0.95); background: var(--input-bg); border-color: var(--primary-color); }
     .dash-card-icon { font-size: 35px; margin-bottom: 10px; }
     .dash-card-title { font-size: 13px; font-weight: 800; color: var(--primary-color); text-transform: uppercase; line-height: 1.2;}
@@ -97,30 +145,50 @@
     .tab-content { display: none; padding: 15px 10px; }
     .tab-content.active { display: block; animation: fadeIn 0.2s; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
     .container { max-width: 900px; margin: 0 auto; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     
-    .card { background: var(--bg-card); border-radius: 18px; padding: 14px; box-shadow: var(--card-shadow); margin-bottom: 15px; position: relative; border: 1px solid var(--border-light); }
-    .card-title { text-align: center; font-weight: 800; font-size: var(--fs-card-title); color: var(--primary-color); margin-bottom: 10px; text-transform: uppercase; }
+    .card { 
+      background: var(--bg-card); border-radius: 18px; padding: 14px; 
+      box-shadow: var(--card-shadow); margin-bottom: 15px; position: relative; border: 1px solid var(--border-light);
+    }
+    .card-title { 
+      text-align: center; font-weight: 800; font-size: var(--fs-card-title); 
+      color: var(--primary-color); margin-bottom: 10px; text-transform: uppercase; 
+    }
 
     label { display: block; font-size: var(--fs-label); color: var(--text-sub); margin-top: 8px; margin-bottom: 4px; font-weight: bold; text-align: left; }
-    input:not([type="checkbox"]):not([type="file"]), select { width: 100%; padding: 12px; font-size: var(--fs-input); text-align: center; border-radius: 12px; border: 1px solid var(--border-light); background: var(--input-bg); color: var(--text-main); box-sizing: border-box; appearance: none; -webkit-appearance: none; }
+    input:not([type="checkbox"]):not([type="file"]), select {
+      width: 100%; padding: 12px; font-size: var(--fs-input); text-align: center; 
+      border-radius: 12px; border: 1px solid var(--border-light); background: var(--input-bg); color: var(--text-main);
+      box-sizing: border-box; appearance: none; -webkit-appearance: none;
+    }
     input:focus, select:focus { outline: none; border: 2px solid var(--warning-color); }
+
     .time-flex { display: flex; align-items: center; gap: 10px; margin-bottom: 10px;}
     .time-flex span { font-weight: bold; color: var(--text-sub); }
-    .btn { margin: 5px 0 15px 0; width: 100%; padding: 14px; font-size: var(--fs-button); font-weight: bold; border: none; border-radius: 999px; background: var(--success-color); color: #fff; cursor: pointer; touch-action: manipulation; transition: 0.2s; }
+    
+    .btn { 
+      margin: 5px 0 15px 0; width: 100%; padding: 14px; font-size: var(--fs-button); 
+      font-weight: bold; border: none; border-radius: 999px; background: var(--success-color); 
+      color: #fff; cursor: pointer; touch-action: manipulation; transition: 0.2s;
+    }
     .btn:active { transform: scale(0.98); opacity: 0.8;}
 
     .mo-ta-box { background: var(--input-bg); border-left: 4px solid var(--warning-color); padding: 12px; border-radius: 8px; font-size: var(--fs-label); line-height: 1.5; margin-top: 15px; }
     .mo-ta-box ul { margin: 5px 0 0 0; padding-left: 20px; }
     .mo-ta-box li { margin-bottom: 6px; }
+
     .summary-box { background: var(--input-bg); border: 2px dashed var(--primary-color); border-radius: 12px; padding: 14px; cursor: pointer; position: relative; }
     .summary-line { font-size: clamp(14px, 4vw, 16px); margin-bottom: 8px; }
     .summary-line strong { display: inline-block; width: 75px; color: var(--text-sub); }
     .sum-val { color: var(--warning-color); font-weight: bold; }
 
+    /* ================== THÔNG GIÓ & KẾT QUẢ BẢNG BIỂU ================== */
     .result-title { text-align: center; font-weight: 800; font-size: var(--fs-result-title); margin-bottom: 10px; color: var(--text-main); }
     .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border-light); margin-top: 10px; }
+    
     table { width: 100%; border-collapse: collapse; font-size: clamp(14px, 4.5vw, 18px); text-align: center; min-width: 340px; }
     th, td { padding: 12px 2px; border-bottom: 1px solid var(--border-light); border-right: 1px solid var(--border-light); color: var(--text-main); }
     th:last-child, td:last-child { border-right: none; }
@@ -134,6 +202,7 @@
     .result-box { background: var(--input-bg); border-radius: 16px; padding: 12px; text-align: center; border: 1px solid var(--border-light);}
     .result-box p { margin: 4px 0; color: var(--text-sub); font-size: var(--fs-label); }
     .value { font-size: var(--fs-value); font-weight: 800; color: var(--primary-color); }
+    
     .final { margin-top: 12px; border-radius: 16px; padding: 12px; text-align: center; font-size: var(--fs-final); font-weight: 600; line-height: 1.4; }
     .ok { background: rgba(52, 199, 89, 0.15); color: var(--success-color); }
     .no { background: rgba(255, 59, 48, 0.15); color: var(--danger-color); }
@@ -143,11 +212,13 @@
     .w-label { font-size: 12px; color: var(--text-sub); font-weight: bold; }
     .loading-text { color: var(--text-sub); font-style: italic; margin: 10px 0; display: none; text-align: center; }
 
+    /* ================== DANH MỤC & TÌM KIẾM ================== */
     .search-bar-container { display: flex; gap: 8px; margin-bottom: 10px; }
     .search-input { flex: 1; padding: 12px 15px !important; font-size: 16px !important; border-radius: 12px !important; border: 1px solid var(--border-light) !important; background: var(--input-bg) !important; text-align: left !important; color: var(--text-main) !important;}
     .search-input:focus { outline: none; border: 2px solid var(--primary-color) !important; }
     .action-btn { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; color: white; border-radius: 50%; font-size: 22px; border: none; cursor: pointer; transition: 0.2s;}
     .action-btn:active { transform: scale(0.9); }
+    
     .setting-panel { background: var(--input-bg); border: 2px solid var(--warning-color); border-radius: 12px; padding: 15px; margin-bottom: 15px; display: none; }
     .set-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; font-size: 14px; font-weight: bold; }
     
@@ -157,47 +228,80 @@
     #bang-danh-muc th { background: var(--primary-color); color: #fff; position: sticky; top: 0; z-index: 10; font-weight: 800; font-size: 14px;}
     #bang-danh-muc td { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
 
+    /* ================== SẮP XẾP & KHÁC ================== */
     .loc-suggestions { position: absolute; top: 100%; left: 0; width: 100%; background: var(--bg-card); border: 1px solid var(--primary-color); border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 20; box-shadow: var(--card-shadow); }
     .sort-item { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 12px 15px; border-radius: 12px; border: 1px solid var(--border-light); margin-bottom: 8px; }
     .sort-item span { font-weight: 800; font-size: 14px; }
+    
     .sort-btns-group { display: flex; gap: 5px; }
     .btn-sort { width: 35px; height: 35px; border-radius: 8px; border: none; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; transition: 0.2s; }
     .btn-up { background: rgba(52, 199, 89, 0.15); color: var(--success-color); }
     .btn-down { background: rgba(255, 149, 0, 0.15); color: var(--warning-color); }
     .btn-sort:active { transform: scale(0.9); }
 
-    .btn-icon-ios { width: 38px; height: 38px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 50%; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: var(--primary-color); }
+    /* ================== MODULE TÀI CHÍNH ================== */
+    .btn-icon-ios {
+      width: 38px; height: 38px; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 50%;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: 0.2s; color: var(--primary-color);
+    }
     .btn-icon-ios:active { transform: scale(0.9); background: var(--input-bg); }
+
     .top-dashboard { display: flex; gap: 12px; margin-bottom: 20px; align-items: stretch; }
-    .hero-card-sm { flex: 1.2; background: linear-gradient(135deg, #007AFF 0%, #0056b3 100%); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; color: white; position: relative; overflow: hidden; }
+    .hero-card-sm {
+      flex: 1.2; background: linear-gradient(135deg, #007AFF 0%, #0056b3 100%);
+      border-radius: 20px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between;
+      color: white; position: relative; overflow: hidden;
+    }
     .hero-top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 2;}
     .hero-label { font-size: 15px; font-weight: 900; opacity: 0.95; text-transform: uppercase;}
     .btn-eye-sm { background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer;}
     .hero-amount-sm { font-size: 26px; font-weight: 900; margin-top: 12px; position: relative; z-index: 2;}
+
     .controls-col { flex: 0.8; display: flex; flex-direction: column; justify-content: space-between; gap: 8px;}
-    .ios-select { background-color: var(--bg-card); border: 1px solid var(--border-light); outline: none; padding: 0 24px 0 12px; border-radius: 14px; font-size: 13px; font-weight: 800; color: var(--text-main); text-align: left; height: 100%; width: 100%; min-height: 40px; }
+    .ios-select {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-light); outline: none;
+      padding: 0 24px 0 12px; border-radius: 14px;
+      font-size: 13px; font-weight: 800; color: var(--text-main); text-align: left;
+      height: 100%; width: 100%; min-height: 40px;
+    }
+
     @keyframes spin { 100% { transform: rotate(360deg); } }
     .spin { display: inline-block; animation: spin 1s linear infinite; color: var(--primary-color) !important; }
+
     .budget-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
     .budget-label { font-size: 12px; font-weight: 800; color: var(--text-sub); text-transform: uppercase;}
     .budget-total { font-size: 24px; font-weight: 900; line-height: 1; }
     .progress-bg { width: 100%; height: 8px; background: var(--input-bg); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
     .progress-fill { height: 100%; background: var(--success-color); border-radius: 4px; transition: width 0.5s ease;}
     .budget-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; }
+
     .expense-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-    .expense-card { background: var(--bg-card); border-radius: 20px; padding: 14px 12px; display: flex; flex-direction: column; justify-content: center; border: 1px solid var(--border-light); cursor: pointer; transition: 0.2s; }
+    .expense-card {
+      background: var(--bg-card); border-radius: 20px; padding: 14px 12px;
+      display: flex; flex-direction: column; justify-content: center; border: 1px solid var(--border-light); cursor: pointer; transition: 0.2s;
+    }
     .expense-card:active { transform: scale(0.96); background: var(--input-bg); }
     .box-content { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 12px;}
     .box-title { font-size: 12px; font-weight: 900; color: var(--warning-color); margin: 0;}
     .box-title.cc { color: var(--success-color); }
     .box-val { font-size: 24px; font-weight: 900; margin: 0;}
     .btn-detail { font-size: 12px; background: var(--input-bg); border: none; padding: 8px; border-radius: 8px; font-weight: bold; width: 100%; color: var(--primary-color);}
-    .debt-card-ios { background: var(--bg-card); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; cursor: pointer; transition: 0.2s; border: 1px solid var(--border-light); }
+
+    .debt-card-ios {
+      background: var(--bg-card); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;
+      position: relative; overflow: hidden; cursor: pointer; transition: 0.2s; border: 1px solid var(--border-light);
+    }
     .debt-card-ios:active { transform: scale(0.97); }
     .debt-card-ios::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 5px; background: var(--danger-color); border-radius: 0 4px 4px 0; }
     .debt-name-col { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 800;}
     .debt-amt-val { font-size: 17px; font-weight: 900; color: var(--danger-color); }
-    .recent-tx-item { background: var(--bg-card); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-light); }
+
+    .recent-tx-item {
+      background: var(--bg-card); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-light);
+    }
     .rtx-left { display: flex; align-items: center; gap: 12px; }
     .rtx-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold;}
     .rtx-icon.cn { background: rgba(255,149,0,0.15); color: var(--warning-color); }
@@ -207,11 +311,23 @@
     .rtx-date { font-size: 12px; color: var(--text-sub); font-weight: 600; }
     .rtx-amount { font-size: 16px; font-weight: 800;}
 
-    /* MODAL CHUNG */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index: 10000; display: none; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+    /* HIỆU ỨNG SPRING CHO MODAL & DIALOG */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+      z-index: 10000; display: none; align-items: flex-end; justify-content: center;
+      opacity: 0; transition: opacity 0.3s ease;
+    }
     .modal-overlay.show { opacity: 1; }
-    .modal-content { background: var(--bg-body); width: 100%; max-height: 85vh; border-radius: 24px 24px 0 0; padding: 20px 16px 40px 16px; overflow-y: auto; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .modal-content {
+      background: var(--bg-body); width: 100%; max-height: 85vh;
+      border-radius: 24px 24px 0 0; padding: 20px 16px 40px 16px;
+      overflow-y: auto;
+      transform: translateY(100%); 
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    }
     .modal-overlay.show .modal-content { transform: translateY(0); }
+    
     .pull-bar { width: 40px; height: 5px; background: var(--text-sub); border-radius: 3px; margin: 0 auto 20px auto; opacity: 0.5;}
     .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .modal-title { font-size: 20px; font-weight: 800; margin: 0; color: var(--primary-color); }
@@ -223,32 +339,46 @@
     .tx-title { font-size: 15px; font-weight: 700; line-height: 1.3;}
     .tx-sub { font-size: 12px; color: var(--text-sub); }
 
-    .custom-dialog-box { background: var(--bg-card); width: 85%; max-width: 320px; border-radius: 20px; padding: 25px 20px 20px 20px; text-align: center; box-shadow: var(--card-shadow); transform: scale(0.9); opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin: auto; border: 1px solid var(--border-light); }
+    .custom-dialog-box {
+      background: var(--bg-card); width: 85%; max-width: 320px; border-radius: 20px; padding: 25px 20px 20px 20px;
+      text-align: center; box-shadow: var(--card-shadow); transform: scale(0.9); opacity: 0;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin: auto; border: 1px solid var(--border-light);
+    }
     #custom-dialog-wrapper.show .custom-dialog-box { transform: scale(1); opacity: 1; }
     .dialog-title { font-size: 18px; font-weight: 800; margin: 0 0 10px 0; }
     .dialog-message { font-size: 15px; color: var(--text-sub); margin: 0 0 20px 0; line-height: 1.4; }
     .dialog-buttons { display: flex; gap: 10px; margin-top: 20px;}
     .btn-dialog { flex: 1; padding: 12px; border-radius: 10px; font-weight: bold; border: none; font-size: 15px; cursor: pointer;}
 
-    /* CSS CHO MODAL NHẬP LIỆU MỚI */
+    /* ========================================== */
+    /* CSS CHO MODAL NHẬP LIỆU (CHỈ CHÈN Ở ĐÂY)  */
+    /* ========================================== */
     .segmented-control { display: flex; background: var(--input-bg); border-radius: 12px; padding: 4px; margin-bottom: 15px;}
     .seg-item { flex: 1; text-align: center; padding: 10px 4px; font-size: 13px; font-weight: 700; color: var(--text-main); border-radius: 10px; cursor: pointer; transition: 0.3s;}
     .seg-item.active { background: var(--bg-card); box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: var(--primary-color); }
     .input-view { display: none; animation: fadeIn 0.3s ease; }
     .input-view.active { display: block; }
+    
     .tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; margin-bottom: 10px;}
     .tag-chip { padding: 8px 14px; background: var(--input-bg); border: 1px solid var(--border-light); border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-main); cursor: pointer; transition: 0.2s;}
     .tag-chip.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+    
     .debt-check-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--input-bg); border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--border-light);}
     .debt-check-item label { margin: 0; flex: 1; display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-main); font-weight: 600;}
     .debt-check-item input[type="checkbox"] { transform: scale(1.3); accent-color: var(--primary-color); }
     .debt-amt-badge { font-weight: 800; color: var(--danger-color); font-size: 15px;}
-    .form-input-box { width: 100%; padding: 12px; font-size: 16px; text-align: left; border-radius: 12px; border: 1px solid var(--border-light); background: var(--input-bg); color: var(--text-main); box-sizing: border-box; appearance: none; -webkit-appearance: none; margin-bottom: 10px; }
+    
+    .form-input-box {
+      width: 100%; padding: 12px; font-size: 16px !important; text-align: left; 
+      border-radius: 12px; border: 1px solid var(--border-light); background: var(--input-bg); color: var(--text-main);
+      box-sizing: border-box; appearance: none; -webkit-appearance: none; margin-bottom: 10px;
+    }
     .form-input-box:focus { outline: none; border-color: var(--primary-color); }
   </style>
 </head>
 <body>
 
+  <!-- ================== MÀN HÌNH KHÓA ================== -->
   <div id="lock-screen">
     <div class="lock-box">
       <div id="lock-spinner" class="lock-icon">🔒</div>
@@ -424,13 +554,16 @@
       </div>
     </div>
 
-    <!-- TAB TÀI CHÍNH (CHUẨN GỐC - ĐÃ FIX DUPLICATE) -->
+    <!-- ========================================== -->
+    <!-- TAB TÀI CHÍNH DUY NHẤT (SẠCH SẼ - KHÔNG LỖI) -->
+    <!-- ========================================== -->
     <div id="tab-tai-chinh" class="tab-content container">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2 style="margin: 0; color: var(--primary-color); font-weight: 800; font-size: var(--fs-header); letter-spacing: -0.5px;">TÀI CHÍNH</h2>
         <div style="display: flex; gap: 10px;">
           <!-- NÚT GỌI FORM NHẬP -->
           <button class="btn-icon-ios" style="background: var(--primary-color); color: white;" onclick="openInputModal()">+</button>
+          
           <button id="btn-update-finance" class="btn-icon-ios" onclick="fetchAllFinanceData()">🔄</button>
           <button class="btn-icon-ios" onclick="openFinanceSettings(); haptic();">⚙️</button>
         </div>
@@ -600,7 +733,7 @@
         <input type="number" id="inp-cc-total" class="form-input-box" placeholder="VD: 300" inputmode="numeric" />
         
         <label>Người tham gia (Bao gồm cả bạn):</label>
-        <input type="text" id="inp-cc-participants" class="form-input-box" placeholder="A, B, C..." />
+        <input type="text" id="inp-cc-participants" class="form-input-box" placeholder="A, B, C..." readonly style="background:var(--bg-body);"/>
         <div class="tag-container" id="tags-cc-participants" style="margin-bottom: 10px;"></div>
 
         <label>Người trả tiền:</label>
@@ -610,6 +743,10 @@
         <div id="cc-payer-amount-box" style="display: none; margin-top: 10px;">
              <label>Số tiền người này đã chi (K):</label>
              <input type="number" id="inp-cc-payer-amount" class="form-input-box" placeholder="VD: 300" />
+             
+             <!-- TRƯỜNG THÊM MỚI THEO YÊU CẦU: LÝ DO CHI -->
+             <label style="margin-top: 10px;">Lý do (Tùy chọn):</label>
+             <input type="text" id="inp-cc-payer-note" class="form-input-box" placeholder="VD: Mua bia, trả tiền phòng..." />
         </div>
       </div>
 
@@ -658,7 +795,7 @@
 
 <script>
   // ==========================================
-  // JAVASCRIPT GỐC VÀ CHỨC NĂNG CƠ BẢN
+  // JAVASCRIPT CƠ BẢN
   // ==========================================
   function haptic() { if (navigator.vibrate) navigator.vibrate(15); }
 
@@ -669,7 +806,7 @@
     finance: { expenseChartInstance: null, allFinanceRawData: { listCaNhan: [], listChiChung: [], tongNo: [] }, isHidden: true, trueDebtValue: "0K", knownNames: new Set() }
   };
 
-  const DEFAULT_FINANCE_API_URL = "https://script.google.com/macros/s/AKfycbwr7GWM6XzgeA1YUZ9TrFq71ysJpKnGxoaBFCoVW_JG97Mj2ny_o0xleytM_1bkRzpb_A/exec";
+  const DEFAULT_FINANCE_API_URL = "https://script.google.com/macros/s/AKfycbzJORCwhdLXKG_9tILqGDVYc7ZcKh_zgTl4t2IMKAIR1-qMZ4lCJeOyayV-UdNdoxnv/exec";
   const DASH_DATA = {
     'tab-thong-gio': { icon: '💨', title: 'Thông gió', fullTitle: 'TÍNH TOÁN THÔNG GIÓ' },
     'tab-chia-gio': { icon: '⏰', title: 'Chia giờ', fullTitle: 'CHIA GIỜ LỊCH TRÌNH' },
@@ -706,14 +843,6 @@
        khoiDongKhoa();
     } else { 
        moKhoaThanhCong(); 
-    }
-    
-    // Gắn sự kiện cho select chi chung 
-    let ccPayer = document.getElementById('inp-cc-payer');
-    if(ccPayer) {
-        ccPayer.addEventListener('change', function(e) {
-            document.getElementById('cc-payer-amount-box').style.display = e.target.value !== 'Tôi' ? 'block' : 'none';
-        });
     }
   });
 
@@ -776,7 +905,7 @@
   // KHỞI CHẠY DỮ LIỆU
   function khoiChayTatCaDuLieuGoc() {
     initWeatherOptions(); 
-    initFinanceDateSelectors(); // Khởi tạo ô chọn Năm/Tháng
+    initFinanceDateSelectors(); 
 
     let history = getHistoryLich(); let ngayHienTai = new Date().toLocaleDateString('vi-VN'); let todayData = history.find(x => x.date === ngayHienTai);
     if (todayData) { document.querySelector('#bang-ra-vao tbody').innerHTML = todayData.bangRaVao; document.querySelector('#bang-thong-gio tbody').innerHTML = todayData.bangThongGio; document.getElementById('wrap-bang-ra-vao').style.display = todayData.isFixed ? 'none' : 'block'; document.getElementById('ket-qua-chia-gio').style.display = 'block'; } else { taoDuLieu(); }
@@ -797,10 +926,8 @@
     const nn = parseFloat(document.getElementById('nn').value.replace(',','.')); const dn = parseFloat(document.getElementById('dn').value.replace(',','.'));
     if([nt, dt, nn, dn].some(v => isNaN(v))) { showDialog("Lỗi", "Vui lòng nhập đủ số hợp lệ", "alert"); return; }
 
-    let iN1 = Math.round(nt) - 1; let iD1 = Math.round(dt) - 60; if(iN1 < 0) iN1 = 0; if(iN1 >= 34) iN1 = 33; if(iD1 < 0) iD1 = 0; if(iD1 >= 40) iD1 = 39; 
-    let daT = BANG_DO_AM[iN1][iD1];
-    let iN2 = Math.round(nn) - 1; let iD2 = Math.round(dn) - 60; if(iN2 < 0) iN2 = 0; if(iN2 >= 34) iN2 = 33; if(iD2 < 0) iD2 = 0; if(iD2 >= 40) iD2 = 39; 
-    let daN = BANG_DO_AM[iN2][iD2];
+    let iN1 = Math.round(nt) - 1; let iD1 = Math.round(dt) - 60; if(iN1 < 0) iN1 = 0; if(iN1 >= 34) iN1 = 33; if(iD1 < 0) iD1 = 0; if(iD1 >= 40) iD1 = 39; let daT = BANG_DO_AM[iN1][iD1];
+    let iN2 = Math.round(nn) - 1; let iD2 = Math.round(dn) - 60; if(iN2 < 0) iN2 = 0; if(iN2 >= 34) iN2 = 33; if(iD2 < 0) iD2 = 0; if(iD2 >= 40) iD2 = 39; let daN = BANG_DO_AM[iN2][iD2];
     
     const b = [5.18,5.55,5.94,6.33,6.8,7.27,7.74,8.28,8.82,9.41,10.01,10.66,11.45,12.11,12.83,13.64,14.49,15.4,16.32,17.31,18.33,19.43,20.57,21.75,23.02,24.35,25.76,27.2,28.78,30.37];
     let b8T = 0; for(let i=0; i<b.length; i++){ if(daT >= b[i]) b8T = i; else break; } 
@@ -837,27 +964,42 @@
   function renderDanhSachLichSu() { let history = getHistoryLich(); let container = document.getElementById('danh-sach-lich-su'); container.innerHTML = ''; if (history.length === 0) { container.innerHTML = '<div style="font-size: 12px; color: var(--text-sub); text-align: center;">Chưa có dữ liệu.</div>'; return; } let ngayHienTai = new Date().toLocaleDateString('vi-VN'); history.slice().reverse().forEach(item => { let isToday = (item.date === ngayHienTai); let btn = document.createElement('button'); btn.innerHTML = isToday ? `Hôm nay (${item.date})` : item.date; btn.style.cssText = `padding: 8px; border: 1px solid ${isToday ? 'var(--warning-color)' : 'var(--primary-color)'}; border-radius: 6px; background: ${isToday ? 'rgba(255,149,0,0.1)' : 'var(--input-bg)'}; color: ${isToday ? 'var(--warning-color)' : 'var(--primary-color)'}; font-weight: bold; cursor: pointer; font-size:12px; text-align:left;`; btn.onclick = () => xemLichSuNgay(item.date, item.bangRaVao, item.bangThongGio, isToday, item.isFixed); container.appendChild(btn); }); }
   function xemLichSuNgay(dateStr, raVao, thongGio, isToday, isFixed) { haptic(); document.querySelector('#bang-ra-vao tbody').innerHTML = raVao; document.querySelector('#bang-thong-gio tbody').innerHTML = thongGio; let label = isToday ? 'Hôm nay' : dateStr; let labelFixed = isFixed ? `(${label} - Đã cố định)` : `(${label})`; document.getElementById('title-ra-vao').innerHTML = `1. LỊCH RA VÀO <span style="color:var(--text-sub); font-size:11px;">${labelFixed}</span>`; document.getElementById('title-thong-gio').innerHTML = `2. LỊCH THÔNG GIÓ <span style="color:var(--text-sub); font-size:11px;">(${label})</span>`; document.getElementById('wrap-bang-ra-vao').style.display = isFixed ? 'none' : 'block'; document.getElementById('ket-qua-chia-gio').style.display = 'block'; toggleLichSu(); }
 
-  // ==========================================
-  // MODULE TÀI CHÍNH GỐC
-  // ==========================================
-  function initFinanceDateSelectors() { 
-    const d = new Date(); 
-    
-    // Cập nhật tất cả các ô tháng (đề phòng bị trùng lặp ID)
-    document.querySelectorAll('#finMonthSelect').forEach(el => {
-        el.value = (d.getMonth() + 1).toString();
-    });
-    
-    // Cập nhật tất cả các ô năm 
-    let optionsHtml = ''; 
-    for(let i = d.getFullYear() - 2; i <= d.getFullYear() + 2; i++) { 
-        optionsHtml += `<option value="${i}" ${i === d.getFullYear() ? 'selected' : ''}>Năm ${i}</option>`; 
-    } 
-    document.querySelectorAll('#finYearSelect').forEach(el => {
-        el.innerHTML = optionsHtml;
-    });
-}
+  function initWeatherOptions() { const dSel = document.getElementById('weather-date'); const hSel = document.getElementById('weather-hour'); const today = new Date(); let dateOptions = []; for(let i = 0; i <= 7; i++){ let d = new Date(); d.setDate(today.getDate() - i); let dStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; let dDisp = i === 0 ? "Hôm nay" : d.toLocaleDateString('vi-VN'); dateOptions.push(`<option value="${dStr}">${dDisp}</option>`); } dSel.innerHTML = dateOptions.join(''); let hourOptions = ['<option value="current" selected>Hiện tại</option>']; for(let h = 0; h < 24; h++){ let hDisp = (h < 10 ? '0' + h : h) + ':00'; hourOptions.push(`<option value="${h}">${hDisp}</option>`); } hSel.innerHTML = hourOptions.join(''); }
+  function debounceSearchLocation(query) { clearTimeout(STATE.weather.searchTimeout); let sugg = document.getElementById('location-suggestions'); if(query.length < 2) { sugg.style.display = 'none'; return; } sugg.innerHTML = '<div style="padding:10px; color:var(--text-sub); text-align:center; font-size:13px;">Đang tìm kiếm...</div>'; sugg.style.display = 'block'; STATE.weather.searchTimeout = setTimeout(() => { fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&countrycodes=vn&format=json&limit=5`).then(res => res.json()).then(data => { if(data && data.length > 0) { let htmlRes = data.map(item => { let name = item.display_name; return `<div style="padding:12px 10px; border-bottom:1px solid var(--border-light); cursor:pointer; font-size:13px; line-height:1.4;" onclick="selectLocation(${item.lat}, ${item.lon}, '${name.replace(/'/g, "\\'")}')">${name}</div>`; }).join(''); sugg.innerHTML = htmlRes; } else { sugg.innerHTML = '<div style="padding:10px; color:var(--danger-color); text-align:center; font-size:13px;">Không tìm thấy.</div>'; } }).catch(() => { sugg.innerHTML = '<div style="padding:10px; color:var(--danger-color); text-align:center; font-size:13px;">Lỗi mạng</div>'; }); }, 800); }
+  function selectLocation(lat, lon, name) { haptic(); STATE.weather.lat = lat; STATE.weather.lon = lon; document.getElementById('weather-location-search').value = name; document.getElementById('location-suggestions').style.display = 'none'; const statusDiv = document.getElementById('location-status'); statusDiv.innerText = `Đang chọn: ${name}`; statusDiv.style.color = 'var(--primary-color)'; }
+  function getCurrentLocation() { haptic(); const statusDiv = document.getElementById('location-status'); statusDiv.innerText = "Đang định vị..."; statusDiv.style.color = 'var(--warning-color)'; if (navigator.geolocation) { navigator.geolocation.getCurrentPosition((position) => { STATE.weather.lat = position.coords.latitude; STATE.weather.lon = position.coords.longitude; statusDiv.innerText = `📍 Tọa độ GPS: ${STATE.weather.lat.toFixed(2)}, ${STATE.weather.lon.toFixed(2)}`; statusDiv.style.color = 'var(--success-color)'; document.getElementById('weather-location-search').value = "Vị trí hiện tại của bạn"; }, (error) => { showDialog("Lỗi GPS", "Vui lòng bật Định vị (GPS).", "alert"); statusDiv.innerText = "Chưa có GPS"; statusDiv.style.color = 'var(--danger-color)'; }); } }
+  async function fetchWeather() { haptic(); const date = document.getElementById('weather-date').value; const hourVal = document.getElementById('weather-hour').value; const hour = (hourVal === 'current') ? new Date().getHours() : parseInt(hourVal); const source = document.getElementById('weather-source').value; const load = document.getElementById('weather-loading'); const resB = document.getElementById('weather-result'); load.style.display = 'block'; resB.style.display = 'none'; try { if (source === 'weatherapi') { const apiKey = 'b8bb28c7f1fe4d6e97142012262203'; const today = new Date(); const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`; let url = (date === todayStr) ? `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${STATE.weather.lat},${STATE.weather.lon}&days=1&aqi=no&alerts=no` : `https://api.weatherapi.com/v1/history.json?key=${apiKey}&q=${STATE.weather.lat},${STATE.weather.lon}&dt=${date}`; const resp = await fetch(url); if (!resp.ok) throw new Error("API Error"); const data = await resp.json(); const hourData = data.forecast.forecastday[0].hour[hour]; document.getElementById('res-temp').innerText = hourData.temp_c + "°C"; document.getElementById('res-hum').innerText = hourData.humidity + "%"; } else if (source === 'visualcrossing') { const vcKey = 'KJ558S6G2GG56PV24J72F35B9'; const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${STATE.weather.lat},${STATE.weather.lon}/${date}?key=${vcKey}&unitGroup=metric&include=hours`; const resp = await fetch(url); if (!resp.ok) throw new Error("API Error"); const data = await resp.json(); const hourData = data.days[0].hours[hour]; document.getElementById('res-temp').innerText = hourData.temp + "°C"; document.getElementById('res-hum').innerText = Math.round(hourData.humidity) + "%"; } else { const url = `https://api.open-meteo.com/v1/forecast?latitude=${STATE.weather.lat}&longitude=${STATE.weather.lon}&hourly=temperature_2m,relative_humidity_2m&timezone=Asia%2FBangkok&start_date=${date}&end_date=${date}`; const resp = await fetch(url); if (!resp.ok) throw new Error("API Error"); const data = await resp.json(); document.getElementById('res-temp').innerText = data.hourly.temperature_2m[hour] + "°C"; document.getElementById('res-hum').innerText = data.hourly.relative_humidity_2m[hour] + "%"; } load.style.display = 'none'; resB.style.display = 'block'; } catch(e) { showDialog("Lỗi", "Lỗi API!", "alert"); load.style.display = 'none'; } }
+  document.addEventListener('click', function(event) { var sugg = document.getElementById('location-suggestions'); if (sugg && event.target.id !== 'weather-location-search') { sugg.style.display = 'none'; } });
 
+  function xuLyFileExcel(e) { haptic(); let file = e.target.files[0]; if (!file) return; let reader = new FileReader(); reader.onload = function(evt) { let data = new Uint8Array(evt.target.result); let workbook = XLSX.read(data, {type: 'array'}); let json = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {defval: ""}); if(json.length === 0) { showDialog("Lỗi", "File rỗng!", "alert"); return; } let cleanedJson = json.map(row => { let newRow = {}; for (let key in row) { if (!key.startsWith('__EMPTY')) { newRow[key] = row[key]; } } return newRow; }); STATE.excel.data = cleanedJson; localStorage.setItem('duLieuExcelOffline', JSON.stringify(STATE.excel.data)); taoCauHinhMacDinh(); hienThiBangDanhMuc(STATE.excel.data); showDialog("Thành công", "Tải dữ liệu thành công! Bấm ⚙️ để căn chỉnh bảng.", "alert"); }; reader.readAsArrayBuffer(file); }
+  function taoCauHinhMacDinh() { let cacCot = Object.keys(STATE.excel.data[0]).filter(c => !c.startsWith('__EMPTY')); let defaultWidth = Math.floor(100 / cacCot.length); STATE.excel.config.cot = {}; cacCot.forEach(c => { STATE.excel.config.cot[c] = { show: true, width: defaultWidth }; }); if(cacCot[0]) STATE.excel.config.cot[cacCot[0]].width = 50; localStorage.setItem('cauHinhBangExcel', JSON.stringify(STATE.excel.config)); }
+  function toggleCaiDatDanhMuc() { haptic(); let panel = document.getElementById('panel-cai-dat-danh-muc'); if(panel.style.display === 'block') { panel.style.display = 'none'; return; } if(STATE.excel.data.length === 0) { showDialog("Lỗi", "Vui lòng tải file Excel lên trước!", "alert"); return; } document.getElementById('set-fontsize').value = STATE.excel.config.fontSize; let htmlCaiDatCot = Object.keys(STATE.excel.config.cot).map(tenCot => { if (tenCot.startsWith('__EMPTY')) return ''; let isChecked = STATE.excel.config.cot[tenCot].show ? "checked" : ""; let widthVal = STATE.excel.config.cot[tenCot].width; return `<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; font-size:12px; font-weight:bold;"><label style="margin:0; display:flex; align-items:center; flex:1; cursor:pointer;"><input type="checkbox" id="chk-${tenCot}" style="transform:scale(1.3); margin-right:10px;" onchange="chuyenPhanTramTuDong('${tenCot}')" ${isChecked}> ${tenCot}</label><div style="display:flex; align-items:center;"><input type="number" id="width-${tenCot}" value="${widthVal}" style="width:60px; padding:4px; margin-bottom:0;" ${!STATE.excel.config.cot[tenCot].show ? 'disabled style="background:var(--bg-body);"' : ''}> <span style="margin-left:5px;">%</span></div></div>`; }).join(''); document.getElementById('danh-sach-cot-cai-dat').innerHTML = htmlCaiDatCot; panel.style.display = 'block'; }
+  function chuyenPhanTramTuDong(cotNay) { let chk = document.getElementById('chk-' + cotNay); let inp = document.getElementById('width-' + cotNay); let soPhanTramHienTai = parseInt(inp.value) || 0; let tatCaCacCot = Object.keys(STATE.excel.config.cot).filter(c => !c.startsWith('__EMPTY')); let viTriHienTai = tatCaCacCot.indexOf(cotNay); if (!chk.checked) { inp.value = 0; inp.disabled = true; inp.style.background = "var(--bg-body)"; let daTimThayCotNhan = false; for (let i = viTriHienTai + 1; i < tatCaCacCot.length; i++) { let chkTiepTheo = document.getElementById('chk-' + tatCaCacCot[i]); if (chkTiepTheo && chkTiepTheo.checked) { let inpTiepTheo = document.getElementById('width-' + tatCaCacCot[i]); inpTiepTheo.value = (parseInt(inpTiepTheo.value) || 0) + soPhanTramHienTai; daTimThayCotNhan = true; break; } } if (!daTimThayCotNhan) { for (let i = viTriHienTai - 1; i >= 0; i--) { let chkPhiaTruoc = document.getElementById('chk-' + tatCaCacCot[i]); if (chkPhiaTruoc && chkPhiaTruoc.checked) { let inpPhiaTruoc = document.getElementById('width-' + tatCaCacCot[i]); inpPhiaTruoc.value = (parseInt(inpPhiaTruoc.value) || 0) + soPhanTramHienTai; break; } } } } else { inp.disabled = false; inp.style.background = "var(--input-bg)"; } }
+  function luuCaiDatDanhMuc() { 
+      haptic(); 
+      let rawFontSize = document.getElementById('set-fontsize').value;
+      if(typeof rawFontSize === 'string') rawFontSize = rawFontSize.replace(',', '.');
+      STATE.excel.config.fontSize = parseFloat(rawFontSize) || 14; 
+      
+      Object.keys(STATE.excel.config.cot).forEach(tenCot => { 
+          if(tenCot.startsWith('__EMPTY')) return; 
+          let el = document.getElementById(`chk-${tenCot}`); 
+          if(el) { 
+              STATE.excel.config.cot[tenCot].show = el.checked; 
+              let widthInput = parseInt(document.getElementById(`width-${tenCot}`).value); 
+              STATE.excel.config.cot[tenCot].width = isNaN(widthInput) ? 0 : widthInput; 
+          } 
+      }); 
+      localStorage.setItem('cauHinhBangExcel', JSON.stringify(STATE.excel.config)); 
+      document.getElementById('panel-cai-dat-danh-muc').style.display = 'none'; 
+      timKiemDanhMuc(); 
+  }
+  function hienThiBangDanhMuc(data) { let thead = document.getElementById('dm-header'); let tbody = document.getElementById('dm-body'); if (!data || data.length === 0) { thead.innerHTML = "<th>DỮ LIỆU</th>"; tbody.innerHTML = "<tr><td style='color:var(--text-sub); padding: 30px; text-align: center;'>Chưa có dữ liệu.</td></tr>"; return; } let cotHienThi = Object.keys(STATE.excel.config.cot).filter(c => STATE.excel.config.cot[c].show && !c.startsWith('__EMPTY')); thead.innerHTML = cotHienThi.map(cot => `<th style="width: ${STATE.excel.config.cot[cot].width}%;">${cot}</th>`).join(''); let fontSize = STATE.excel.config.fontSize + "px"; let htmlNoiDung = data.map(hang => { let cacOCuaHang = cotHienThi.map(cot => { let align = cotHienThi.indexOf(cot) === 0 ? "left" : "center"; return `<td style="text-align: ${align}; font-size: ${fontSize};">${hang[cot] !== undefined ? hang[cot] : ''}</td>`; }).join(''); return `<tr>${cacOCuaHang}</tr>`; }).join(''); tbody.innerHTML = htmlNoiDung; }
+  function timKiemDanhMuc() { let tuKhoa = document.getElementById('search-danh-muc').value.toLowerCase(); if (!tuKhoa) { hienThiBangDanhMuc(STATE.excel.data); return; } let ketQua = STATE.excel.data.filter(hang => { return Object.values(hang).some(giaTri => String(giaTri).toLowerCase().includes(tuKhoa)); }); hienThiBangDanhMuc(ketQua); }
+
+  // ==========================================
+  // MODULE TÀI CHÍNH
+  // ==========================================
   function getCleanUrl_Finance() { let url = localStorage.getItem('gasWebAppUrl'); if (!url) return null; url = url.trim(); if (!url.startsWith('http')) url = 'https://' + url; if (url.includes('/edit')) url = url.substring(0, url.indexOf('/edit')) + '/exec'; return url; }
   function openFinanceSettings() { document.getElementById('gas-url-modal').value = localStorage.getItem('gasWebAppUrl') || ''; document.getElementById('inp-budget').value = localStorage.getItem('myBudget') || ''; let modal = document.getElementById('fin-settings-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('show'), 10); }
   function closeFinanceSettings() { haptic(); let modal = document.getElementById('fin-settings-modal'); modal.classList.remove('show'); setTimeout(() => modal.style.display = 'none', 300); }
@@ -882,42 +1024,36 @@
   }
 
   function renderFinanceUI() { 
-    const { listCaNhan, listChiChung, tongNo } = STATE.finance.allFinanceRawData; 
-    
-    // Lấy tất cả các select bị trùng, dùng mảng để chốt lấy ô cuối cùng (ô đang hiển thị)
-    const mSels = document.querySelectorAll('#finMonthSelect');
-    const ySels = document.querySelectorAll('#finYearSelect');
-    
-    let selMonth = "";
-    let selYear = "";
-    if (mSels.length > 0) selMonth = mSels[mSels.length - 1].value;
-    if (ySels.length > 0) selYear = ySels[ySels.length - 1].value;
-    
-    const isMatch = (dateStr) => { 
-        const d = parseDateVN_Finance(dateStr); 
-        if (!d) return false; 
-        const dt = new Date(d); 
-        return (selMonth === "" ? true : (dt.getMonth() + 1).toString() === selMonth) && (dt.getFullYear().toString() === selYear); 
-    }; 
-    
-    const filteredCN = listCaNhan.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Cá nhân'})); 
-    const filteredCC = listChiChung.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Chi chung'})); 
-    const totalCN = filteredCN.reduce((a, b) => a + (b.amount || 0), 0); 
-    const totalCC = filteredCC.reduce((a, b) => a + (b.amount || 0), 0); 
-    const totalExpense = totalCN + totalCC; 
-    const totalDebt = tongNo.reduce((a, b) => a + (b.total || 0), 0); 
-    
-    renderFinanceSummaryCards(totalCN, totalCC, totalDebt); 
-    renderFinanceBudgetCard(totalExpense); 
-    renderFinanceDebtSection(tongNo); 
-    renderFinanceRecentTransactions(filteredCN, filteredCC); 
-    renderFinanceChart(filteredCN); 
-}
+      const { listCaNhan, listChiChung, tongNo } = STATE.finance.allFinanceRawData; 
+      
+      const mSels = document.querySelectorAll('#finMonthSelect');
+      const ySels = document.querySelectorAll('#finYearSelect');
+      let selMonth = ""; let selYear = ""; 
+      if (mSels.length > 0) selMonth = mSels[mSels.length - 1].value; 
+      if (ySels.length > 0) selYear = ySels[ySels.length - 1].value; 
+      
+      const isMatch = (dateStr) => { 
+          const d = parseDateVN_Finance(dateStr); 
+          if (!d) return false; 
+          const dt = new Date(d); 
+          return (selMonth === "" ? true : (dt.getMonth() + 1).toString() === selMonth) && (dt.getFullYear().toString() === selYear); 
+      }; 
+      
+      const filteredCN = listCaNhan.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Cá nhân'})); 
+      const filteredCC = listChiChung.filter(i => isMatch(i.date)).map(i => ({...i, txType: 'Chi chung'})); 
+      const totalCN = filteredCN.reduce((a, b) => a + (b.amount || 0), 0); const totalCC = filteredCC.reduce((a, b) => a + (b.amount || 0), 0); 
+      const totalExpense = totalCN + totalCC; const totalDebt = tongNo.reduce((a, b) => a + (b.total || 0), 0); 
+      
+      renderFinanceSummaryCards(totalCN, totalCC, totalDebt); renderFinanceBudgetCard(totalExpense); renderFinanceDebtSection(tongNo); renderFinanceRecentTransactions(filteredCN, filteredCC); renderFinanceChart(filteredCN); 
+  }
   
   function renderFinanceSummaryCards(totalCN, totalCC, totalDebt) { 
-      document.getElementById('val-cn').innerText = formatMoney(totalCN); document.getElementById('val-cc').innerText = formatMoney(totalCC); 
+      document.querySelectorAll('#val-cn').forEach(el => el.innerText = formatMoney(totalCN)); 
+      document.querySelectorAll('#val-cc').forEach(el => el.innerText = formatMoney(totalCC)); 
       STATE.finance.trueDebtValue = formatMoney(totalDebt); 
-      if (!STATE.finance.isHidden) { document.getElementById('total-debt-lbl').innerText = STATE.finance.trueDebtValue; } else { document.getElementById('total-debt-lbl').innerText = "****** ₫"; } 
+      document.querySelectorAll('#total-debt-lbl').forEach(el => {
+          el.innerText = STATE.finance.isHidden ? "****** ₫" : STATE.finance.trueDebtValue; 
+      });
   }
 
   function renderFinanceBudgetCard(totalExpense) { 
@@ -956,11 +1092,27 @@
       STATE.finance.expenseChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#007AFF', '#FF3B30', '#34C759', '#FF9500', '#AF52DE', '#5AC8FA', '#FF2D55', '#5856D6', '#FFCC00', '#8E8E93'], borderWidth: 2, borderColor: 'var(--bg-card)', hoverOffset: 4 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: 'bottom', labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-main'), padding: 20, font: {family: '-apple-system', size: 12, weight: 'bold'} } }, datalabels: { color: '#fff', font: { weight: 'bold', size: 13 }, formatter: (v, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0); let pct = Math.round(v/sum*100); return pct >= 5 ? pct + '%' : ''; } } } } }); 
   }
 
-  function toggleDebt() { haptic(); STATE.finance.isHidden = !STATE.finance.isHidden; document.getElementById('total-debt-lbl').innerText = STATE.finance.isHidden ? "****** ₫" : (STATE.finance.trueDebtValue || "0K"); if (STATE.finance.isHidden) { document.getElementById('debt-list-container').style.display = 'none'; document.getElementById('debt-hidden-msg').style.display = 'block'; } else { document.getElementById('debt-list-container').style.display = 'block'; document.getElementById('debt-hidden-msg').style.display = 'none'; } }
+  function toggleDebt() { 
+      haptic(); 
+      STATE.finance.isHidden = !STATE.finance.isHidden; 
+      document.querySelectorAll('#total-debt-lbl').forEach(el => {
+          el.innerText = STATE.finance.isHidden ? "****** ₫" : (STATE.finance.trueDebtValue || "0K");
+      });
+      document.querySelectorAll('#debt-list-container').forEach(el => {
+          el.style.display = STATE.finance.isHidden ? 'none' : 'block';
+      });
+      document.querySelectorAll('#debt-hidden-msg').forEach(el => {
+          el.style.display = STATE.finance.isHidden ? 'block' : 'none';
+      });
+  }
   
   function openFinanceDetailModal(title, type) { 
       haptic(); document.getElementById('fin-modal-title').innerText = title; document.getElementById('fin-modal-title').style.color = type === 'caNhan' ? 'var(--warning-color)' : 'var(--success-color)'; 
-      const selMonth = document.getElementById('finMonthSelect').value; const selYear = document.getElementById('finYearSelect').value; 
+      const mSels = document.querySelectorAll('#finMonthSelect');
+      const ySels = document.querySelectorAll('#finYearSelect');
+      let selMonth = ""; let selYear = ""; 
+      if (mSels.length > 0) selMonth = mSels[mSels.length - 1].value; 
+      if (ySels.length > 0) selYear = ySels[ySels.length - 1].value; 
       const isMatch = (dateStr) => { const d = parseDateVN_Finance(dateStr); if (!d) return false; const dt = new Date(d); return (selMonth === "" ? true : (dt.getMonth() + 1).toString() === selMonth) && (dt.getFullYear().toString() === selYear); }; 
       let dataArr = type === 'caNhan' ? STATE.finance.allFinanceRawData.listCaNhan : STATE.finance.allFinanceRawData.listChiChung; 
       dataArr = (dataArr || []).filter(i => isMatch(i.date)); 
@@ -982,7 +1134,7 @@
   function closeFinanceModal() { haptic(); let modal = document.getElementById('fin-bottom-modal'); modal.classList.remove('show'); setTimeout(() => modal.style.display = 'none', 300); }
 
   // ==========================================
-  // JAVASCRIPT CHO MODAL NHẬP LIỆU MỚI
+  // JAVASCRIPT CHO MODAL NHẬP LIỆU
   // ==========================================
   let currentInputTab = 'cn';
   
@@ -1016,12 +1168,41 @@
   function setPersonalTag(content, defaultAmount, element) {
       haptic();
       document.getElementById('inp-cn-content').value = content;
-      document.getElementById('inp-cn-amount').value = defaultAmount;
+      
+      let suggestedAmount = defaultAmount;
+      if (STATE.finance.allFinanceRawData && STATE.finance.allFinanceRawData.listCaNhan) {
+          const list = STATE.finance.allFinanceRawData.listCaNhan;
+          for (let i = list.length - 1; i >= 0; i--) {
+              if (list[i].content && list[i].content.toLowerCase() === content.toLowerCase()) {
+                  suggestedAmount = list[i].amount;
+                  break;
+              }
+          }
+      }
+      
+      document.getElementById('inp-cn-amount').value = suggestedAmount;
       document.querySelectorAll('#inp-view-cn .tag-chip').forEach(el => el.classList.remove('active'));
       element.classList.add('active');
   }
 
   function setInputValue(inputId, val) { haptic(); document.getElementById(inputId).value = val; }
+
+  function updatePayerSelect() {
+      let inp = document.getElementById('inp-cc-participants');
+      let current = inp.value.split(',').map(s => s.trim()).filter(Boolean);
+      let select = document.getElementById('inp-cc-payer');
+      
+      let html = `<option value="Tôi">Tôi (Bạn đã trả)</option>`;
+      current.forEach(n => {
+          html += `<option value="${n}">${n} trả</option>`;
+      });
+      select.innerHTML = html;
+      
+      if(!current.includes(select.value) && select.value !== 'Tôi') {
+          select.value = 'Tôi';
+      }
+      select.dispatchEvent(new Event('change'));
+  }
 
   function toggleParticipant(name, element) {
       haptic();
@@ -1036,21 +1217,35 @@
           element.classList.add('active');
       }
       inp.value = current.join(', ');
+      updatePayerSelect();
   }
 
   function populateInputTags() {
       let names = new Set();
       let debtors = [];
-      if (STATE.finance.allFinanceRawData && STATE.finance.allFinanceRawData.tongNo) {
-          STATE.finance.allFinanceRawData.tongNo.forEach(p => {
-              names.add(p.name);
-              if(p.total > 0) debtors.push(p); 
-          });
+      
+      if (STATE.finance.allFinanceRawData) {
+          if (STATE.finance.allFinanceRawData.tongNo) {
+              STATE.finance.allFinanceRawData.tongNo.forEach(p => {
+                  names.add(p.name);
+                  if(p.total > 0) debtors.push(p); 
+              });
+          }
+          if (STATE.finance.allFinanceRawData.listChiChung) {
+              STATE.finance.allFinanceRawData.listChiChung.forEach(tx => {
+                  if(tx.participants) {
+                      tx.participants.split(',').forEach(n => {
+                          let trimmed = n.trim();
+                          if(trimmed && trimmed !== 'Tôi' && trimmed !== 'Tài') names.add(trimmed);
+                      });
+                  }
+              });
+          }
       }
-      let nameArr = Array.from(names);
+      let nameArr = Array.from(names).sort();
 
       document.getElementById('tags-cc-participants').innerHTML = nameArr.map(n => `<div class="tag-chip" onclick="toggleParticipant('${n}', this)">${n}</div>`).join("");
-      document.getElementById('inp-cc-payer').innerHTML = `<option value="Tôi">Tôi (Bạn đã trả)</option>` + nameArr.map(n => `<option value="${n}">${n} trả</option>`).join("");
+      updatePayerSelect();
       document.getElementById('tags-cv-person').innerHTML = nameArr.map(n => `<div class="tag-chip" onclick="setInputValue('inp-cv-person', '${n}')">${n}</div>`).join("");
 
       if(debtors.length > 0) {
@@ -1134,8 +1329,9 @@
           let parts = document.getElementById('inp-cc-participants').value;
           let payer = document.getElementById('inp-cc-payer').value;
           let payerAmount = document.getElementById('inp-cc-payer-amount').value;
+          let payerNote = document.getElementById('inp-cc-payer-note').value; 
           if(!content || !total || !parts) { showDialog("Lỗi", "Vui lòng nhập đủ thông tin!", "alert"); return; }
-          payload.data = { content, total: Number(total), participants: parts, payer, payerAmount: Number(payerAmount) };
+          payload.data = { content, total: Number(total), participants: parts, payer, payerAmount: Number(payerAmount), payerNote };
       } else if (currentInputTab === 'cv') {
           let person = document.getElementById('inp-cv-person').value;
           let amount = document.getElementById('inp-cv-amount').value;
@@ -1157,21 +1353,51 @@
       btn.innerHTML = "ĐANG GỬI DỮ LIỆU..."; btn.disabled = true;
 
       try {
-          // Bắn POST lên Google Apps Script
           const response = await fetch(url, {
               method: 'POST',
               headers: { 'Content-Type': 'text/plain;charset=utf-8' },
               body: JSON.stringify(payload)
           });
           
-          showDialog("Thông báo", "Đã gửi dữ liệu thành công! (Vui lòng đảm bảo file CẤU HÌNH.txt trên Apps Script đã viết hàm doPost để nhận dữ liệu)", "alert");
+          showDialog("Thành công", "Đã ghi", "alert"); 
           closeInputModal();
+          
+          document.getElementById('inp-cn-content').value = '';
+          document.getElementById('inp-cn-amount').value = '';
+          document.getElementById('inp-cc-content').value = '';
+          document.getElementById('inp-cc-total').value = '';
+          document.getElementById('inp-cv-person').value = '';
+          document.getElementById('inp-cv-amount').value = '';
+          document.getElementById('inp-cv-reason').value = '';
+          document.getElementById('inp-cc-payer-note').value = ''; 
+          
+          fetchAllFinanceData();
       } catch (e) {
           showDialog("Lỗi", "Không thể gửi dữ liệu: " + e.message, "alert");
       } finally {
           btn.innerHTML = ogText; btn.disabled = false;
       }
   }
+
+  // ==========================================
+  // BẢN VÁ LỖI HIỂN THỊ NĂM/THÁNG
+  // ==========================================
+  function initFinanceDateSelectors() { 
+      const d = new Date(); 
+      document.querySelectorAll('#finMonthSelect').forEach(el => el.value = (d.getMonth() + 1).toString()); 
+      let optionsHtml = ''; 
+      for(let i = d.getFullYear() - 2; i <= d.getFullYear() + 2; i++) { 
+          optionsHtml += `<option value="${i}" ${i === d.getFullYear() ? 'selected' : ''}>Năm ${i}</option>`; 
+      } 
+      document.querySelectorAll('#finYearSelect').forEach(el => el.innerHTML = optionsHtml); 
+  }
+
+  document.addEventListener('change', function(e) {
+      if(e.target.id === 'finYearSelect' || e.target.id === 'finMonthSelect') {
+          document.querySelectorAll('#' + e.target.id).forEach(el => el.value = e.target.value);
+          renderFinanceUI();
+      }
+  });
 </script>
 </body>
 </html>
