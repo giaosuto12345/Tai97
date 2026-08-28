@@ -671,7 +671,7 @@
         <input type="number" id="inp-cc-total" class="form-input-box" placeholder="VD: 300" inputmode="numeric" />
         
         <label>Người tham gia (Bao gồm cả bạn):</label>
-        <input type="text" id="inp-cc-participants" class="form-input-box" placeholder="A, B, C..." readonly style="background:var(--bg-body);"/>
+        <input type="text" id="inp-cc-participants" class="form-input-box" placeholder="Nhập tên (Cách nhau bằng dấu phẩy)..." oninput="updatePayerSelect()" />
         <div class="tag-container" id="tags-cc-participants" style="margin-bottom: 10px;"></div>
 
         <label>Người trả tiền:</label>
@@ -1091,16 +1091,26 @@
       let current = inp.value.split(',').map(s => s.trim()).filter(Boolean);
       let select = document.getElementById('inp-cc-payer');
       
+      let prevVal = select.value;
       let html = `<option value="Tôi">Tôi (Bạn đã trả)</option>`;
+      
       current.forEach(n => {
-          if (n !== 'Tôi') html += `<option value="${n}">${n} trả</option>`;
+          if(n !== 'Tôi' && n !== 'Tài') { // Chống lặp chữ "Tôi" nếu người dùng lỡ tự gõ
+              html += `<option value="${n}">${n} trả</option>`;
+          }
       });
       select.innerHTML = html;
       
-      if(!current.includes(select.value) && select.value !== 'Tôi') {
+      // Giữ nguyên người đang chọn nếu tên đó vẫn còn trong danh sách
+      let opts = Array.from(select.options).map(o => o.value);
+      if(opts.includes(prevVal)) {
+          select.value = prevVal;
+      } else {
           select.value = 'Tôi';
       }
-      select.dispatchEvent(new Event('change'));
+      
+      // Ẩn/hiện khung nhập tiền chi riêng
+      document.getElementById('cc-payer-amount-box').style.display = select.value !== 'Tôi' ? 'block' : 'none';
   }
 
   function toggleParticipant(name, element) {
