@@ -735,25 +735,11 @@
       </div>
     </div>
   </div>
+ <!-- ========================================== -->
+  <!-- KHUNG ẨN ĐỂ CHỤP ẢNH Y HỆT GIAO DIỆN (ẢNH 3) -->
   <!-- ========================================== -->
-  <!-- MẪU HÓA ĐƠN XUẤT ẢNH (ẨN PHÍA SAU)         -->
-  <!-- ========================================== -->
-  <div id="invoice-template" style="width: 420px; padding: 30px; background: #ffffff; color: #000000; position: fixed; top: 0; left: 0; z-index: -1000; opacity: 0; pointer-events: none; font-family: sans-serif; box-sizing: border-box;">
-      <h2 style="text-align: center; margin: 0 0 5px 0; color: #007AFF; font-size: 24px; text-transform: uppercase;">Phiếu Công Nợ</h2>
-      <p style="text-align: center; margin: 0 0 20px 0; font-size: 13px; color: #666;" id="inv-date"></p>
-      
-      <div style="border-bottom: 2px dashed #ccc; margin-bottom: 15px;"></div>
-      <p style="font-size: 16px; margin: 0 0 15px 0;"><strong>Khách hàng:</strong> <span id="inv-name" style="font-size: 18px; color: #FF3B30;"></span></p>
-      <div style="border-bottom: 2px dashed #ccc; margin-bottom: 15px;"></div>
-      
-      <div id="inv-items"></div>
-      
-      <div style="border-bottom: 2px dashed #ccc; margin-top: 15px; margin-bottom: 15px;"></div>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 18px; font-weight: bold;">TỔNG CỘNG:</span>
-          <span id="inv-total" style="font-size: 24px; font-weight: 900; color: #FF3B30;"></span>
-      </div>
-      <p style="text-align: center; font-size: 12px; color: #999; margin-top: 40px; font-style: italic;">Sản phẩm được tạo bởi Hệ thống Quản Lý Tài</p>
+  <div id="export-capture-area" style="width: 420px; padding: 24px; background: #F2F2F7; position: fixed; top: 0; left: -2000px; z-index: -1000; opacity: 0; pointer-events: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box;">
+      <!-- Javascript sẽ tự động vẽ UI vào đây -->
   </div>
 
 <script>
@@ -1410,48 +1396,66 @@
       modalBody.insertAdjacentHTML('beforeend', btnHtml);
   };
 
-  // 2. Logic tạo và chụp ảnh 1 hóa đơn
+ // 2. Logic tạo và chụp ảnh 1 hóa đơn (Chuẩn UI iOS)
   async function generateInvoiceImage(person) {
       return new Promise((resolve) => {
-          const template = document.getElementById('invoice-template');
-          const now = new Date();
-          document.getElementById('inv-date').innerText = `Ngày xuất: ${now.toLocaleDateString('vi-VN')} ${now.toLocaleTimeString('vi-VN')}`;
-          document.getElementById('inv-name').innerText = person.name;
-          document.getElementById('inv-total').innerText = formatMoney(person.total);
+          const captureArea = document.getElementById('export-capture-area');
           
-          let itemsHtml = '';
+          let html = `
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 28px;">👤</span>
+                    <span style="font-size: 24px; font-weight: 800; color: #1C1C1E;">${person.name}</span>
+                </div>
+                <div style="width: 28px; height: 28px; background: #FFFFFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #8E8E93; font-weight: bold; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">✕</div>
+            </div>
+            <div style="color: #FF3B30; font-weight: 800; font-size: 20px; padding-bottom: 15px; border-bottom: 1px solid #E5E5EA; margin-bottom: 20px;">Tổng nợ: ${formatMoney(person.total)}</div>
+            <div>`;
+          
           if(person.loans && person.loans.length > 0) {
-              itemsHtml += `<div style="font-weight: 900; color: #007AFF; margin-bottom: 8px; font-size: 15px;">💸 TIỀN VAY</div>`;
-              person.loans.forEach(l => {
-                  itemsHtml += `<div style="display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
-                      <span style="flex: 1; padding-right: 10px;">${l.time || ''} <br><span style="color:#666; font-size: 13px;">Lý do: ${l.reason || 'Không rõ'}</span></span>
-                      <strong>${formatMoney(l.amount)}</strong>
-                  </div>`;
+              html += `<div style="font-size: 14px; font-weight: 800; color: #007AFF; margin-bottom: 10px; text-transform: uppercase;">💸 TIỀN VAY (${formatMoney(person.totalLoan)})</div>`;
+              let sortedLoans = [...person.loans].sort((a, b) => { let diff = parseDateVN_Finance(b.time) - parseDateVN_Finance(a.time); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); });
+              sortedLoans.forEach(l => {
+                  html += `
+                    <div style="background: #FFFFFF; border-radius: 16px; padding: 16px; margin-bottom: 15px; border: 1px solid #E5E5EA;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                <span style="font-size: 14px; color: #007AFF; font-weight: 700;">${l.time || 'N/A'}</span>
+                                <span style="font-size: 17px; font-weight: 700; color: #1C1C1E;">${l.reason ? l.reason : 'Cho vay'}</span>
+                            </div>
+                            <span style="font-size: 18px; font-weight: 500; color: #007AFF;">${formatMoney(l.amount)}</span>
+                        </div>
+                    </div>`;
               });
           }
+
           if(person.commonExpenses && person.commonExpenses.length > 0) {
-              itemsHtml += `<div style="font-weight: 900; color: #34C759; margin-top: 15px; margin-bottom: 8px; font-size: 15px;">👥 CHI CHUNG</div>`;
-              person.commonExpenses.forEach(c => {
-                  itemsHtml += `<div style="display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
-                      <span style="flex: 1; padding-right: 10px;">${c.time || ''} <br><span style="color:#666; font-size: 13px;">${c.content || 'Chi tiêu'}</span></span>
-                      <strong>${formatMoney(c.amount)}</strong>
-                  </div>`;
+              html += `<div style="font-size: 14px; font-weight: 800; color: #34C759; margin-bottom: 10px; margin-top: 20px; text-transform: uppercase;">👥 CHI CHUNG (${formatMoney(person.totalCommon)})</div>`;
+              let sortedCommon = [...person.commonExpenses].sort((a, b) => { let diff = parseDateVN_Finance(b.time) - parseDateVN_Finance(a.time); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); });
+              sortedCommon.forEach(c => {
+                  let subText = c.total ? `Tổng bill: ${formatMoney(c.total)} - ${c.participants || ''}` : (c.participants || '');
+                  let noteText = c.payerNote ? `(${c.payerNote})` : '';
+                  html += `
+                    <div style="background: #FFFFFF; border-radius: 16px; padding: 16px; margin-bottom: 15px; border: 1px solid #E5E5EA;">
+                        <div style="font-size: 14px; color: #34C759; font-weight: 700; margin-bottom: 8px;">${c.time || ''}</div>
+                        <div style="font-size: 18px; font-weight: 700; color: #1C1C1E; margin-bottom: 8px;">${c.content || 'Chi tiêu'}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px;">
+                            <div style="font-size: 13px; color: #8E8E93; line-height: 1.4; flex: 1;">${subText}</div>
+                            <div style="font-size: 18px; font-weight: 500; color: #34C759;">${formatMoney(c.amount)}</div>
+                        </div>
+                        ${noteText ? `<div style="font-size: 16px; color: #1C1C1E; font-weight: 500;">${noteText}</div>` : ''}
+                    </div>`;
               });
           }
-          document.getElementById('inv-items').innerHTML = itemsHtml;
           
-          template.style.opacity = '1'; 
+          html += `</div>`;
+          captureArea.innerHTML = html;
           
           setTimeout(() => {
-              html2canvas(template, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
-                  template.style.opacity = '0'; // Ẩn lại
-                  const link = document.createElement('a');
-                  link.download = `Hoa_Don_${person.name.replace(/\s+/g, '_')}.png`;
-                  link.href = canvas.toDataURL('image/png');
-                  link.click();
-                  resolve();
+              html2canvas(captureArea, { scale: 3, backgroundColor: '#F2F2F7', useCORS: true }).then(canvas => {
+                  resolve(canvas); // Trả thẳng canvas ra để lưu/share
               });
-          }, 300); // Đợi DOM render chữ xong
+          }, 300);
       });
   }
   
