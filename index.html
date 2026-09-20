@@ -14,11 +14,13 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   
-  <!-- Thư viện Excel -->
+ <!-- Thư viện Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <!-- Thư viện Biểu đồ (Tài chính) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+  <!-- Thêm thư viện xuất ảnh Hóa đơn -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     /* ================== BIẾN MÀU SẮC TỰ ĐỘNG (LIGHT / DARK MODE) ================== */
@@ -537,8 +539,11 @@
 
       <div class="card" style="padding: 20px;"><div class="card-title" style="color: var(--warning-color); font-size: 16px;">CƠ CẤU CHI CÁ NHÂN</div><div style="height: 320px; width: 100%;"><canvas id="expenseChart"></canvas></div></div>
 
-      <div class="card" style="background: transparent; box-shadow: none; padding: 0; border: none;">
-        <div class="card-title" style="text-align: left; margin-bottom: 12px; font-size: 16px;">SỔ CÔNG NỢ</div>
+     <div class="card" style="background: transparent; box-shadow: none; padding: 0; border: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div class="card-title" style="margin: 0; font-size: 16px;">SỔ CÔNG NỢ</div>
+            <button onclick="openMultiExportModal()" style="background: var(--primary-color); color: white; border: none; padding: 6px 14px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);">📄 Xuất nhiều</button>
+        </div>
         <div id="debt-hidden-msg" class="hidden-msg" style="display: none;">Đang ẩn 🔒</div>
         <div id="debt-list-container"><div style="text-align: center; padding: 20px; color: var(--text-sub);">Bấm 🔄 để tải dữ liệu...</div></div>
       </div>
@@ -729,6 +734,26 @@
         <button class="btn" id="btn-submit-tx" onclick="submitTransaction()">LƯU GIAO DỊCH</button>
       </div>
     </div>
+  </div>
+  <!-- ========================================== -->
+  <!-- MẪU HÓA ĐƠN XUẤT ẢNH (ẨN PHÍA SAU)         -->
+  <!-- ========================================== -->
+  <div id="invoice-template" style="width: 420px; padding: 30px; background: #ffffff; color: #000000; position: fixed; top: 0; left: 0; z-index: -1000; opacity: 0; pointer-events: none; font-family: sans-serif; box-sizing: border-box;">
+      <h2 style="text-align: center; margin: 0 0 5px 0; color: #007AFF; font-size: 24px; text-transform: uppercase;">Phiếu Công Nợ</h2>
+      <p style="text-align: center; margin: 0 0 20px 0; font-size: 13px; color: #666;" id="inv-date"></p>
+      
+      <div style="border-bottom: 2px dashed #ccc; margin-bottom: 15px;"></div>
+      <p style="font-size: 16px; margin: 0 0 15px 0;"><strong>Khách hàng:</strong> <span id="inv-name" style="font-size: 18px; color: #FF3B30;"></span></p>
+      <div style="border-bottom: 2px dashed #ccc; margin-bottom: 15px;"></div>
+      
+      <div id="inv-items"></div>
+      
+      <div style="border-bottom: 2px dashed #ccc; margin-top: 15px; margin-bottom: 15px;"></div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 18px; font-weight: bold;">TỔNG CỘNG:</span>
+          <span id="inv-total" style="font-size: 24px; font-weight: 900; color: #FF3B30;"></span>
+      </div>
+      <p style="text-align: center; font-size: 12px; color: #999; margin-top: 40px; font-style: italic;">Sản phẩm được tạo bởi Hệ thống Quản Lý Tài</p>
   </div>
 
 <script>
@@ -1371,6 +1396,137 @@
           renderFinanceUI();
       }
   });
+// ==========================================
+  // TÍNH NĂNG XUẤT ẢNH HÓA ĐƠN
+  // ==========================================
+
+  // 1. Thêm nút "Xuất Hóa Đơn" vào Modal Chi Tiết Gốc
+  const oldOpenFinanceDebtModal = openFinanceDebtModal;
+  openFinanceDebtModal = function(idx) {
+      oldOpenFinanceDebtModal(idx); // Gọi lại hàm cũ để vẽ UI chi tiết
+      // Gắn thêm nút xuất ở dưới cùng
+      let modalBody = document.getElementById('fin-modal-body');
+      let btnHtml = `<button onclick="exportSingleInvoice(${idx}, this)" class="btn" style="margin-top: 20px; background: var(--success-color); box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);">📸 TẢI ẢNH HOÁ ĐƠN</button>`;
+      modalBody.insertAdjacentHTML('beforeend', btnHtml);
+  };
+
+  // 2. Logic tạo và chụp ảnh 1 hóa đơn
+  async function generateInvoiceImage(person) {
+      return new Promise((resolve) => {
+          const template = document.getElementById('invoice-template');
+          const now = new Date();
+          document.getElementById('inv-date').innerText = `Ngày xuất: ${now.toLocaleDateString('vi-VN')} ${now.toLocaleTimeString('vi-VN')}`;
+          document.getElementById('inv-name').innerText = person.name;
+          document.getElementById('inv-total').innerText = formatMoney(person.total);
+          
+          let itemsHtml = '';
+          if(person.loans && person.loans.length > 0) {
+              itemsHtml += `<div style="font-weight: 900; color: #007AFF; margin-bottom: 8px; font-size: 15px;">💸 TIỀN VAY</div>`;
+              person.loans.forEach(l => {
+                  itemsHtml += `<div style="display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
+                      <span style="flex: 1; padding-right: 10px;">${l.time || ''} <br><span style="color:#666; font-size: 13px;">Lý do: ${l.reason || 'Không rõ'}</span></span>
+                      <strong>${formatMoney(l.amount)}</strong>
+                  </div>`;
+              });
+          }
+          if(person.commonExpenses && person.commonExpenses.length > 0) {
+              itemsHtml += `<div style="font-weight: 900; color: #34C759; margin-top: 15px; margin-bottom: 8px; font-size: 15px;">👥 CHI CHUNG</div>`;
+              person.commonExpenses.forEach(c => {
+                  itemsHtml += `<div style="display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
+                      <span style="flex: 1; padding-right: 10px;">${c.time || ''} <br><span style="color:#666; font-size: 13px;">${c.content || 'Chi tiêu'}</span></span>
+                      <strong>${formatMoney(c.amount)}</strong>
+                  </div>`;
+              });
+          }
+          document.getElementById('inv-items').innerHTML = itemsHtml;
+          
+          template.style.opacity = '1'; 
+          
+          setTimeout(() => {
+              html2canvas(template, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
+                  template.style.opacity = '0'; // Ẩn lại
+                  const link = document.createElement('a');
+                  link.download = `Hoa_Don_${person.name.replace(/\s+/g, '_')}.png`;
+                  link.href = canvas.toDataURL('image/png');
+                  link.click();
+                  resolve();
+              });
+          }, 300); // Đợi DOM render chữ xong
+      });
+  }
+  
+  // 3. Xử lý khi ấn nút "Xuất Hóa đơn" 1 người
+  async function exportSingleInvoice(idx, btnElement) {
+      haptic();
+      const person = STATE.finance.allFinanceRawData.tongNo[idx];
+      if(!person) return;
+      
+      const ogText = btnElement.innerHTML;
+      btnElement.innerHTML = "ĐANG TẠO ẢNH..."; btnElement.disabled = true;
+      
+      await generateInvoiceImage(person);
+      
+      btnElement.innerHTML = "✅ ĐÃ TẢI XUỐNG";
+      setTimeout(() => { btnElement.innerHTML = ogText; btnElement.disabled = false; }, 2000);
+  }
+
+  // 4. Mở Modal Xuất nhiều người
+  function openMultiExportModal() {
+      haptic();
+      const tongNo = STATE.finance.allFinanceRawData.tongNo || [];
+      if(tongNo.length === 0) { showDialog("Thông báo", "Không có khoản nợ nào để xuất.", "alert"); return; }
+      
+      document.getElementById('fin-modal-title').innerText = `📄 Xuất Hóa Đơn Cấp Số Nhiều`;
+      document.getElementById('fin-modal-title').style.color = 'var(--primary-color)';
+      
+      let html = `<div style="margin-bottom: 15px; background: var(--input-bg); padding: 12px; border-radius: 12px;">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--primary-color); font-weight: 700; cursor: pointer; margin: 0;">
+              <input type="checkbox" onchange="document.querySelectorAll('.chk-export-item').forEach(c => c.checked = this.checked)" style="transform: scale(1.3); margin: 0;"> CHỌN TẤT CẢ
+          </label>
+      </div>`;
+      
+      html += `<div style="max-height: 50vh; overflow-y: auto; margin-bottom: 15px;">`;
+      tongNo.forEach((person, idx) => {
+          html += `
+          <div class="debt-check-item">
+              <label>
+                  <input type="checkbox" class="chk-export-item" value="${idx}">
+                  <div><div style="font-weight: bold; font-size:15px;">👤 ${person.name}</div></div>
+              </label>
+              <span class="debt-amt-badge">${formatMoney(person.total)}</span>
+          </div>`;
+      });
+      html += `</div>`;
+      html += `<button onclick="executeMultiExport(this)" class="btn" style="background: var(--success-color); box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);">🚀 TẢI ẢNH HÀNG LOẠT</button>`;
+      
+      document.getElementById('fin-modal-body').innerHTML = html;
+      let modal = document.getElementById('fin-bottom-modal');
+      modal.style.display = 'flex';
+      setTimeout(() => modal.classList.add('show'), 10);
+  }
+
+  // 5. Xử lý xuất hàng loạt
+  async function executeMultiExport(btnElement) {
+      haptic();
+      const checked = document.querySelectorAll('.chk-export-item:checked');
+      if(checked.length === 0) { showDialog("Lỗi", "Vui lòng chọn ít nhất 1 người!", "alert"); return; }
+      
+      btnElement.innerHTML = "ĐANG XUẤT ẢNH..."; btnElement.disabled = true;
+      
+      // Chạy vòng lặp xuất từng ảnh (Cần delay để Safari/Chrome không chặn popup tải xuống)
+      for(let i=0; i<checked.length; i++) {
+          let idx = parseInt(checked[i].value);
+          const person = STATE.finance.allFinanceRawData.tongNo[idx];
+          if(person) {
+              await generateInvoiceImage(person);
+              await new Promise(r => setTimeout(r, 800)); // Delay 800ms
+          }
+      }
+      
+      btnElement.innerHTML = "✅ HOÀN TẤT";
+      setTimeout(() => { closeFinanceModal(); }, 1500);
+  }
+  
 </script>
 </body>
 </html>
