@@ -1397,20 +1397,77 @@
       }
   });
 // ==========================================
-  // TÍNH NĂNG XUẤT ẢNH HÓA ĐƠN
+  // GIAO DIỆN CHI TIẾT (PREMIUM) VÀ TÍNH NĂNG XUẤT ẢNH iOS
   // ==========================================
 
-  // 1. Thêm nút "Xuất Hóa Đơn" vào Modal Chi Tiết Gốc
-  const oldOpenFinanceDebtModal = openFinanceDebtModal;
-  openFinanceDebtModal = function(idx) {
-      oldOpenFinanceDebtModal(idx); // Gọi lại hàm cũ để vẽ UI chi tiết
-      // Gắn thêm nút xuất ở dưới cùng
-      let modalBody = document.getElementById('fin-modal-body');
-      let btnHtml = `<button onclick="exportSingleInvoice(${idx}, this)" class="btn" style="margin-top: 20px; background: var(--success-color); box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);">📸 TẢI ẢNH HOÁ ĐƠN</button>`;
-      modalBody.insertAdjacentHTML('beforeend', btnHtml);
-  };
+  // 1. Ghi đè Modal Chi tiết Nợ với giao diện dạng thẻ (Card) tuyệt đẹp
+  function openFinanceDebtModal(idx) { 
+      haptic(); 
+      let person = STATE.finance.allFinanceRawData.tongNo[idx]; 
+      if(!person) return; 
+      
+      // Header với Icon và Tên
+      document.getElementById('fin-modal-title').innerHTML = `<span style="font-size:24px; vertical-align:middle; margin-right:8px;">👤</span>${person.name}`; 
+      document.getElementById('fin-modal-title').style.color = 'var(--text-main)'; 
+      document.getElementById('fin-modal-title').style.display = 'flex';
+      document.getElementById('fin-modal-title').style.alignItems = 'center';
+      
+      // Tổng nợ màu đỏ
+      let htmlBlocks = [`<div style="color: #FF3B30; font-weight: 900; font-size: 19px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border-light);">Tổng nợ: ${formatMoney(person.total)}</div>`]; 
+      
+      // --- Phần TIỀN VAY ---
+      if (person.loans && person.loans.length > 0) { 
+          htmlBlocks.push(`<div style="font-size: 13px; font-weight: 800; color: #007AFF; margin-bottom: 10px; text-transform: uppercase;">💸 TIỀN VAY (${formatMoney(person.totalLoan)})</div>`); 
+          let sortedLoans = [...person.loans].sort((a, b) => { let diff = parseDateVN_Finance(b.time) - parseDateVN_Finance(a.time); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); }); 
+          
+          sortedLoans.forEach(l => {
+              htmlBlocks.push(`
+                <div style="background: var(--bg-card); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; border: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 13px; color: #007AFF; font-weight: 700;">${l.time || 'N/A'}</span>
+                        <span style="font-size: 16px; font-weight: 700; color: var(--text-main);">${l.reason ? l.reason : 'Cho vay'}</span>
+                    </div>
+                    <span style="font-size: 18px; font-weight: 700; color: #007AFF;">${formatMoney(l.amount)}</span>
+                </div>
+              `);
+          });
+      } 
+      
+      // --- Phần CHI CHUNG ---
+      if (person.commonExpenses && person.commonExpenses.length > 0) { 
+          htmlBlocks.push(`<div style="font-size: 13px; font-weight: 800; color: #34C759; margin-bottom: 10px; margin-top: 20px; text-transform: uppercase;">👥 CHI CHUNG (${formatMoney(person.totalCommon)})</div>`); 
+          let sortedCommon = [...person.commonExpenses].sort((a, b) => { let diff = parseDateVN_Finance(b.time) - parseDateVN_Finance(a.time); if (diff !== 0) return diff; return (b.originalIndex || 0) - (a.originalIndex || 0); }); 
+          
+          sortedCommon.forEach(c => { 
+              let subText = c.total ? `Tổng bill: ${formatMoney(c.total)} - ${c.participants || ''}` : (c.participants || ''); 
+              let noteText = c.payerNote ? `(${c.payerNote})` : ''; 
+              
+              htmlBlocks.push(`
+                <div style="background: var(--bg-card); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; border: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: stretch; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                    <div style="display: flex; flex-direction: column; justify-content: space-between; flex: 1; padding-right: 15px;">
+                        <div>
+                            <div style="font-size: 13px; color: #34C759; font-weight: 700; margin-bottom: 4px;">${c.time || ''}</div>
+                            <div style="font-size: 16px; font-weight: 700; color: var(--text-main); line-height: 1.3;">${c.content || 'Chi tiêu'}</div>
+                            ${subText ? `<div style="font-size: 13px; color: var(--text-sub); margin-top: 4px; line-height: 1.4;">${subText}</div>` : ''}
+                        </div>
+                        ${noteText ? `<div style="font-size: 14px; color: var(--text-main); font-weight: 500; margin-top: 8px;">${noteText}</div>` : ''}
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: flex-end;">
+                        <span style="font-size: 18px; font-weight: 700; color: #34C759;">${formatMoney(c.amount)}</span>
+                    </div>
+                </div>
+              `);
+          }); 
+      } 
+      
+      // Nút xuất ảnh
+      htmlBlocks.push(`<button onclick="exportSingleInvoice(${idx}, this)" class="btn" style="margin-top: 24px; background: #57C664; border-radius: 20px; font-size: 16px; padding: 18px; box-shadow: 0 4px 12px rgba(87, 198, 100, 0.4);">📸 TẢI ẢNH HOÁ ĐƠN</button>`);
 
-  // 2. Logic tạo và chụp ảnh 1 hóa đơn
+      document.getElementById('fin-modal-body').innerHTML = htmlBlocks.join(''); 
+      let modal = document.getElementById('fin-bottom-modal'); modal.style.display = 'flex'; setTimeout(() => modal.classList.add('show'), 10); 
+  }
+
+  // 2. Logic tạo và chụp ảnh
   async function generateInvoiceImage(person) {
       return new Promise((resolve) => {
           const template = document.getElementById('invoice-template');
@@ -1424,7 +1481,7 @@
               itemsHtml += `<div style="font-weight: 900; color: #007AFF; margin-bottom: 8px; font-size: 15px;">💸 TIỀN VAY</div>`;
               person.loans.forEach(l => {
                   itemsHtml += `<div style="display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #eee;">
-                      <span style="flex: 1; padding-right: 10px;">${l.time || ''} <br><span style="color:#666; font-size: 13px;">Lý do: ${l.reason || 'Không rõ'}</span></span>
+                      <span style="flex: 1; padding-right: 10px;">${l.time || ''} <br><span style="color:#666; font-size: 13px;">Lý do: ${l.reason || 'Cho vay'}</span></span>
                       <strong>${formatMoney(l.amount)}</strong>
                   </div>`;
               });
@@ -1443,19 +1500,15 @@
           template.style.opacity = '1'; 
           
           setTimeout(() => {
-              html2canvas(template, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
+              html2canvas(template, { scale: 3, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
                   template.style.opacity = '0'; // Ẩn lại
-                  const link = document.createElement('a');
-                  link.download = `Hoa_Don_${person.name.replace(/\s+/g, '_')}.png`;
-                  link.href = canvas.toDataURL('image/png');
-                  link.click();
-                  resolve();
+                  resolve(canvas);
               });
-          }, 300); // Đợi DOM render chữ xong
+          }, 300);
       });
   }
   
-  // 3. Xử lý khi ấn nút "Xuất Hóa đơn" 1 người
+  // 3. Xử lý lưu ảnh thông minh cho iOS (Web Share API)
   async function exportSingleInvoice(idx, btnElement) {
       haptic();
       const person = STATE.finance.allFinanceRawData.tongNo[idx];
@@ -1464,10 +1517,39 @@
       const ogText = btnElement.innerHTML;
       btnElement.innerHTML = "ĐANG TẠO ẢNH..."; btnElement.disabled = true;
       
-      await generateInvoiceImage(person);
-      
-      btnElement.innerHTML = "✅ ĐÃ TẢI XUỐNG";
-      setTimeout(() => { btnElement.innerHTML = ogText; btnElement.disabled = false; }, 2000);
+      try {
+          const canvas = await generateInvoiceImage(person);
+          const fileName = `Hoa_Don_${person.name.replace(/\s+/g, '_')}.png`;
+
+          canvas.toBlob(async (blob) => {
+              const file = new File([blob], fileName, { type: 'image/png' });
+              
+              if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                  try {
+                      await navigator.share({
+                          files: [file],
+                          title: 'Hóa Đơn Công Nợ',
+                          text: `Gửi ${person.name} chi tiết các khoản.`
+                      });
+                      btnElement.innerHTML = "✅ ĐÃ CHIA SẺ";
+                  } catch (err) {
+                      btnElement.innerHTML = ogText; // Hủy share
+                  }
+              } else {
+                  // Fallback cho PC/Android: tải file trực tiếp
+                  const link = document.createElement('a');
+                  link.download = fileName;
+                  link.href = canvas.toDataURL('image/png');
+                  link.click();
+                  btnElement.innerHTML = "✅ ĐÃ TẢI XUỐNG";
+              }
+              setTimeout(() => { btnElement.innerHTML = ogText; btnElement.disabled = false; }, 2000);
+          }, 'image/png');
+          
+      } catch (err) {
+          btnElement.innerHTML = ogText; btnElement.disabled = false;
+          alert("Có lỗi khi tạo ảnh.");
+      }
   }
 
   // 4. Mở Modal Xuất nhiều người
@@ -1476,12 +1558,12 @@
       const tongNo = STATE.finance.allFinanceRawData.tongNo || [];
       if(tongNo.length === 0) { showDialog("Thông báo", "Không có khoản nợ nào để xuất.", "alert"); return; }
       
-      document.getElementById('fin-modal-title').innerText = `📄 Xuất Hóa Đơn Cấp Số Nhiều`;
+      document.getElementById('fin-modal-title').innerText = `📄 Xuất Hóa Đơn Hàng Loạt`;
       document.getElementById('fin-modal-title').style.color = 'var(--primary-color)';
       
       let html = `<div style="margin-bottom: 15px; background: var(--input-bg); padding: 12px; border-radius: 12px;">
           <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--primary-color); font-weight: 700; cursor: pointer; margin: 0;">
-              <input type="checkbox" onchange="document.querySelectorAll('.chk-export-item').forEach(c => c.checked = this.checked)" style="transform: scale(1.3); margin: 0;"> CHỌN TẤT CẢ
+              <input type="checkbox" onchange="document.querySelectorAll('.chk-export-item').forEach(c => c.checked = this.checked)" style="transform: scale(1.3); margin: 0; accent-color: var(--primary-color);"> CHỌN TẤT CẢ
           </label>
       </div>`;
       
@@ -1497,7 +1579,7 @@
           </div>`;
       });
       html += `</div>`;
-      html += `<button onclick="executeMultiExport(this)" class="btn" style="background: var(--success-color); box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);">🚀 TẢI ẢNH HÀNG LOẠT</button>`;
+      html += `<button onclick="executeMultiExport(this)" class="btn" style="background: var(--success-color); box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);">🚀 LƯU / CHIA SẺ HÀNG LOẠT</button>`;
       
       document.getElementById('fin-modal-body').innerHTML = html;
       let modal = document.getElementById('fin-bottom-modal');
@@ -1505,26 +1587,61 @@
       setTimeout(() => modal.classList.add('show'), 10);
   }
 
-  // 5. Xử lý xuất hàng loạt
+  // 5. Xử lý xuất hàng loạt (Gom tất cả file vào 1 mảng và Share 1 lần duy nhất)
   async function executeMultiExport(btnElement) {
       haptic();
       const checked = document.querySelectorAll('.chk-export-item:checked');
       if(checked.length === 0) { showDialog("Lỗi", "Vui lòng chọn ít nhất 1 người!", "alert"); return; }
       
-      btnElement.innerHTML = "ĐANG XUẤT ẢNH..."; btnElement.disabled = true;
+      const ogText = btnElement.innerHTML;
+      btnElement.innerHTML = "ĐANG TẠO ẢNH..."; btnElement.disabled = true;
       
-      // Chạy vòng lặp xuất từng ảnh (Cần delay để Safari/Chrome không chặn popup tải xuống)
-      for(let i=0; i<checked.length; i++) {
-          let idx = parseInt(checked[i].value);
-          const person = STATE.finance.allFinanceRawData.tongNo[idx];
-          if(person) {
-              await generateInvoiceImage(person);
-              await new Promise(r => setTimeout(r, 800)); // Delay 800ms
+      try {
+          let filesToShare = [];
+          
+          for(let i=0; i<checked.length; i++) {
+              let idx = parseInt(checked[i].value);
+              const person = STATE.finance.allFinanceRawData.tongNo[idx];
+              if(person) {
+                  const canvas = await generateInvoiceImage(person);
+                  const fileName = `Hoa_Don_${person.name.replace(/\s+/g, '_')}.png`;
+                  
+                  // Đổi Canvas thành Blob tuần tự
+                  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                  filesToShare.push(new File([blob], fileName, { type: 'image/png' }));
+              }
           }
+          
+          // Bật bảng Share của iOS 1 lần duy nhất cho tất cả các ảnh
+          if (navigator.canShare && navigator.canShare({ files: filesToShare })) {
+              try {
+                  await navigator.share({
+                      files: filesToShare,
+                      title: 'Hóa Đơn Công Nợ Hàng Loạt'
+                  });
+                  btnElement.innerHTML = "✅ HOÀN TẤT";
+              } catch (err) {
+                  btnElement.innerHTML = ogText; // User bấm hủy
+              }
+          } else {
+              // Fallback cho PC: Tự tải xuống nhiều file
+              filesToShare.forEach(f => {
+                  const url = URL.createObjectURL(f);
+                  const link = document.createElement('a');
+                  link.download = f.name;
+                  link.href = url;
+                  link.click();
+                  URL.revokeObjectURL(url);
+              });
+              btnElement.innerHTML = "✅ ĐÃ TẢI XUỐNG";
+          }
+      } catch (err) {
+          alert("Lỗi khi tạo ảnh hàng loạt.");
+          btnElement.innerHTML = ogText; 
+      } finally {
+          btnElement.disabled = false;
+          setTimeout(() => { closeFinanceModal(); }, 2000);
       }
-      
-      btnElement.innerHTML = "✅ HOÀN TẤT";
-      setTimeout(() => { closeFinanceModal(); }, 1500);
   }
   
 </script>
